@@ -43,7 +43,7 @@ window.SideQuest.returnToBookmark = function(bookmark) {
   let target = null;
   let messageRoot = null;
 
-  if (bookmark.messageId) {
+if (bookmark.messageId) {
     messageRoot = document.querySelector(`[data-message-id="${bookmark.messageId}"]`);
   }
 
@@ -60,8 +60,6 @@ window.SideQuest.returnToBookmark = function(bookmark) {
   } else if (messageRoot) {
     messageRoot.scrollIntoView({ behavior: 'instant', block: 'start' });
   }
-
-  if (window.SideQuest.removeReturnButton) {
-    window.SideQuest.removeReturnButton();
-  }
+  window.SideQuest.removeReturnButton();
+  removeBookmark(bookmark.sessionId);
 };

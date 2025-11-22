@@ -1,30 +1,31 @@
 /**
- * LocalStorage  data creation and state management
+ * LocalStorage management for bookmarks
  */
 
-const STORAGE_KEY = "sidequestBookmarks";
+window.SideQuest = window.SideQuest || {};
 
-function loadAll() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  return raw ? JSON.parse(raw) : {};
-}
+const STORAGE_KEY = "SideQuestBookmarks";
 
-export function saveBookmark(sessionId, bookmark) {
-  const all = loadAll();
-  all[sessionId] = bookmark;     
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-}
+window.SideQuest.loadBookmarks = function() {
+  const bookmarks = localStorage.getItem(STORAGE_KEY);
+  return bookmarks ? JSON.parse(bookmarks) : {};
+};
 
-export function loadBookmark(sessionId) {
-  const all = loadAll();
-  return all[sessionId] || null;
-}
+window.SideQuest.saveBookmark = function(sessionId, bookmark) {
+  const bookmarks = window.SideQuest.loadBookmarks();
+  bookmarks[sessionId] = bookmark;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+};
 
-export function removeBookmark(sessionId) {
-  const all = loadAll();
-  if (all[sessionId]) {
-    delete all[sessionId];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+window.SideQuest.loadBookmark = function(sessionId) {
+  const bookmarks = window.SideQuest.loadBookmarks();
+  return bookmarks[sessionId] || null;
+};
+
+window.SideQuest.removeBookmark = function(sessionId) {
+  const bookmarks = window.SideQuest.loadBookmarks();
+  if (bookmarks[sessionId]) {
+    delete bookmarks[sessionId];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
   }
-}
-
+};

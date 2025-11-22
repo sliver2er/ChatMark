@@ -10,6 +10,7 @@
       "js": [
         "src/content/dom.js",
         "src/content/bookmark.js",
+        "src/content/storage.js",
         "src/content/ui/returnButton.js",
         "src/content/ui/popup.js",
         "src/content/main.js"

@@ -104,6 +104,7 @@ window.SideQuest.showBookmarkPopup = function(text, x, y, event) {
       state.selectedDataStart,
       state.selectedDataEnd
     );
+    window.SideQuest.saveBookmark(window.SideQuest.getSessionId(), bookmarkRecord);
 
     console.log('Bookmark record created:', bookmarkRecord);
     window.SideQuest.createReturnButton(bookmarkRecord);
