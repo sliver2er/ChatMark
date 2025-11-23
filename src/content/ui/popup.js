@@ -1,26 +1,52 @@
 /**
- * Inline "Make a bookmark?" popup
+ * Inline Bookmark popup
  */
 
 window.SideQuest = window.SideQuest || {};
 
-const BASE_BG = "rgba(255, 255, 255, 0.12)";
-const HOVER_BG = "rgba(255, 255, 255, 0.20)";
-const ACTIVE_BG = "rgba(255, 255, 255, 0.27)";
-
-const BASE_BORDER = "rgba(255, 255, 255, 0.18)";
-const HOVER_BORDER = "rgba(255, 255, 255, 0.25)";
-const ACTIVE_BORDER = "rgba(255, 255, 255, 0.33)";
-
-const BASE_SHADOW = "0 4px 12px rgba(0, 0, 0, 0.15)";
-const HOVER_SHADOW = "0 4px 16px rgba(0, 0, 0, 0.22)";
-const ACTIVE_SHADOW = "0 2px 8px rgba(0, 0, 0, 0.20)";
-
-window.SideQuest.showBookmarkPopup = function(text, x, y, event) {
+window.SideQuest.showBookmarkPopup = function(text,event) { 
   const existingPopup = document.getElementById('sidequest-bookmark-popup');
   if (existingPopup) {
     existingPopup.remove();
   }
+  const buttons = document.querySelectorAll(
+    'button.btn.relative.btn-secondary.shadow-long.flex.rounded-xl'
+  );
+  const askGptBtn = [...buttons].find(btn => {
+    return btn.querySelector('span')?.classList.contains('flex')
+        && btn.querySelector('span')?.classList.contains('items-center');
+  });
+
+  if (!askGptBtn) return;
+
+  const rect = askGptBtn.getBoundingClientRect();
+  const popup = document.createElement("div");
+  popup.id = "sidequest-bookmark-popup";
+
+  popup.innerHTML = `
+    <div style="display: flex; align-items:center; gap: 6px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"
+        xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 2h12a1 1 0 0 1 1 1v19l-7-5-7 5V3a1 1 0 0 1 1-1z"/>
+      </svg>
+    </div>
+  `;
+  popup.style.cssText = `
+  position: fixed;
+  top: ${rect.top + rect.height / 2 - 20}px;
+  left: ${rect.right + 8}px;
+  padding: 8px 12px;
+  background: rgba(30,30,30,0.85);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  z-index: 2147483647;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: opacity .15s ease;
+`;
 
   const state = window.SideQuest.bookmarkState;
   state.selectedBookmarkText = text;
@@ -30,72 +56,8 @@ window.SideQuest.showBookmarkPopup = function(text, x, y, event) {
   state.selectedDataStart = dataRange.dataStart;
   state.selectedDataEnd = dataRange.dataEnd;
 
-  const popup = document.createElement('div');
-  popup.id = 'sidequest-bookmark-popup';
+  //팝업을 해당 컴포넌트 옆에 붙이기
 
-  let isHovering = false;
-  let isMouseDown = false;
-
-  function applyStyle() {
-    if (isMouseDown) {
-      popup.style.background = ACTIVE_BG;
-      popup.style.borderColor = ACTIVE_BORDER;
-      popup.style.boxShadow = ACTIVE_SHADOW;
-      return;
-    }
-
-    if (isHovering) {
-      popup.style.background = HOVER_BG;
-      popup.style.borderColor = HOVER_BORDER;
-      popup.style.boxShadow = HOVER_SHADOW;
-      return;
-    }
-
-    popup.style.background = BASE_BG;
-    popup.style.borderColor = BASE_BORDER;
-    popup.style.boxShadow = BASE_SHADOW;
-  }
-
-  popup.style.cssText = `
-    position: absolute;
-    top: ${y + 12}px;
-    left: ${x}px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    background: rgba(30, 30, 30, 0.85);
-    backdrop-filter: blur(4px);
-    color: #f5f5f5;
-    font-size: 14px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.12);
-    z-index: 2147483000;
-    cursor: pointer;
-    transition: all 0.12s ease;
-    opacity: 0;
-  `;
-
-  popup.textContent = 'Make a bookmark?';
-
-  popup.addEventListener('mouseenter', () => {
-    isHovering = true;
-    applyStyle();
-  });
-
-  popup.addEventListener('mouseleave', () => {
-    isHovering = false;
-    isMouseDown = false;
-    applyStyle();
-  });
-
-  popup.addEventListener('mousedown', () => {
-    isMouseDown = true;
-    applyStyle();
-  });
-
-  popup.addEventListener('mouseup', () => {
-    isMouseDown = false;
-    applyStyle();
-  });
 
   popup.addEventListener('click', () => {
     const bookmarkRecord = window.SideQuest.createBookmarkRecord(
@@ -105,26 +67,21 @@ window.SideQuest.showBookmarkPopup = function(text, x, y, event) {
       state.selectedDataEnd
     );
     window.SideQuest.saveBookmark(window.SideQuest.getSessionId(), bookmarkRecord);
-
-    console.log('Bookmark record created:', bookmarkRecord);
     window.SideQuest.createReturnButton(bookmarkRecord);
     popup.remove();
   });
-
-  document.body.appendChild(popup);
-
+  document.body.append(popup)
   requestAnimationFrame(() => {
     popup.style.opacity = "1";
   });
-
-  function handleOutsideClick(e) {
+  function close(e) {
     if (!popup.contains(e.target)) {
       popup.remove();
-      document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener("click", close);
     }
   }
+  setTimeout(() => document.addEventListener("click", close), 80);
 
-  setTimeout(() => {
-    document.addEventListener('click', handleOutsideClick);
-  }, 100);
+
+
 };

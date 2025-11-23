@@ -61,5 +61,5 @@ if (bookmark.messageId) {
     messageRoot.scrollIntoView({ behavior: 'instant', block: 'start' });
   }
   window.SideQuest.removeReturnButton();
-  removeBookmark(bookmark.sessionId);
+  window.SideQuest.removeBookmark(bookmark.sessionId);
 };
