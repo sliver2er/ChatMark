@@ -18,7 +18,7 @@ export default defineManifest({
         "https://chat.openai.com/*",
         "https://chatgpt.com/*"
       ],
-      js: ["scripts/index.ts"]
+      js: ["src/scripts/index.ts"]
     }
   ]
 });
