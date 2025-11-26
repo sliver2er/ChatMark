@@ -9,9 +9,12 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
-    "types": ["chrome"]
+    "baseUrl": ".",
+    "paths" : {
+        "@/*": ["./src/*"]
+    },
+    "types": ["chrome", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["src"],
+  "include": ["src", "tests", "jest.setup.ts", "manifest.config.ts"],
   "exclude": ["node_modules"]
 }

@@ -5,11 +5,11 @@ export default defineManifest({
   name: "ChatMark",
   version: "1.0.0",
   action: {
-    default_popup: "panel/index.html"
+    default_popup: "src/panel/index.html"
   },
   permissions: ["storage", "activeTab", "scripting"],
   background: {
-    service_worker: "background/index.ts",
+    service_worker: "src/background/index.ts",
     type: "module"
   },
   content_scripts: [
