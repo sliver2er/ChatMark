@@ -6,26 +6,38 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
-      "args": ["--runInBand", "--watchAll"],
+      "args": ["--runInBand"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
+      "internalConsoleOptions": "neverOpen"
     },
+
     {
       "name": "Debug Content Script (Chrome)",
       "type": "chrome",
       "request": "launch",
-      "url": "chrome:://extensions",
+      "url": "https://chat.openai.com/",
       "webRoot": "${workspaceFolder}/dist",
-      "sourceMaps": true
+      "sourceMaps": true,
+
+      "runtimeArgs": [
+        "--disable-web-security",
+        "--disable-site-isolation-trials",
+        "--auto-open-devtools-for-tabs",
+        "--user-data-dir=${workspaceFolder}/.vscode_chrome"
+      ]
     },
+
     {
       "name": "Debug React Panel",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:5173",
+      "url": "http://localhost:5173/panel/index.html",
       "webRoot": "${workspaceFolder}/src/panel",
-      "sourceMaps": true
+      "sourceMaps": true,
+      "runtimeArgs": [
+        "--auto-open-devtools-for-tabs"
+      ]
     }
   ]
 }

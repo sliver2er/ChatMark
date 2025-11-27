@@ -11,9 +11,13 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-    },
+  },
+  server: {
+    cors: true
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
   },
 });
+

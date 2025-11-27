@@ -1,6 +1,4 @@
-import { injectBookmarkButton } from "./injectBookmarkButton";
-
-
+import { injectBookmarkButton } from "./components/injectBookmarkButton";
 
 export function findAskGPTButton(): HTMLElement | null {
   const buttons = document.querySelectorAll("button");
@@ -14,7 +12,6 @@ export function findAskGPTButton(): HTMLElement | null {
   return null;
 }
 
-// ChatGPT DOM 상단에 AskGPT 버튼이 생기는 순간을 감지해야 함
 const observer = new MutationObserver(() => {
   const askGPTBtn = findAskGPTButton();
   if (askGPTBtn) {
@@ -22,7 +19,6 @@ const observer = new MutationObserver(() => {
   }
 });
 
-// body 전체를 감시
 observer.observe(document.body, {
   childList: true,
   subtree: true,
