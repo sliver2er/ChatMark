@@ -1,11 +1,11 @@
 import { ActionIcon, Box, rem } from "@mantine/core";
-import { IconBookmarkFilled } from "@tabler/icons-react";
+import { IconBookmark } from "@tabler/icons-react";
 
-interface Props {
+interface BookmarkIconProps {
   onClick?: () => void;
 }
 
-export function BookmarkIcon({ onClick }: Props) {
+export const BookmarkIcon = ({ onClick }: BookmarkIconProps) => {
   return (
     <Box
       ml = "0"
@@ -30,7 +30,7 @@ export function BookmarkIcon({ onClick }: Props) {
           cursor: "pointer",
         }}
       >
-        <IconBookmarkFilled style={{ width: rem(16), height: rem(16) }} />
+        <IconBookmark size = "28px"/>
       </ActionIcon>
     </Box>
   );
