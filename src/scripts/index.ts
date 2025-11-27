@@ -1,4 +1,4 @@
-import { injectBookmarkButton } from "./components/injectBookmarkButton";
+import { injectBookmarkButton } from "./features/Bookmark/injectBookmarkButton";
 
 export function findAskGPTButton(): HTMLElement | null {
   const buttons = document.querySelectorAll("button");

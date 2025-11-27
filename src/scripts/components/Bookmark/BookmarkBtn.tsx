@@ -10,7 +10,7 @@ export function BookmarkIcon({ onClick }: Props) {
     <Tooltip label="북마크 추가" offset={4}>
       <ActionIcon
         variant="light"
-        color="white"
+        color="red"
         radius="lg"
         size="sm"
         onClick={onClick}

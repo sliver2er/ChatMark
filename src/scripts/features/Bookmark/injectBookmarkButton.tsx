@@ -1,8 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { MantineProvider } from "@mantine/core";
-import { BookmarkIcon } from "./BookmarkBtn";
-import { findAskGPTButton } from "..";
+import { BookmarkIcon } from "../../components/Bookmark/BookmarkBtn";
+import { findAskGPTButton } from "../..";
 
 export function injectBookmarkButton() {
   const askGPTBtn = findAskGPTButton();
