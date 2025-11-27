@@ -15,7 +15,7 @@
       "name": "Debug Content Script (Chrome)",
       "type": "chrome",
       "request": "launch",
-      "url": "https://chat.openai.com",
+      "url": "chrome:://extensions",
       "webRoot": "${workspaceFolder}/dist",
       "sourceMaps": true
     },
