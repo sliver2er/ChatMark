@@ -1,5 +1,5 @@
 import { MantineProvider } from "@mantine/core";
-import { BookmarkPopup } from "./features/Bookmark";
+import { BookmarkPopup } from "./features/BookmarkPopup";
 
 export const App = () => {
   return (

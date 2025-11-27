@@ -1,4 +1,4 @@
-import { ActionIcon, Tooltip, rem } from "@mantine/core";
+import { ActionIcon, Box, rem } from "@mantine/core";
 import { IconBookmarkFilled } from "@tabler/icons-react";
 
 interface Props {
@@ -7,20 +7,31 @@ interface Props {
 
 export function BookmarkIcon({ onClick }: Props) {
   return (
-    <Tooltip label="북마크 추가" offset={4}>
+    <Box
+      ml = "0"
+      bg = "#222"
+      bdrs={"sm"}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginLeft: "8px",
+        padding: "4px 8px",
+
+      }}
+    >
       <ActionIcon
-        variant="light"
-        color="red"
+        p = "md"
+        variant="subtle"
         radius="lg"
-        size="sm"
+        size="xs"
         onClick={onClick}
         style={{
-          marginLeft: "8px",
           cursor: "pointer",
         }}
       >
         <IconBookmarkFilled style={{ width: rem(16), height: rem(16) }} />
       </ActionIcon>
-    </Tooltip>
+    </Box>
   );
 }
