@@ -19,7 +19,7 @@
       "url": "https://chat.openai.com/",
       "webRoot": "${workspaceFolder}/dist",
       "sourceMaps": true,
-
+      "userDataDir": false,
       "runtimeArgs": [
         "--disable-web-security",
         "--disable-site-isolation-trials",

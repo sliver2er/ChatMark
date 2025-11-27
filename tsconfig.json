@@ -13,7 +13,7 @@
     "paths" : {
         "@/*": ["./src/*"]
     },
-    "types": ["chrome", "jest"]
+    "types": ["chrome"]
   },
   "include": ["src", "manifest.config.ts"],
   "exclude": ["node_modules"]
