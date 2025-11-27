@@ -25,7 +25,7 @@ export async function saveBookmark(session_id : string,bookmark: BookmarkItem) {
   });
 }
 
-export async function deleteBookmark(session_id : string, id: Number) {
+export async function deleteBookmark(session_id : string, id: string) {
   const bookmarks = await getBookmarks(session_id);
   const updated = bookmarks.filter((b) => b.id !== id);
 
