@@ -9,7 +9,7 @@ export default defineManifest({
   },
   permissions: ["storage", "activeTab", "scripting"],
   background: {
-    service_worker: "src/background/index.ts",
+    service_worker: "src/background/index.tsx",
     type: "module"
   },
   content_scripts: [
@@ -18,7 +18,7 @@ export default defineManifest({
         "https://chat.openai.com/*",
         "https://chatgpt.com/*"
       ],
-      js: ["src/scripts/index.ts"]
+      js: ["src/scripts/index.tsx"]
     }
   ]
 });
