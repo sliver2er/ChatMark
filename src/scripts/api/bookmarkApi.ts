@@ -1,5 +1,5 @@
 import { BookmarkItem } from "@/types";
-import { error } from "@/shared/logger";
+import { error, log } from "@/shared/logger";
 
 
 export const bookmarkApi = {
@@ -27,7 +27,10 @@ export const bookmarkApi = {
             error("Failed to add bookmark : ", response?.error);
             reject(response?.error);
         }
-          else resolve();
+          else {
+            log("Bookmark add signal sent successfully");
+            resolve();
+            }
         }
       );
     });

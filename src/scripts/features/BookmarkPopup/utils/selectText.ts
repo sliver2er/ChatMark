@@ -19,13 +19,13 @@ function findMessageId(node: Node): HTMLElement | null {
 }
 
 /**
- * Find the closest parent span with data-start attribute
+ * Find the closest parent element with data-start attribute
  */
 function findDataStart(node: Node): HTMLElement | null {
   let current = node instanceof Text ? node.parentElement : (node as HTMLElement);
 
   while (current) {
-    if (current.tagName === 'SPAN' && current.dataset?.start !== undefined) {
+    if (current.dataset?.start !== undefined) {
       return current;
     }
     current = current.parentElement;

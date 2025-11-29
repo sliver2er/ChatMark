@@ -10,7 +10,7 @@ function findAskGPTButton(): HTMLElement | null {
   return null;
 }
 
-export function useBookmarkElement() {
+export function useBookmarkPortal() {
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {

@@ -1,16 +1,42 @@
 import { createPortal } from "react-dom";
-import { useBookmarkElement } from "./hooks/useBookmarkElement";
+import { useBookmarkPortal } from "./hooks/useBookmarkPortal";
 import { BookmarkBtn } from "./components/BookmarkBtn";
-import { log } from "@/shared/logger"
+import { getSessionId } from "@/shared/functions/getSessionId";
+import { captureTextSelection } from "./utils/selectText";
+import { error, log } from "@/shared/logger";
+import { useBookmark } from "@/scripts/hooks/useBookmark";
+
 
 export function BookmarkPopup() {
-  const targetElement = useBookmarkElement();
+  const targetElement = useBookmarkPortal();
+  const sessionId = getSessionId();
+
+  const { addBookmark } = useBookmark(sessionId || "");
 
   if (!targetElement) return null;
-  log("targetElement", targetElement)
+
+  const handleBookmarkClick = async () => {
+    const bookmarkItem = captureTextSelection();
+
+    if (!bookmarkItem) {
+      error("Failed to capture text selection");
+      return;
+    }
+
+    if (!sessionId) {
+      error("Failed to get session ID");
+      return;
+    }
+
+    try {
+      await addBookmark(bookmarkItem);
+    } catch (err) {
+      error("Failed to add bookmark:", err);
+    }
+  };
 
   return createPortal(
-    <BookmarkBtn onClick={() => alert("bookmark")} />,
+    <BookmarkBtn onClick={handleBookmarkClick} />,
     targetElement
   );
 }

@@ -48,6 +48,7 @@ export const useBookmark = (session_id: string) => {
   return {
     bookmarks,
     loading,
+    loadBookmarks,
     addBookmark,
     deleteBookmark,
   

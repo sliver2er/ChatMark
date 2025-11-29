@@ -1,9 +1,14 @@
 import * as repo from "../repository/bookmarkCRUD";
 import { BookmarkItem } from "@/types";
+import { log } from "@/shared/logger";
+
 
 export async function handleBookmarkAdd(msg: any, sendResponse: Function) {
   const item: BookmarkItem = msg.payload;
   await repo.saveBookmark(item.session_id, item);
+  log("Bookmark add signal received")
+  log("Bookmark", item)
+
   sendResponse({ success: true });
 }
 
