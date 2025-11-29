@@ -1,4 +1,4 @@
-import { handleBookmarkAdd, handleBookmarkGetAll, handleBookmarkDelete } from "../handlers/bookmarkHandler";
+import { handleBookmarkAdd, handleBookmarkGetAll, handleBookmarkDelete } from "../services/bookmarkService";
 import { MessageType } from "@/types/index";
 
 export function routeMessage(msg: any, sendResponse: Function) {

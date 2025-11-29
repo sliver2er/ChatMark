@@ -25,9 +25,9 @@ export async function saveBookmark(session_id : string,bookmark: BookmarkItem) {
   });
 }
 
-export async function deleteBookmark(session_id : string, id: string) {
+export async function deleteBookmark(session_id : string, bookmark_id: string) {
   const bookmarks = await getBookmarks(session_id);
-  const updated = bookmarks.filter((b) => b.id !== id);
+  const updated = bookmarks.filter((b) => b.id !== bookmark_id);
 
   return new Promise((resolve) => {
     chrome.storage.sync.set({ [key(session_id)]: updated }, () => {
