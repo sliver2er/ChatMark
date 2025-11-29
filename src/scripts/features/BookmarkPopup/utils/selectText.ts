@@ -1,5 +1,6 @@
 import { BookmarkItem } from "@/types";
-import { getSessionId } from "@/shared/getSessionId";
+import { getSessionId } from "@/shared/functions/getSessionId";
+import  { error }  from "@/shared/logger"
 
 /**
  * Find the closest parent element with data-message-id
@@ -53,7 +54,7 @@ export function captureTextSelection(): BookmarkItem | null {
   const messageNode = findMessageId(range.startContainer);
 
   if (!messageNode || !messageNode.dataset.messageId) {
-    console.error("Could not find message node with data-message-id");
+    error("Could not find message node with data-message-id");
     return null;
   }
 
@@ -63,7 +64,7 @@ export function captureTextSelection(): BookmarkItem | null {
   const endSpan = findDataStart(range.endContainer);
 
   if (!startSpan || !endSpan) {
-    console.error("Could not find span with data-start attribute");
+    error("Could not find span with data-start attribute");
     return null;
   }
 
@@ -77,7 +78,7 @@ export function captureTextSelection(): BookmarkItem | null {
   const sessionId = getSessionId();
 
   if (!sessionId) {
-    console.error("Could not extract session_id from URL");
+    error("Could not extract session_id from URL");
     return null;
   }
 
