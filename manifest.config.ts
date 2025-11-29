@@ -5,7 +5,7 @@ export default defineManifest({
   name: "ChatMark",
   version: "1.0.0",
   action: {
-    default_popup: "src/panel/index.html"
+    default_popup: "src/popup/index.html"
   },
   permissions: ["storage", "activeTab", "scripting"],
   background: {

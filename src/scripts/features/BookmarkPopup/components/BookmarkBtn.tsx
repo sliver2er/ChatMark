@@ -1,11 +1,11 @@
 import { ActionIcon, Box, rem } from "@mantine/core";
 import { IconBookmark } from "@tabler/icons-react";
 
-interface BookmarkIconProps {
+interface BookmarkBtnProps {
   onClick?: () => void;
 }
 
-export const BookmarkIcon = ({ onClick }: BookmarkIconProps) => {
+export const BookmarkBtn = ({ onClick }: BookmarkBtnProps) => {
   return (
     <Box
       ml = "0"

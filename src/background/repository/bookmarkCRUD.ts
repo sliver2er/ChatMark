@@ -1,4 +1,4 @@
-import { BookmarkItem } from "@/scripts/features/BookmarkPopup/types";
+import { BookmarkItem } from "@/types";
 
 const key = (session_id : string) =>{
     return 'chatmark.bookmarks.' + session_id;

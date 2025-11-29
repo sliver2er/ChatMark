@@ -1,14 +1,15 @@
 import { createPortal } from "react-dom";
 import { useBookmark } from "./hooks/useBookmark";
-import { BookmarkIcon } from "./components/BookmarkBtn";
+import { BookmarkBtn } from "./components/BookmarkBtn";
 
 export function BookmarkPopup() {
   const targetElement = useBookmark();
 
   if (!targetElement) return null;
+  console.log("targetElement", targetElement)
 
   return createPortal(
-    <BookmarkIcon onClick={() => alert("bookmark")} />,
+    <BookmarkBtn onClick={() => alert("bookmark")} />,
     targetElement
   );
 }

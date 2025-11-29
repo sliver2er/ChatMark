@@ -1,10 +1,10 @@
-import { BookmarkItem } from "../types";
-import { getSessionId } from "../utils/getSessionId";
+import { BookmarkItem } from "@/types";
+import { getSessionId } from "@/shared/getSessionId";
 
 /**
  * Find the closest parent element with data-message-id
  */
-function findMessageNode(node: Node): HTMLElement | null {
+function findMessageId(node: Node): HTMLElement | null {
   let current = node instanceof Text ? node.parentElement : (node as HTMLElement);
 
   while (current) {
@@ -20,7 +20,7 @@ function findMessageNode(node: Node): HTMLElement | null {
 /**
  * Find the closest parent span with data-start attribute
  */
-function findSpanWithDataStart(node: Node): HTMLElement | null {
+function findDataStart(node: Node): HTMLElement | null {
   let current = node instanceof Text ? node.parentElement : (node as HTMLElement);
 
   while (current) {
@@ -50,9 +50,7 @@ export function captureTextSelection(): BookmarkItem | null {
   if (!selectedText) {
     return null;
   }
-
-  // a Find message node with data-message-id
-  const messageNode = findMessageNode(range.startContainer);
+  const messageNode = findMessageId(range.startContainer);
 
   if (!messageNode || !messageNode.dataset.messageId) {
     console.error("Could not find message node with data-message-id");
@@ -61,9 +59,8 @@ export function captureTextSelection(): BookmarkItem | null {
 
   const messageId = messageNode.dataset.messageId;
 
-  // b Calculate start/end positions from data-start/data-end
-  const startSpan = findSpanWithDataStart(range.startContainer);
-  const endSpan = findSpanWithDataStart(range.endContainer);
+  const startSpan = findDataStart(range.startContainer);
+  const endSpan = findDataStart(range.endContainer);
 
   if (!startSpan || !endSpan) {
     console.error("Could not find span with data-start attribute");
@@ -87,13 +84,13 @@ export function captureTextSelection(): BookmarkItem | null {
   // d Create bookmark item
   const bookmarkItem: BookmarkItem = {
     id: crypto.randomUUID(),
+    bookmark_name : selectedText,
     session_id: sessionId,
     message_id: messageId,
     text: selectedText,
     start,
     end,
     created_at: new Date(),
-    type: "text-fragment",
   };
 
   return bookmarkItem;
