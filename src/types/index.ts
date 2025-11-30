@@ -18,5 +18,7 @@ export type BookmarkItem = z.infer<typeof BookmarkItemSchema>;
 export enum MessageType {
   Add = "BOOKMARK_ADD",
   GetAll = "BOOKMARK_GET_ALL",
-  Delete = "BOOKMARK_DELETE"
+  Delete = "BOOKMARK_DELETE",
+  Navigate = "BOOKMARK_NAVIGATE",
+  PanelRefresh = "PANEL_REFRESH"
 }

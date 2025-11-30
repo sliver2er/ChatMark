@@ -1,6 +1,9 @@
 import { createRoot } from "react-dom/client";
 import React from "react";
 import { App } from "./App";
+import { getBookmarkPosition } from "@/shared/functions/getBookmarkPosition";
+import { getSessionId } from "@/shared/functions/getSessionId";
+import { BookmarkItem } from "@/types";
 
 (function mount() {
   // React root container 생성
@@ -16,3 +19,37 @@ import { App } from "./App";
   const root = createRoot(container);
   root.render(<App/>);
 })();
+
+// Track current session ID to detect navigation
+let currentSessionId = getSessionId();
+
+// Detect URL changes and notify panel
+setInterval(() => {
+  const newSessionId = getSessionId();
+
+  if (newSessionId && newSessionId !== currentSessionId) {
+    currentSessionId = newSessionId;
+
+    // Notify panel about navigation
+    chrome.runtime.sendMessage({
+      type: "PANEL_REFRESH",
+      session_id: newSessionId
+    });
+  }
+}, 1000); // Check every second
+
+// Listen for bookmark navigation messages from the panel
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "BOOKMARK_NAVIGATE") {
+    const bookmark = msg.bookmark as BookmarkItem;
+    const element = getBookmarkPosition(bookmark);
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      sendResponse({ success: true });
+    } else {
+      sendResponse({ success: false, error: "Element not found" });
+    }
+  }
+  return true; // Allow async response
+});

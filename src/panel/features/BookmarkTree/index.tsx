@@ -8,33 +8,51 @@ export const BookmarkTree = () => {
     const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [sessionId, setSessionId] = useState<string | null>(null)
+
+    const fetchBookmarks = async (sid: string) => {
+        try {
+            setLoading(true)
+            const data = await bookmarkApi.getAll(sid)
+            setBookmarks(data)
+            setError(null)
+        } catch (err) {
+            setError(String(err))
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
-        const fetchBookmarks = async () => {
-            try {
-                // Get session_id from URL parameters
-                const params = new URLSearchParams(window.location.search)
-                const sessionId = params.get('session_id')
+        // Get initial session_id from URL parameters
+        const params = new URLSearchParams(window.location.search)
+        const initialSessionId = params.get('session_id')
 
-                console.log("Session ID from URL:", sessionId)
+        console.log("Session ID from URL:", initialSessionId)
 
-                if (!sessionId) {
-                    setError("No session ID found. Please open from a ChatGPT conversation.")
-                    setLoading(false)
-                    return
-                }
+        if (!initialSessionId) {
+            setError("No session ID found. Please open from a ChatGPT conversation.")
+            setLoading(false)
+            return
+        }
 
-                const data = await bookmarkApi.getAll(sessionId)
-                setBookmarks(data)
-                setError(null)
-            } catch (err) {
-                setError(String(err))
-            } finally {
-                setLoading(false)
+        setSessionId(initialSessionId)
+        fetchBookmarks(initialSessionId)
+
+        // Listen for panel refresh messages from content script
+        const handleMessage = (msg: any) => {
+            if (msg.type === "PANEL_REFRESH" && msg.session_id) {
+                console.log("Panel refreshing for new session:", msg.session_id)
+                setSessionId(msg.session_id)
+                fetchBookmarks(msg.session_id)
             }
         }
 
-        fetchBookmarks()
+        chrome.runtime.onMessage.addListener(handleMessage)
+
+        return () => {
+            chrome.runtime.onMessage.removeListener(handleMessage)
+        }
     }, [])
 
     if (loading) {

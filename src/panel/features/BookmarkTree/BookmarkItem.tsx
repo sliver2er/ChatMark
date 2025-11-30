@@ -1,16 +1,26 @@
 import { Group, Text } from "@mantine/core"
 import { IconBookmark } from "@tabler/icons-react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
+import { NavigateApi } from "@/api/NavigateApi"
 
 interface BookmarkItemProps {
     bookmark: BookmarkItemType
 }
 
 export const BookmarkItem = ({ bookmark }: BookmarkItemProps) => {
+    const handleClick = async () => {
+        try {
+            await NavigateApi.navigateToBookmark(bookmark)
+        } catch (error) {
+            console.error("Failed to navigate to bookmark:", error)
+        }
+    }
+
     return (
         <Group
             gap="sm"
             p="sm"
+            onClick={handleClick}
             style={{
                 cursor: 'pointer',
                 borderRadius: '8px',
