@@ -4,3 +4,6 @@ dist
 
 .vscode
 .vscode_chrome
+.vscode_chrome/
+
+.cluade

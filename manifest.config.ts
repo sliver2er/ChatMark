@@ -7,7 +7,7 @@ export default defineManifest({
   action: {
     default_popup: "src/popup/index.html"
   },
-  permissions: ["storage", "activeTab", "scripting"],
+  permissions: ["storage", "activeTab", "scripting", "sidePanel"],
   background: {
     service_worker: "src/background/index.ts",
     type: "module"
@@ -20,5 +20,8 @@ export default defineManifest({
       ],
       js: ["src/scripts/index.tsx"]
     }
-  ]
+  ],
+  side_panel : {
+    default_path : "src/panel/index.html"
+  },
 });
