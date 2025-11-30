@@ -2,10 +2,16 @@ import { IconBookmarkFilled } from "@tabler/icons-react"
 import { PanelApi } from "@/api/PanelApi"
 import { error } from "@/shared/logger"
 import { useState } from "react"
+import { getSessionId } from "@/shared/functions/getSessionId"
 
 const handleOpenPanel = async () => {
     try {
-        await PanelApi.openPanel()
+        const sessionId = getSessionId()
+        if (!sessionId) {
+            error("No session ID found")
+            return
+        }
+        await PanelApi.openPanel(sessionId)
     } catch (err) {
         error(err)
     }

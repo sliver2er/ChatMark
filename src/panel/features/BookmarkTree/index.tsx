@@ -2,7 +2,6 @@ import { Stack, Text, Loader, Center } from "@mantine/core"
 import { useEffect, useState } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
-import { getSessionId } from "@/shared/functions/getSessionId"
 import { BookmarkItem } from "./BookmarkItem"
 
 export const BookmarkTree = () => {
@@ -13,7 +12,11 @@ export const BookmarkTree = () => {
     useEffect(() => {
         const fetchBookmarks = async () => {
             try {
-                const sessionId = getSessionId()
+                // Get session_id from URL parameters
+                const params = new URLSearchParams(window.location.search)
+                const sessionId = params.get('session_id')
+
+                console.log("Session ID from URL:", sessionId)
 
                 if (!sessionId) {
                     setError("No session ID found. Please open from a ChatGPT conversation.")
