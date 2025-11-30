@@ -1,5 +1,5 @@
 import { IconBookmarkFilled } from "@tabler/icons-react"
-import { PanelApi } from "@/scripts/api/PanelApi"
+import { PanelApi } from "@/api/PanelApi"
 import { error } from "@/shared/logger"
 import { useState } from "react"
 

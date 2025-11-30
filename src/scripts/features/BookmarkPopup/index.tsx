@@ -4,7 +4,7 @@ import { BookmarkBtn } from "./components/BookmarkBtn";
 import { getSessionId } from "@/shared/functions/getSessionId";
 import { captureTextSelection } from "./utils/selectText";
 import { error, log } from "@/shared/logger";
-import { useBookmark } from "@/scripts/hooks/useBookmark";
+import { useBookmark } from "@/hooks/useBookmark";
 
 
 export function BookmarkPopup() {
