@@ -1,4 +1,4 @@
-import { Drawer, ScrollArea, Title, Box } from '@mantine/core'
+import { ScrollArea, Title, Box, Paper, CloseButton, Group, Stack } from '@mantine/core'
 import { BookmarkTree } from './BookmarkTree'
 
 interface SidebarProps {
@@ -7,31 +7,53 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+  console.log('[ChatMark] Sidebar render, isOpen:', isOpen);
+
+  if (!isOpen) return null;
+
   return (
-    <Drawer
-      opened={isOpen}
-      onClose={onClose}
-      position="right"
-      size="400px"
-      title={<Title order={3}>Bookmarks</Title>}
-      styles={{
-        content: {
-          backgroundColor: '#1a1b1e',
-        },
-        header: {
-          backgroundColor: '#1a1b1e',
-          borderBottom: '1px solid #2c2e33',
-        },
-        body: {
-          padding: 0,
-        },
+    <Paper
+      shadow="xl"
+      radius={0}
+      pos="fixed"
+      top={0}
+      right={0}
+      w={400}
+      h="100vh"
+      style={{
+        zIndex: 10000,
+        borderLeft: '1px solid var(--mantine-color-dark-4)',
       }}
+      bg="dark.8"
     >
-      <ScrollArea h="calc(100vh - 60px)">
-        <Box p="md">
-          <BookmarkTree />
+      <Stack gap={0} h="100%">
+        {/* Header */}
+        <Box
+          p="md"
+          style={{
+            borderBottom: '1px solid var(--mantine-color-dark-4)',
+          }}
+        >
+          <Group justify="space-between" align="center">
+            <Title order={3} c="white">Bookmarks</Title>
+            <CloseButton
+              onClick={onClose}
+              size="lg"
+              c="white"
+              variant="subtle"
+            />
+          </Group>
         </Box>
-      </ScrollArea>
-    </Drawer>
+
+        {/* Content */}
+        <Box style={{ flex: 1, overflow: 'hidden' }}>
+          <ScrollArea h="100%">
+            <Box p="md">
+              <BookmarkTree />
+            </Box>
+          </ScrollArea>
+        </Box>
+      </Stack>
+    </Paper>
   )
 }
