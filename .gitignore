@@ -6,4 +6,5 @@ dist
 .vscode_chrome
 .vscode_chrome/
 
-.cluade
+.claude
+CLAUDE.md
