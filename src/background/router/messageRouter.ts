@@ -1,4 +1,4 @@
-import { handleBookmarkAdd, handleBookmarkGetAll, handleBookmarkDelete } from "../services/bookmarkService";
+import { handleBookmarkAdd, handleBookmarkGetAll, handleBookmarkDelete, handleBookmarkNavigate } from "../services/bookmarkService";
 import { MessageType } from "@/types/index";
 
 export function routeMessage(msg: any, sendResponse: Function, sender: chrome.runtime.MessageSender) {
@@ -6,6 +6,7 @@ export function routeMessage(msg: any, sendResponse: Function, sender: chrome.ru
     "BOOKMARK_ADD": handleBookmarkAdd,
     "BOOKMARK_GET_ALL": handleBookmarkGetAll,
     "BOOKMARK_DELETE": handleBookmarkDelete,
+    "BOOKMARK_NAVIGATE": handleBookmarkNavigate,
   };
 
   const handler = map[msg.type];

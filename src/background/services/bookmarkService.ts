@@ -22,3 +22,35 @@ export async function handleBookmarkDelete(msg: any, sendResponse: Function) {
   await repo.deleteBookmark(session_id, id);
   sendResponse({ success: true });
 }
+
+export async function handleBookmarkNavigate(msg: any, sendResponse: Function) {
+  const bookmark: BookmarkItem = msg.bookmark;
+
+  try {
+    // Get the active tab
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    if (!tab?.id) {
+      sendResponse({ success: false, error: "No active tab found" });
+      return;
+    }
+
+    // Send message to content script in the active tab
+    chrome.tabs.sendMessage(
+      tab.id,
+      {
+        type: "BOOKMARK_NAVIGATE",
+        bookmark
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ success: false, error: chrome.runtime.lastError.message });
+        } else {
+          sendResponse(response);
+        }
+      }
+    );
+  } catch (error) {
+    sendResponse({ success: false, error: String(error) });
+  }
+}

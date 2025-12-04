@@ -6,8 +6,10 @@ export const BookmarkItemSchema = z.object({
   session_id: z.string(),
   message_id: z.string(),
   text: z.string(),
-  start: z.number(),
-  end: z.number(),
+  context_before: z.string(), // 50 characters before the bookmarked text
+  context_after: z.string(), // 50 characters after the bookmarked text
+  start: z.number().optional(), // DOM offset (unreliable, for reference only)
+  end: z.number().optional(), // DOM offset (unreliable, for reference only)
   created_at: z.date(),
   note: z.string().optional(),
   parent_bookmark: z.string().optional(), // UUID of parent folder/bookmark

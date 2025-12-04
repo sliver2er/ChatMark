@@ -37,7 +37,7 @@ export const BookmarkTree = () => {
 
         debounceTimerRef.current = setTimeout(() => {
             fetchBookmarks(sid)
-        }, 150) // 150ms debounce
+        }, 300) 
     }, [])
 
     // Storage sync callback
@@ -54,6 +54,12 @@ export const BookmarkTree = () => {
     })
 
     useEffect(() => {
+        if (sessionId) {
+            debouncedFetchBookmarks(sessionId)
+        }
+    }, [sessionId])
+
+    useEffect(() => {
         // Get session ID from current page
         const initialSessionId = getSessionId()
 
@@ -66,24 +72,26 @@ export const BookmarkTree = () => {
         setSessionId(initialSessionId)
         fetchBookmarks(initialSessionId)
 
-        // Listen for panel refresh messages from content script
-        const handleMessage = (msg: any) => {
-            if (msg.type === "PANEL_REFRESH" && msg.session_id) {
-                setSessionId(msg.session_id)
-                fetchBookmarks(msg.session_id)
-            }
-        }
-
-        chrome.runtime.onMessage.addListener(handleMessage)
-
         return () => {
-            chrome.runtime.onMessage.removeListener(handleMessage)
             // Cleanup debounce timer
             if (debounceTimerRef.current) {
                 clearTimeout(debounceTimerRef.current)
             }
         }
     }, [])
+
+    // Real-time URL change detection
+    useEffect(() => {
+        const checkUrlChange = () => {
+            const newSessionId = getSessionId()
+            if (newSessionId && newSessionId !== sessionId) {
+                setSessionId(newSessionId)
+            }
+        }
+
+        const intervalId = setInterval(checkUrlChange, 300)
+        return () => clearInterval(intervalId)
+    }, [sessionId])
 
     if (loading) {
         return (

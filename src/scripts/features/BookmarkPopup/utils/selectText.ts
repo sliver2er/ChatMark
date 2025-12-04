@@ -38,7 +38,7 @@ function findDataStart(node: Node): HTMLElement | null {
  * Capture the current text selection and create a bookmark item
  */
 export function captureTextSelection(): BookmarkItem | null {
-  // ` Get current selection
+  // Get current selection
   const selection = window.getSelection();
 
   if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
@@ -60,21 +60,28 @@ export function captureTextSelection(): BookmarkItem | null {
 
   const messageId = messageNode.dataset.messageId;
 
-  const startSpan = findDataStart(range.startContainer);
-  const endSpan = findDataStart(range.endContainer);
+  // Get full message text content
+  const fullText = messageNode.textContent || "";
 
-  if (!startSpan || !endSpan) {
-    error("Could not find span with data-start attribute");
+  // Find the selected text position in the full message
+  const selectionIndex = fullText.indexOf(selectedText);
+
+  if (selectionIndex === -1) {
+    error("Could not find selected text in message content");
     return null;
   }
 
-  const spanStart = parseInt(startSpan.dataset.start || "0", 10);
-  const spanEnd = parseInt(endSpan.dataset.start || "0", 10);
+  // Extract context (50 characters before and after)
+  const context_before = fullText.substring(
+    Math.max(0, selectionIndex - 50),
+    selectionIndex
+  );
+  const context_after = fullText.substring(
+    selectionIndex + selectedText.length,
+    Math.min(fullText.length, selectionIndex + selectedText.length + 50)
+  );
 
-  const start = spanStart + range.startOffset;
-  const end = spanEnd + range.endOffset;
-
-  // c Get session_id from URL
+  // Get session_id from URL
   const sessionId = getSessionId();
 
   if (!sessionId) {
@@ -82,13 +89,29 @@ export function captureTextSelection(): BookmarkItem | null {
     return null;
   }
 
-  // d Create bookmark item
+  // Optional: try to get DOM offsets for reference (unreliable)
+  let start: number | undefined;
+  let end: number | undefined;
+
+  const startSpan = findDataStart(range.startContainer);
+  const endSpan = findDataStart(range.endContainer);
+
+  if (startSpan && endSpan) {
+    const spanStart = parseInt(startSpan.dataset.start || "0", 10);
+    const spanEnd = parseInt(endSpan.dataset.start || "0", 10);
+    start = spanStart + range.startOffset;
+    end = spanEnd + range.endOffset;
+  }
+
+  // Create bookmark item
   const bookmarkItem: BookmarkItem = {
     id: crypto.randomUUID(),
-    bookmark_name : selectedText,
+    bookmark_name: selectedText,
     session_id: sessionId,
     message_id: messageId,
     text: selectedText,
+    context_before,
+    context_after,
     start,
     end,
     created_at: new Date(),
