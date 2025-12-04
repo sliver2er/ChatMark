@@ -1,8 +1,10 @@
-import { Stack, Text, Loader, Center } from "@mantine/core"
+import { Stack, Text, Loader, Center, Alert } from "@mantine/core"
+import { IconAlertCircle } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
 import { BookmarkItem } from "./BookmarkItem"
+import { getSessionId } from "@/shared/functions/getSessionId"
 
 export const BookmarkTree = () => {
     const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([])
@@ -24,11 +26,8 @@ export const BookmarkTree = () => {
     }
 
     useEffect(() => {
-        // Get initial session_id from URL parameters
-        const params = new URLSearchParams(window.location.search)
-        const initialSessionId = params.get('session_id')
-
-        console.log("Session ID from URL:", initialSessionId)
+        // Get session ID from current page
+        const initialSessionId = getSessionId()
 
         if (!initialSessionId) {
             setError("No session ID found. Please open from a ChatGPT conversation.")
@@ -42,7 +41,6 @@ export const BookmarkTree = () => {
         // Listen for panel refresh messages from content script
         const handleMessage = (msg: any) => {
             if (msg.type === "PANEL_REFRESH" && msg.session_id) {
-                console.log("Panel refreshing for new session:", msg.session_id)
                 setSessionId(msg.session_id)
                 fetchBookmarks(msg.session_id)
             }
@@ -57,30 +55,35 @@ export const BookmarkTree = () => {
 
     if (loading) {
         return (
-            <Center h="100vh">
-                <Loader size="lg" />
+            <Center h="300px">
+                <Loader size="lg" type="dots" />
             </Center>
         )
     }
 
     if (error) {
         return (
-            <Center h="100vh">
-                <Text c="red">{error}</Text>
-            </Center>
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              title="Error"
+              color="red"
+              variant="light"
+            >
+                {error}
+            </Alert>
         )
     }
 
     if (bookmarks.length === 0) {
         return (
-            <Center h="100vh">
-                <Text c="dimmed">No bookmarks yet</Text>
+            <Center h="300px">
+                <Text c="dimmed" size="sm">No bookmarks yet</Text>
             </Center>
         )
     }
 
     return (
-        <Stack gap="xs" p="md">
+        <Stack gap="xs">
             {bookmarks.map((bookmark) => (
                 <BookmarkItem key={bookmark.id} bookmark={bookmark} />
             ))}

@@ -1,28 +1,16 @@
 import { IconBookmarkFilled } from "@tabler/icons-react"
-import { PanelApi } from "@/api/PanelApi"
-import { error } from "@/shared/logger"
 import { useState } from "react"
-import { getSessionId } from "@/shared/functions/getSessionId"
 
-const handleOpenPanel = async () => {
-    try {
-        const sessionId = getSessionId()
-        if (!sessionId) {
-            error("No session ID found")
-            return
-        }
-        await PanelApi.openPanel(sessionId)
-    } catch (err) {
-        error(err)
-    }
+interface OpenPanelBtnProps {
+    onOpenSidebar: () => void
 }
 
-export const OpenPanelBtn = () => {
+export const OpenPanelBtn = ({ onOpenSidebar }: OpenPanelBtnProps) => {
     const [isHovered, setIsHovered] = useState(false)
 
     return (
         <button
-            onClick={handleOpenPanel}
+            onClick={onOpenSidebar}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{

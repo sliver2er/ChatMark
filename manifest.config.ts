@@ -7,7 +7,7 @@ export default defineManifest({
   action: {
     default_popup: "src/popup/index.html"
   },
-  permissions: ["storage", "activeTab", "scripting", "sidePanel"],
+  permissions: ["storage", "activeTab", "scripting"],
   background: {
     service_worker: "src/background/index.ts",
     type: "module"
@@ -15,13 +15,10 @@ export default defineManifest({
   content_scripts: [
     {
       matches: [
-        "https://chat.openai.com/*", 
+        "https://chat.openai.com/*",
         "https://chatgpt.com/*"
       ],
       js: ["src/scripts/index.tsx"]
     }
   ],
-  side_panel : {
-    default_path : "src/panel/index.html"
-  },
 });
