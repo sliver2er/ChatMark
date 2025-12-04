@@ -1,10 +1,14 @@
 import { createPortal } from "react-dom";
+import { useState } from "react";
+import { Popover } from "@mantine/core";
 import { useBookmarkPortal } from "./hooks/useBookmarkPortal";
 import { BookmarkBtn } from "./components/BookmarkBtn";
+import { BookmarkSaveMenu } from "./components/BookmarkSaveMenu";
 import { getSessionId } from "@/shared/functions/getSessionId";
 import { captureTextSelection } from "./utils/selectText";
-import { error, log } from "@/shared/logger";
+import { error } from "@/shared/logger";
 import { useBookmark } from "@/hooks/useBookmark";
+import { BookmarkItem } from "@/types";
 
 
 export function BookmarkPopup() {
@@ -13,9 +17,12 @@ export function BookmarkPopup() {
 
   const { addBookmark } = useBookmark(sessionId || "");
 
+  const [menuOpened, setMenuOpened] = useState(false);
+  const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
+
   if (!targetElement) return null;
 
-  const handleBookmarkClick = async () => {
+  const handleBookmarkClick = () => {
     const bookmarkItem = captureTextSelection();
 
     if (!bookmarkItem) {
@@ -28,15 +35,51 @@ export function BookmarkPopup() {
       return;
     }
 
+    setCapturedBookmark(bookmarkItem);
+    setMenuOpened(true);
+  };
+
+  const handleSave = async (name: string, parentId?: string) => {
+    if (!capturedBookmark) return;
+
+    const finalBookmark: BookmarkItem = {
+      ...capturedBookmark,
+      bookmark_name: name,
+      parent_bookmark: parentId,
+    };
+
     try {
-      await addBookmark(bookmarkItem);
+      await addBookmark(finalBookmark);
+      setCapturedBookmark(null);
     } catch (err) {
       error("Failed to add bookmark:", err);
+      throw err;
     }
   };
 
   return createPortal(
-    <BookmarkBtn onClick={handleBookmarkClick} />,
+    <Popover
+      opened={menuOpened}
+      onChange={setMenuOpened}
+      position="bottom"
+      withArrow
+      shadow="md"
+    >
+      <Popover.Target>
+        <div>
+          <BookmarkBtn onClick={handleBookmarkClick} />
+        </div>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <BookmarkSaveMenu
+          opened={menuOpened}
+          onClose={() => setMenuOpened(false)}
+          onSave={handleSave}
+          sessionId={sessionId || ""}
+          defaultName={capturedBookmark?.bookmark_name || ""}
+        />
+      </Popover.Dropdown>
+    </Popover>,
     targetElement
   );
 }

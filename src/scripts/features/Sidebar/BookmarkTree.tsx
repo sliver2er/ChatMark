@@ -1,9 +1,9 @@
-import { Stack, Text, Loader, Center, Alert } from "@mantine/core"
+import { Text, Loader, Center, Alert } from "@mantine/core"
 import { IconAlertCircle } from "@tabler/icons-react"
 import { useEffect, useState, useCallback, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
-import { BookmarkItem } from "./BookmarkItem"
+import { BookmarkTreeView } from "@/components/BookmarkTreeView"
 import { getSessionId } from "@/shared/functions/getSessionId"
 import { useStorageSync } from "@/hooks/useStorageSync"
 
@@ -12,6 +12,7 @@ export const BookmarkTree = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [sessionId, setSessionId] = useState<string | null>(null)
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
 
     // Debounce timer ref to prevent excessive re-fetches
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -122,11 +123,24 @@ export const BookmarkTree = () => {
         )
     }
 
+    const handleToggleExpand = (id: string) => {
+        setExpandedIds((prev) => {
+            const newSet = new Set(prev)
+            if (newSet.has(id)) {
+                newSet.delete(id)
+            } else {
+                newSet.add(id)
+            }
+            return newSet
+        })
+    }
+
     return (
-        <Stack gap="xs">
-            {bookmarks.map((bookmark) => (
-                <BookmarkItem key={bookmark.id} bookmark={bookmark} />
-            ))}
-        </Stack>
+        <BookmarkTreeView
+            bookmarks={bookmarks}
+            expandedIds={expandedIds}
+            onToggleExpand={handleToggleExpand}
+            renderMode="navigation"
+        />
     )
 }
