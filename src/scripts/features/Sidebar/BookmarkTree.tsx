@@ -1,16 +1,20 @@
 import { Stack, Text, Loader, Center, Alert } from "@mantine/core"
 import { IconAlertCircle } from "@tabler/icons-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
 import { BookmarkItem } from "./BookmarkItem"
 import { getSessionId } from "@/shared/functions/getSessionId"
+import { useStorageSync } from "@/hooks/useStorageSync"
 
 export const BookmarkTree = () => {
     const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [sessionId, setSessionId] = useState<string | null>(null)
+
+    // Debounce timer ref to prevent excessive re-fetches
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
     const fetchBookmarks = async (sid: string) => {
         try {
@@ -24,6 +28,30 @@ export const BookmarkTree = () => {
             setLoading(false)
         }
     }
+
+    // Debounced fetch to prevent excessive API calls
+    const debouncedFetchBookmarks = useCallback((sid: string) => {
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current)
+        }
+
+        debounceTimerRef.current = setTimeout(() => {
+            fetchBookmarks(sid)
+        }, 150) // 150ms debounce
+    }, [])
+
+    // Storage sync callback
+    const handleStorageChange = useCallback((newBookmarks: BookmarkItemType[]) => {
+        if (sessionId) {
+            debouncedFetchBookmarks(sessionId)
+        }
+    }, [sessionId, debouncedFetchBookmarks])
+
+    // Set up storage sync listener for this session's bookmarks
+    useStorageSync({
+        keyPattern: sessionId ? `chatmark.bookmarks.${sessionId}` : '',
+        onChanged: handleStorageChange,
+    })
 
     useEffect(() => {
         // Get session ID from current page
@@ -50,6 +78,10 @@ export const BookmarkTree = () => {
 
         return () => {
             chrome.runtime.onMessage.removeListener(handleMessage)
+            // Cleanup debounce timer
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current)
+            }
         }
     }, [])
 
