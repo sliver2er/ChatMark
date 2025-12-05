@@ -1,25 +1,23 @@
 import { Stack } from "@mantine/core"
 import { BookmarkItem as BookmarkItemType } from "@/types"
-import { FolderTreeItem } from "@/scripts/features/Sidebar/FolderTreeItem"
+import { SelectionFolderTreeItem } from "./SelectionFolderTreeItem"
 import { getRootBookmarks, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils"
 
-interface BookmarkTreeViewProps {
+interface SelectionBookmarkTreeViewProps {
   bookmarks: BookmarkItemType[]
   expandedIds: Set<string>
   onToggleExpand: (id: string) => void
-  renderMode: 'navigation' | 'selection'
-  onSelectBookmark?: (bookmark: BookmarkItemType) => void
+  onSelectBookmark: (bookmark: BookmarkItemType) => void
   selectedId?: string
 }
 
-export const BookmarkTreeView = ({
+export const SelectionBookmarkTreeView = ({
   bookmarks,
   expandedIds,
   onToggleExpand,
-  renderMode,
   onSelectBookmark,
   selectedId,
-}: BookmarkTreeViewProps) => {
+}: SelectionBookmarkTreeViewProps) => {
   const rootBookmarks = sortBookmarksByDate(getRootBookmarks(bookmarks))
 
   if (rootBookmarks.length === 0) {
@@ -29,14 +27,13 @@ export const BookmarkTreeView = ({
   return (
     <Stack gap="xs">
       {rootBookmarks.map((bookmark) => (
-        <FolderTreeItem
+        <SelectionFolderTreeItem
           key={bookmark.id}
           bookmark={bookmark}
           level={0}
           bookmarks={bookmarks}
           expandedIds={expandedIds}
           onToggleExpand={onToggleExpand}
-          renderMode={renderMode}
           onSelectBookmark={onSelectBookmark}
           selectedId={selectedId}
         />

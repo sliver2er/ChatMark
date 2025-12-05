@@ -13,7 +13,7 @@ import { IconBookmark, IconFolderPlus } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
-import { BookmarkTreeView } from "@/components/BookmarkTreeView"
+import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView"
 
 interface BookmarkSaveMenuProps {
   opened: boolean
@@ -140,11 +140,10 @@ export const BookmarkSaveMenu = ({
         </Text>
       ) : (
         <ScrollArea h={250} offsetScrollbars>
-          <BookmarkTreeView
+          <SelectionBookmarkTreeView
             bookmarks={bookmarks}
             expandedIds={expandedIds}
             onToggleExpand={handleToggleExpand}
-            renderMode="selection"
             onSelectBookmark={handleSelectBookmark}
             selectedId={selectedParent}
           />

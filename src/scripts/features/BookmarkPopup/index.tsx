@@ -66,9 +66,7 @@ export function BookmarkPopup() {
       shadow="md"
     >
       <Popover.Target>
-        <div>
-          <BookmarkBtn onClick={handleBookmarkClick} />
-        </div>
+        <BookmarkBtn onClick={handleBookmarkClick} />
       </Popover.Target>
       <Popover.Dropdown>
         <BookmarkSaveMenu

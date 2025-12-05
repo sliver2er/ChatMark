@@ -3,7 +3,7 @@ import { IconAlertCircle } from "@tabler/icons-react"
 import { useEffect, useState, useCallback, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
-import { BookmarkTreeView } from "@/components/BookmarkTreeView"
+import { NavigationBookmarkTreeView } from "./NavigationBookmarkTreeView"
 import { getSessionId } from "@/shared/functions/getSessionId"
 import { useStorageSync } from "@/hooks/useStorageSync"
 
@@ -136,11 +136,10 @@ export const BookmarkTree = () => {
     }
 
     return (
-        <BookmarkTreeView
+        <NavigationBookmarkTreeView
             bookmarks={bookmarks}
             expandedIds={expandedIds}
             onToggleExpand={handleToggleExpand}
-            renderMode="navigation"
         />
     )
 }

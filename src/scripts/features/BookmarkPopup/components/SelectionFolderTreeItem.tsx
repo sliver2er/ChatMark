@@ -7,45 +7,34 @@ import {
   IconChevronDown
 } from "@tabler/icons-react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
-import { NavigateApi } from "@/api/NavigateApi"
 import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils"
 
-interface FolderTreeItemProps {
+interface SelectionFolderTreeItemProps {
   bookmark: BookmarkItemType
   level: number
   bookmarks: BookmarkItemType[]
   expandedIds: Set<string>
   onToggleExpand: (id: string) => void
-  renderMode: 'navigation' | 'selection'
-  onSelectBookmark?: (bookmark: BookmarkItemType) => void
+  onSelectBookmark: (bookmark: BookmarkItemType) => void
   selectedId?: string
 }
 
-export const FolderTreeItem = ({
+export const SelectionFolderTreeItem = ({
   bookmark,
   level,
   bookmarks,
   expandedIds,
   onToggleExpand,
-  renderMode,
   onSelectBookmark,
   selectedId,
-}: FolderTreeItemProps) => {
+}: SelectionFolderTreeItemProps) => {
   const children = sortBookmarksByDate(getChildBookmarks(bookmarks, bookmark.id))
   const isFolder = hasChildren(bookmarks, bookmark.id)
   const isExpanded = expandedIds.has(bookmark.id)
   const isSelected = selectedId === bookmark.id
 
-  const handleClick = async () => {
-    if (renderMode === 'navigation') {
-      try {
-        await NavigateApi.navigateToBookmark(bookmark)
-      } catch (error) {
-        console.error("Failed to navigate to bookmark:", error)
-      }
-    } else {
-      onSelectBookmark?.(bookmark)
-    }
+  const handleClick = () => {
+    onSelectBookmark(bookmark)
   }
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -53,7 +42,6 @@ export const FolderTreeItem = ({
     onToggleExpand(bookmark.id)
   }
 
-  // 아이콘 선택
   const getIcon = () => {
     if (isFolder) {
       return isExpanded ? <IconFolderOpen size={16} /> : <IconFolder size={16} />
@@ -115,14 +103,13 @@ export const FolderTreeItem = ({
         <Collapse in={isExpanded}>
           <Stack gap="xs" mt="xs">
             {children.map((child) => (
-              <FolderTreeItem
+              <SelectionFolderTreeItem
                 key={child.id}
                 bookmark={child}
                 level={level + 1}
                 bookmarks={bookmarks}
                 expandedIds={expandedIds}
                 onToggleExpand={onToggleExpand}
-                renderMode={renderMode}
                 onSelectBookmark={onSelectBookmark}
                 selectedId={selectedId}
               />

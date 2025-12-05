@@ -1,5 +1,5 @@
 import { ScrollArea, Title, Box, Paper, CloseButton, Group, Stack } from '@mantine/core'
-import { BookmarkTree } from './BookmarkTree'
+import { BookmarkTree } from './components/BookmarkTree'
 
 interface SidebarProps {
   isOpen: boolean
