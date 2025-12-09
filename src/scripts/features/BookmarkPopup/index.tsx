@@ -68,14 +68,10 @@ export function BookmarkPopup() {
   return createPortal(
     <Popover
       opened={menuOpened}
-      onChange={() => {
-        // closeOnClickOutside={false}이므로 onChange를 무시
-      }}
       position="bottom"
       withArrow
       shadow="md"
       closeOnClickOutside={false}
-      clickOutsideEvents={['mouseup', 'touchend']}
       withinPortal={false}
     >
       <Popover.Target>
