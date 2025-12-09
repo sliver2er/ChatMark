@@ -122,17 +122,6 @@ export const BookmarkSaveMenu = ({
         placeholder="북마크 이름을 입력하세요"
         value={bookmarkName}
         onChange={(e) => setBookmarkName(e.currentTarget.value)}
-        onClick={(e) => {
-          console.log('[TextInput] onClick', e.target);
-          e.stopPropagation();
-        }}
-        onFocus={(e) => {
-          console.log('[TextInput] onFocus', e.target);
-        }}
-        onMouseDown={(e) => {
-          console.log('[TextInput] onMouseDown', e.target);
-          e.stopPropagation();
-        }}
         leftSection={<IconBookmark size={16} />}
         disabled={saving}
       />

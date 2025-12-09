@@ -20,16 +20,9 @@ export function BookmarkPopup() {
   const [menuOpened, setMenuOpened] = useState(false);
   const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
 
-  // 디버깅: menuOpened 상태 변화 추적
-  const handleSetMenuOpened = (value: boolean) => {
-    console.log('[BookmarkPopup] setMenuOpened called:', value, new Error().stack);
-    setMenuOpened(value);
-  };
-
   // targetElement가 변경되면 Popover를 닫음 (재마운트 대응)
   useEffect(() => {
     if (!targetElement && menuOpened) {
-      console.log('[BookmarkPopup] targetElement lost, closing popover');
       setMenuOpened(false);
       setCapturedBookmark(null);
     }
@@ -51,7 +44,7 @@ export function BookmarkPopup() {
     }
 
     setCapturedBookmark(bookmarkItem);
-    handleSetMenuOpened(true);
+    setMenuOpened(true);
   };
 
   const handleSave = async (name: string, parentId?: string) => {
@@ -75,8 +68,8 @@ export function BookmarkPopup() {
   return createPortal(
     <Popover
       opened={menuOpened}
-      onChange={(opened) => {
-        console.log('[Popover] onChange called:', opened, new Error().stack);
+      onChange={() => {
+        // closeOnClickOutside={false}이므로 onChange를 무시
       }}
       position="bottom"
       withArrow
@@ -91,7 +84,7 @@ export function BookmarkPopup() {
       <Popover.Dropdown>
         <BookmarkSaveMenu
           opened={menuOpened}
-          onClose={() => handleSetMenuOpened(false)}
+          onClose={() => setMenuOpened(false)}
           onSave={handleSave}
           sessionId={sessionId || ""}
           defaultName={capturedBookmark?.bookmark_name || ""}
