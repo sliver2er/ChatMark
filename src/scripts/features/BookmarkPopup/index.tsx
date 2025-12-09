@@ -20,6 +20,12 @@ export function BookmarkPopup() {
   const [menuOpened, setMenuOpened] = useState(false);
   const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
 
+  // 디버깅: menuOpened 상태 변화 추적
+  const handleSetMenuOpened = (value: boolean) => {
+    console.log('[BookmarkPopup] setMenuOpened called:', value, new Error().stack);
+    setMenuOpened(value);
+  };
+
   if (!targetElement) return null;
 
   const handleBookmarkClick = () => {
@@ -36,7 +42,7 @@ export function BookmarkPopup() {
     }
 
     setCapturedBookmark(bookmarkItem);
-    setMenuOpened(true);
+    handleSetMenuOpened(true);
   };
 
   const handleSave = async (name: string, parentId?: string) => {
@@ -60,10 +66,11 @@ export function BookmarkPopup() {
   return createPortal(
     <Popover
       opened={menuOpened}
-      onChange={setMenuOpened}
       position="bottom"
       withArrow
       shadow="md"
+      closeOnClickOutside={false}
+      trapFocus={false}
     >
       <Popover.Target>
         <BookmarkBtn onClick={handleBookmarkClick} />
@@ -71,7 +78,7 @@ export function BookmarkPopup() {
       <Popover.Dropdown>
         <BookmarkSaveMenu
           opened={menuOpened}
-          onClose={() => setMenuOpened(false)}
+          onClose={() => handleSetMenuOpened(false)}
           onSave={handleSave}
           sessionId={sessionId || ""}
           defaultName={capturedBookmark?.bookmark_name || ""}

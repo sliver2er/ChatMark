@@ -34,8 +34,6 @@ export async function handleBookmarkNavigate(msg: any, sendResponse: Function) {
       sendResponse({ success: false, error: "No active tab found" });
       return;
     }
-
-    // Send message to content script in the active tab
     chrome.tabs.sendMessage(
       tab.id,
       {
