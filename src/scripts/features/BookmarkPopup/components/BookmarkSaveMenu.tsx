@@ -10,7 +10,7 @@ import {
   Loader,
 } from "@mantine/core"
 import { IconBookmark, IconFolderPlus } from "@tabler/icons-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
 import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView"
@@ -30,6 +30,7 @@ export const BookmarkSaveMenu = ({
   sessionId,
   defaultName,
 }: BookmarkSaveMenuProps) => {
+  const inputRef = useRef<HTMLInputElement>(null)
   const [bookmarkName, setBookmarkName] = useState(defaultName)
   const [selectedParent, setSelectedParent] = useState<string | undefined>()
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
@@ -46,6 +47,15 @@ export const BookmarkSaveMenu = ({
   useEffect(() => {
     setBookmarkName(defaultName)
   }, [defaultName])
+
+  useEffect(() => {
+    if (opened && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current?.focus()
+        inputRef.current?.select()
+      }, 100)
+    }
+  }, [opened])
 
   const loadBookmarks = async () => {
     try {
@@ -118,6 +128,7 @@ export const BookmarkSaveMenu = ({
   return (
     <Stack gap="md" p="md" style={{ minWidth: 300, maxWidth: 400 }}>
       <TextInput
+        ref={inputRef}
         label="북마크 이름"
         placeholder="북마크 이름을 입력하세요"
         value={bookmarkName}
