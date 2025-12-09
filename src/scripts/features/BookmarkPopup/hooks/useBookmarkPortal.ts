@@ -29,8 +29,9 @@ export function useBookmarkPortal() {
         container.style.display = "inline-flex";
         container.style.alignItems = "center";
         askGPTBtn.insertAdjacentElement("afterend", container);
+        setTargetElement(container);
       }
-      setTargetElement(container);
+      // 이미 존재하면 setTargetElement를 호출하지 않음 (불필요한 리렌더링 방지)
     };
 
     // Initial check

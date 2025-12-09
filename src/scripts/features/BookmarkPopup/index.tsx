@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Popover } from "@mantine/core";
 import { useBookmarkPortal } from "./hooks/useBookmarkPortal";
 import { BookmarkBtn } from "./components/BookmarkBtn";
@@ -25,6 +25,15 @@ export function BookmarkPopup() {
     console.log('[BookmarkPopup] setMenuOpened called:', value, new Error().stack);
     setMenuOpened(value);
   };
+
+  // targetElement가 변경되면 Popover를 닫음 (재마운트 대응)
+  useEffect(() => {
+    if (!targetElement && menuOpened) {
+      console.log('[BookmarkPopup] targetElement lost, closing popover');
+      setMenuOpened(false);
+      setCapturedBookmark(null);
+    }
+  }, [targetElement, menuOpened]);
 
   if (!targetElement) return null;
 
@@ -66,11 +75,15 @@ export function BookmarkPopup() {
   return createPortal(
     <Popover
       opened={menuOpened}
+      onChange={(opened) => {
+        console.log('[Popover] onChange called:', opened, new Error().stack);
+      }}
       position="bottom"
       withArrow
       shadow="md"
       closeOnClickOutside={false}
-      trapFocus={false}
+      clickOutsideEvents={['mouseup', 'touchend']}
+      withinPortal={false}
     >
       <Popover.Target>
         <BookmarkBtn onClick={handleBookmarkClick} />
