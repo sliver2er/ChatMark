@@ -44,9 +44,9 @@ export const NavigationFolderTreeItem = ({
 
   const getIcon = () => {
     if (isFolder) {
-      return isExpanded ? <IconFolderOpen size={16} /> : <IconFolder size={16} />
+      return isExpanded ? <IconFolderOpen size={TREE_ICON_SIZE} /> : <IconFolder size={TREE_ICON_SIZE} />
     }
-    return <IconBookmark size={16} />
+    return <IconBookmark size={TREE_ICON_SIZE} />
   }
 
   return (
@@ -55,7 +55,7 @@ export const NavigationFolderTreeItem = ({
         onClick={handleClick}
         w="100%"
         p="xs"
-        pl={level * 20 + 12}
+        pl={level * TREE_INDENT_PER_LEVEL + TREE_BASE_INDENT}
       >
         <Group gap="xs" wrap="nowrap">
           {isFolder ? (
@@ -65,10 +65,10 @@ export const NavigationFolderTreeItem = ({
               onClick={handleToggle}
               style={{ flexShrink: 0 }}
             >
-              {isExpanded ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
+              {isExpanded ? <IconChevronDown size={TREE_CHEVRON_SIZE} /> : <IconChevronRight size={TREE_CHEVRON_SIZE} />}
             </ActionIcon>
           ) : (
-            <Box w={28} style={{ flexShrink: 0 }} />
+            <Box w={TREE_SPACER_WIDTH} style={{ flexShrink: 0 }} />
           )}
           <Box style={{ flexShrink: 0 }}>
             {getIcon()}

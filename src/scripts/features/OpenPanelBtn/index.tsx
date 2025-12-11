@@ -6,12 +6,12 @@ import { useEffect, useRef } from "react"
 interface OpenPanelBtnProps {
     onOpenSidebar: () => void
     isSidebarOpen: boolean
+    sidebarWidth: number
 }
 
 const STORAGE_KEY = 'chatmark.openPanelBtn.position'
-const SIDEBAR_WIDTH = 400
 
-export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps) => {
+export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen, sidebarWidth }: OpenPanelBtnProps) => {
     // Default position: bottom-right corner
     const defaultX = window.innerWidth - 120
     const defaultY = window.innerHeight - 112
@@ -33,7 +33,7 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
     useEffect(() => {
         if (isSidebarOpen) {
             const currentX = x.get()
-            const sidebarLeftEdge = window.innerWidth - SIDEBAR_WIDTH
+            const sidebarLeftEdge = window.innerWidth - sidebarWidth
             if (currentX + 64 > sidebarLeftEdge) {
                 const newX = sidebarLeftEdge - 64 - 24
                 x.set(newX)
@@ -45,7 +45,7 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
                 })
             }
         }
-    }, [isSidebarOpen, x, y])
+    }, [isSidebarOpen, sidebarWidth, x, y])
 
     const handleDragStart = () => {
         isDraggingRef.current = true
@@ -74,7 +74,7 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
     const dragConstraints = {
         left: 0,
         top: 0,
-        right: isSidebarOpen ? window.innerWidth - SIDEBAR_WIDTH - 64 : window.innerWidth - 64,
+        right: isSidebarOpen ? window.innerWidth - sidebarWidth - 64 : window.innerWidth - 64,
         bottom: window.innerHeight - 64
     }
 

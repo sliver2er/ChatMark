@@ -1,6 +1,5 @@
 import { Text, Loader, Center, Alert } from "@mantine/core"
 import { IconAlertCircle } from "@tabler/icons-react"
-import { useEffect, useState, useCallback, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
 import { NavigationBookmarkTreeView } from "./NavigationBookmarkTreeView"
@@ -36,10 +35,10 @@ export const BookmarkTree = () => {
 
         debounceTimerRef.current = setTimeout(() => {
             fetchBookmarks(sid)
-        }, 300) 
+        }, DEBOUNCE_DELAY)
     }, [])
 
-    const handleStorageChange = useCallback((newBookmarks: BookmarkItemType[]) => {
+    const handleStorageChange = useCallback(() => {
         if (sessionId) {
             debouncedFetchBookmarks(sessionId)
         }
@@ -87,13 +86,13 @@ export const BookmarkTree = () => {
             }
         }
 
-        const intervalId = setInterval(checkUrlChange, 300)
+        const intervalId = setInterval(checkUrlChange, URL_POLLING_INTERVAL)
         return () => clearInterval(intervalId)
     }, [sessionId])
 
     if (loading) {
         return (
-            <Center h="300px">
+            <Center h={LOADING_CENTER_HEIGHT}>
                 <Loader size="lg" type="dots" />
             </Center>
         )
@@ -114,7 +113,7 @@ export const BookmarkTree = () => {
 
     if (bookmarks.length === 0) {
         return (
-            <Center h="300px">
+            <Center h={EMPTY_STATE_HEIGHT}>
                 <Text c="dimmed" size="sm">No bookmarks yet</Text>
             </Center>
         )

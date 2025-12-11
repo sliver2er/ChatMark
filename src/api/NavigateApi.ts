@@ -1,11 +1,11 @@
-import { BookmarkItem } from "@/types";
+import { BookmarkItem, MessageType } from "@/types";
 
 export const NavigateApi = {
   navigateToBookmark(bookmark: BookmarkItem): Promise<void> {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(
         {
-          type: "BOOKMARK_NAVIGATE",
+          type: MessageType.Navigate,
           bookmark
         },
         (response) => {

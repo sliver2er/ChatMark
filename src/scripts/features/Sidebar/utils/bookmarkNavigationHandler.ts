@@ -1,11 +1,11 @@
 import { getBookmarkPosition } from "@/shared/functions/getBookmarkPosition";
 import { highlightRange } from "@/shared/functions/highlightRange";
-import { BookmarkItem } from "@/types";
+import { BookmarkItem, MessageType } from "@/types";
 import { scrollToRange, scrollToElement, selectElement } from "./scrollUtils";
 
 export function setupBookmarkNavigationListener() {
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.type === "BOOKMARK_NAVIGATE") {
+    if (msg.type === MessageType.Navigate) {
       handleBookmarkNavigate(msg.bookmark, sendResponse);
     }
     return true;
@@ -24,7 +24,7 @@ function handleBookmarkNavigate(bookmark: BookmarkItem, sendResponse: Function) 
 
   if (range) {
     scrollToRange(range, element);
-    setTimeout(() => highlightRange(range), 100);
+    setTimeout(() => highlightRange(range), HIGHLIGHT_DELAY);
   } else {
     scrollToElement(element);
     selectElement(element);

@@ -25,5 +25,5 @@ export function selectElement(element: HTMLElement) {
 
   setTimeout(() => {
     selection.removeAllRanges();
-  }, 2000);
+  }, SELECTION_REMOVE_DELAY);
 }
