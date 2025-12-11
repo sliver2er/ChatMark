@@ -54,23 +54,25 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
         style={{
           borderLeft: '1px solid var(--mantine-color-dark-4)',
         }}
-        bg="dark.8"
+        variant='default'
       >
       <Stack gap={0} h="100%">
         {/* Header */}
         <Box
-          p="md"
-          style={{
-            borderBottom: '1px solid var(--mantine-color-dark-4)',
-          }}
+          py="md"
+          px="lg"
+          style={(theme) => ({
+            borderBottom: `2px solid ${theme.colors.dark[4]}`,
+          })}
+          
         >
           <Group justify="space-between" align="center">
-            <Title order={3} c="white">Bookmarks</Title>
+            <Title order={4} fw={600} lh={1.35} size={"xl"}>Bookmarks</Title>
             <CloseButton
               onClick={onClose}
-              size="lg"
-              c="white"
+              size="md"
               variant="subtle"
+              c="dimmed"
             />
           </Group>
         </Box>
@@ -78,7 +80,7 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
         {/* Content */}
         <Box style={{ flex: 1, overflow: 'hidden' }}>
           <ScrollArea h="100%">
-            <Box p="md">
+            <Box p="md" pt="lg">
               <BookmarkTree />
             </Box>
           </ScrollArea>

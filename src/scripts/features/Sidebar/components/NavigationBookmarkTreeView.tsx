@@ -7,12 +7,16 @@ interface NavigationBookmarkTreeViewProps {
   bookmarks: BookmarkItemType[]
   expandedIds: Set<string>
   onToggleExpand: (id: string) => void
+  selectedId?: string
+  onSelectBookmark?: (bookmark: BookmarkItemType) => void
 }
 
 export const NavigationBookmarkTreeView = ({
   bookmarks,
   expandedIds,
   onToggleExpand,
+  selectedId,
+  onSelectBookmark,
 }: NavigationBookmarkTreeViewProps) => {
   const rootBookmarks = sortBookmarksByDate(getRootBookmarks(bookmarks))
 
@@ -21,7 +25,7 @@ export const NavigationBookmarkTreeView = ({
   }
 
   return (
-    <Stack gap="xs">
+    <Stack gap={8}>
       {rootBookmarks.map((bookmark) => (
         <NavigationFolderTreeItem
           key={bookmark.id}
@@ -30,6 +34,8 @@ export const NavigationBookmarkTreeView = ({
           bookmarks={bookmarks}
           expandedIds={expandedIds}
           onToggleExpand={onToggleExpand}
+          selectedId={selectedId}
+          onSelectBookmark={onSelectBookmark}
         />
       ))}
     </Stack>

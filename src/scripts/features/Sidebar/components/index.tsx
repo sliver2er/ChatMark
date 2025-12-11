@@ -5,6 +5,7 @@ import { bookmarkApi } from "@/api/bookmarkApi"
 import { NavigationBookmarkTreeView } from "./NavigationBookmarkTreeView"
 import { getSessionId } from "@/shared/functions/getSessionId"
 import { useStorageSync } from "@/hooks/useStorageSync"
+import { DEBOUNCE_DELAY, URL_POLLING_INTERVAL, LOADING_CENTER_HEIGHT, EMPTY_STATE_HEIGHT } from "../config/constants"
 
 export const BookmarkTree = () => {
     const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([])
@@ -12,6 +13,7 @@ export const BookmarkTree = () => {
     const [error, setError] = useState<string | null>(null)
     const [sessionId, setSessionId] = useState<string | null>(null)
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+    const [selectedId, setSelectedId] = useState<string | undefined>()
 
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -54,7 +56,7 @@ export const BookmarkTree = () => {
         if (sessionId) {
             debouncedFetchBookmarks(sessionId)
         }
-    }, [sessionId])
+    }, [sessionId, debouncedFetchBookmarks])
 
     useEffect(() => {
         // Get session ID from current page
@@ -131,11 +133,17 @@ export const BookmarkTree = () => {
         })
     }
 
+    const handleSelectBookmark = (bookmark: BookmarkItemType) => {
+        setSelectedId(bookmark.id)
+    }
+
     return (
         <NavigationBookmarkTreeView
             bookmarks={bookmarks}
             expandedIds={expandedIds}
             onToggleExpand={handleToggleExpand}
+            selectedId={selectedId}
+            onSelectBookmark={handleSelectBookmark}
         />
     )
 }
