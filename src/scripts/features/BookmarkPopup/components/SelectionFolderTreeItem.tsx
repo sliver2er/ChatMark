@@ -1,10 +1,8 @@
-import { UnstyledButton, Group, Text, ActionIcon, Box, Stack, Collapse, useMantineColorScheme } from "@mantine/core"
+import { UnstyledButton, Group, Text, Box, Stack, Collapse, useMantineColorScheme } from "@mantine/core"
 import {
   IconBookmark,
-  IconFolder,
   IconFolderOpen,
-  IconChevronRight,
-  IconChevronDown
+  IconFolder,
 } from "@tabler/icons-react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils"
@@ -36,12 +34,19 @@ export const SelectionFolderTreeItem = ({
   const isSelected = selectedId === bookmark.id
 
   const handleClick = () => {
-    onSelectBookmark(bookmark)
-  }
+    if (isFolder) {
 
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onToggleExpand(bookmark.id)
+      if (isSelected) {
+        onToggleExpand(bookmark.id)
+      } else {
+        onSelectBookmark(bookmark)
+        if (!isExpanded) {
+          onToggleExpand(bookmark.id)
+        }
+      }
+    } else {
+      onSelectBookmark(bookmark)
+    }
   }
 
   const getIcon = () => {
@@ -82,24 +87,12 @@ export const SelectionFolderTreeItem = ({
         })}
       >
         <Group gap="sm" wrap="nowrap">
-          {isFolder ? (
-            <ActionIcon
-              size="sm"
-              variant="subtle"
-              onClick={handleToggle}
-              c="dimmed"
-              style={{ flexShrink: 0 }}
-            >
-              {isExpanded ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
-            </ActionIcon>
-          ) : (
-            <Box w={28} style={{ flexShrink: 0 }} />
-          )}
           <Box style={{ flexShrink: 0 }} c={isSelected ? undefined : "dimmed"}>
             {getIcon()}
           </Box>
           <Text
             size="sm"
+            lh={1.35}
             style={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',

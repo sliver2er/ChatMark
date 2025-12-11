@@ -1,5 +1,5 @@
 import { ActionIcon, Box, rem } from "@mantine/core";
-import { IconBookmark } from "@tabler/icons-react";
+import { IconBookmarkFilled } from "@tabler/icons-react";
 import { forwardRef } from "react";
 
 interface BookmarkBtnProps {
@@ -31,7 +31,7 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(
             color: "white",
           }}
         >
-          <IconBookmark size={20} stroke={2} style={{ color: "white" }} />
+          <IconBookmarkFilled size={20} style={{ color: "white" }} />
         </ActionIcon>
       </Box>
     );

@@ -8,7 +8,7 @@ import {
   Group,
   Loader,
 } from "@mantine/core"
-import { IconBookmark, IconFolderPlus, IconBookmarkPlus } from "@tabler/icons-react"
+import { IconBookmarkFilled, IconFolderFilled } from "@tabler/icons-react"
 import { useEffect, useState, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
@@ -128,7 +128,7 @@ export const BookmarkSaveMenu = ({
       pt="0"
       pb="xs"
       bdrs={12}
-      w="340px"
+      w="370px"
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
@@ -137,6 +137,7 @@ export const BookmarkSaveMenu = ({
         size="lg"
         fw={600}
         mt="sm"
+        lh={1.35}
       >
         Add Bookmark
       </Text>
@@ -144,6 +145,7 @@ export const BookmarkSaveMenu = ({
         size="sm"
         c="dimmed"
         mt={4}
+        lh={1.35}
       >
         Save this snippet for later
       </Text>
@@ -156,15 +158,16 @@ export const BookmarkSaveMenu = ({
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
-        leftSection={<IconBookmark size={16} />}
+        leftSection={<IconBookmarkFilled size={16} />}
         disabled={saving}
         variant="filled"
         bdrs="lg"
+        mb={4}
       />
 
-      <Divider my="md" />
+      <Divider mt = "lg" mb="md" />
 
-      <Text size="sm" fw={500} mb="md">
+      <Text size="md" fw={500} mb="md" lh={1.45}>
         Choose folder <Text span c="dimmed">(optional)</Text>
       </Text>
 
@@ -173,7 +176,7 @@ export const BookmarkSaveMenu = ({
           <Loader size="sm" />
         </Group>
       ) : bookmarks.length === 0 ? (
-        <Text size="sm" c="dimmed" ta="center" p="md">
+        <Text size="md" c="dimmed" ta="center" p="md">
           No Bookmarks
         </Text>
       ) : (
@@ -189,27 +192,28 @@ export const BookmarkSaveMenu = ({
       )}
 
 
-      <Stack gap="xs" mt="md">
+      <Stack gap="xs" mt="md" mb="xs">
         <Button
           variant="filled"
-          leftSection={<IconBookmarkPlus size={16} />}
+          leftSection={<IconBookmarkFilled size={16} />}
           onClick={handleSaveToRoot}
           radius="md"
           size="md"
           fw={500}
           disabled={saving}
+          mb="xs"
         >
           Save in Root
         </Button>
         {selectedParent && (
           <Button
-            variant="light"
+            variant="filled"
             onClick={handleSave}
             disabled={saving}
             loading={saving}
             radius="md"
             size="md"
-            leftSection={<IconFolderPlus size={16} />}
+            leftSection={<IconFolderFilled size={16} />}
             fw={500}
           >
             Save in Selected Folder
