@@ -72,12 +72,16 @@ export function BookmarkPopup() {
       withArrow
       shadow="md"
       closeOnClickOutside={false}
+      clickOutsideEvents={[]}
       withinPortal={false}
     >
       <Popover.Target>
         <BookmarkBtn onClick={handleBookmarkClick} />
       </Popover.Target>
-      <Popover.Dropdown>
+      <Popover.Dropdown
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
+      >
         <BookmarkSaveMenu
           opened={menuOpened}
           onClose={() => setMenuOpened(false)}

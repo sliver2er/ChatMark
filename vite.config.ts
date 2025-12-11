@@ -6,9 +6,19 @@ import manifest from './manifest.config';
 import path from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 
+const ReactCompilerConfig = {
+  target: '18' // React 18 타겟 설정
+};
+
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: [
+          ['babel-plugin-react-compiler', ReactCompilerConfig]
+        ]
+      }
+    }),
     crx({ manifest }),
     AutoImport({
       imports: [

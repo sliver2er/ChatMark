@@ -1,5 +1,4 @@
 import {
-  Popover,
   TextInput,
   Button,
   Stack,
@@ -14,6 +13,7 @@ import { useEffect, useState, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
 import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView"
+import { error } from "@/shared/logger"
 
 interface BookmarkSaveMenuProps {
   opened: boolean
@@ -87,10 +87,9 @@ export const BookmarkSaveMenu = ({
 
   const handleSave = async () => {
     if (!bookmarkName.trim()) {
-      alert("북마크 이름을 입력해주세요.")
+      alert("Please enter a bookmark name.")
       return
     }
-
     try {
       setSaving(true)
       await onSave(bookmarkName.trim(), selectedParent)
@@ -99,7 +98,6 @@ export const BookmarkSaveMenu = ({
       onClose()
     } catch (err) {
       console.error("Failed to save bookmark:", err)
-      alert("북마크 저장에 실패했습니다.")
     } finally {
       setSaving(false)
     }
@@ -107,7 +105,7 @@ export const BookmarkSaveMenu = ({
 
   const handleSaveToRoot = async () => {
     if (!bookmarkName.trim()) {
-      alert("북마크 이름을 입력해주세요.")
+      alert("Please enter a bookmark name.")
       return
     }
 
@@ -119,18 +117,24 @@ export const BookmarkSaveMenu = ({
       onClose()
     } catch (err) {
       console.error("Failed to save bookmark:", err)
-      alert("북마크 저장에 실패했습니다.")
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <Stack gap="md" p="md" style={{ minWidth: 300, maxWidth: 400 }}>
+    <Stack
+      gap="md"
+      p="md"
+      style={{ minWidth: 300, maxWidth: 400 }}
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseUp={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+    >
       <TextInput
         ref={inputRef}
-        label="북마크 이름"
-        placeholder="북마크 이름을 입력하세요"
+        label="Bookmark name"
+        placeholder="Enter bookmark name..."
         value={bookmarkName}
         onChange={(e) => setBookmarkName(e.currentTarget.value)}
         onClick={(e) => e.stopPropagation()}
@@ -142,7 +146,7 @@ export const BookmarkSaveMenu = ({
 
       <Divider />
 
-      <Text size="sm" fw={500}>부모 폴더 선택 (선택사항)</Text>
+      <Text size="sm" fw={500}>Choose Parent Bookmark(Optional)</Text>
 
       {loading ? (
         <Group justify="center" p="md">
@@ -150,7 +154,7 @@ export const BookmarkSaveMenu = ({
         </Group>
       ) : bookmarks.length === 0 ? (
         <Text size="sm" c="dimmed" ta="center" p="md">
-          아직 북마크가 없습니다
+          No Bookmarks
         </Text>
       ) : (
         <ScrollArea h={250} offsetScrollbars>
@@ -173,7 +177,7 @@ export const BookmarkSaveMenu = ({
           onClick={handleSaveToRoot}
           disabled={saving}
         >
-          루트에 저장
+          Save in Root
         </Button>
         {selectedParent && (
           <Button
