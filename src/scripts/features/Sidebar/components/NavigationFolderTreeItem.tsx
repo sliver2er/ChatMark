@@ -36,22 +36,18 @@ export const NavigationFolderTreeItem = ({
 
   const handleClick = async () => {
     if (isFolder) {
-      // 폴더인 경우
       if (onSelectBookmark) {
         onSelectBookmark(bookmark)
       }
 
       if (isSelected) {
-        // 이미 선택되어 있으면 토글 (열림 ↔ 닫힘)
         onToggleExpand(bookmark.id)
       } else {
-        // 선택되어 있지 않으면 열기
         if (!isExpanded) {
           onToggleExpand(bookmark.id)
         }
       }
     } else {
-      // 일반 북마크는 네비게이션
       if (onSelectBookmark) {
         onSelectBookmark(bookmark)
       }
@@ -121,7 +117,7 @@ export const NavigationFolderTreeItem = ({
 
       {isFolder && (
         <Collapse in={isExpanded}>
-          <Stack gap={2} mt={4}>
+          <Stack gap={4}>
             {children.map((child) => (
               <NavigationFolderTreeItem
                 key={child.id}

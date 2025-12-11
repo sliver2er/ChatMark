@@ -51,9 +51,11 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
         radius={0}
         w="100%"
         h="100%"
-        style={{
-          borderLeft: '1px solid var(--mantine-color-dark-4)',
-        }}
+        style={(theme) => ({
+          borderLeft: `1px solid ${theme.colors.dark[4]}`,
+          backgroundColor: theme.colors.dark[7],
+        })}
+        bg='dark.7'
         variant='default'
       >
       <Stack gap={0} h="100%">
@@ -67,7 +69,7 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
           
         >
           <Group justify="space-between" align="center">
-            <Title order={4} fw={600} lh={1.35} size={"xl"}>Bookmarks</Title>
+            <Title order={3} fw={600} lh={1.35} size={"xl"}>Bookmarks</Title>
             <CloseButton
               onClick={onClose}
               size="md"

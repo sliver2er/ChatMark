@@ -81,6 +81,7 @@ export function BookmarkPopup() {
       <Popover.Dropdown
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
+        bg="dark.7"
       >
         <BookmarkSaveMenu
           opened={menuOpened}
