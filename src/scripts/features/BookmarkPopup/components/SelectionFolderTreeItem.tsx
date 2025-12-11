@@ -1,4 +1,4 @@
-import { UnstyledButton, Group, Text, ActionIcon, Box, Stack, Collapse } from "@mantine/core"
+import { UnstyledButton, Group, Text, ActionIcon, Box, Stack, Collapse, useMantineColorScheme } from "@mantine/core"
 import {
   IconBookmark,
   IconFolder,
@@ -28,6 +28,8 @@ export const SelectionFolderTreeItem = ({
   onSelectBookmark,
   selectedId,
 }: SelectionFolderTreeItemProps) => {
+  const { colorScheme } = useMantineColorScheme()
+  const isDark = colorScheme === 'dark'
   const children = sortBookmarksByDate(getChildBookmarks(bookmarks, bookmark.id))
   const isFolder = hasChildren(bookmarks, bookmark.id)
   const isExpanded = expandedIds.has(bookmark.id)
@@ -54,27 +56,38 @@ export const SelectionFolderTreeItem = ({
       <UnstyledButton
         onClick={handleClick}
         w="100%"
-        p="xs"
+        py={10}
+        px="sm"
         pl={level * 20 + 12}
         style={(theme) => ({
           borderRadius: theme.radius.md,
-          transition: 'background-color 0.2s',
+          transition: 'all 0.15s ease',
           backgroundColor: isSelected
-            ? 'rgba(66, 153, 225, 0.2)'
+            ? isDark
+              ? 'rgba(255, 255, 255, 0.06)'
+              : 'rgba(0, 0, 0, 0.04)'
             : 'transparent',
+          border: isSelected
+            ? `1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'}`
+            : '1px solid transparent',
           '&:hover': {
             backgroundColor: isSelected
-              ? 'rgba(66, 153, 225, 0.3)'
-              : 'rgba(255, 255, 255, 0.05)',
+              ? isDark
+                ? 'rgba(255, 255, 255, 0.08)'
+                : 'rgba(0, 0, 0, 0.06)'
+              : isDark
+                ? 'rgba(255, 255, 255, 0.04)'
+                : 'rgba(0, 0, 0, 0.03)',
           },
         })}
       >
-        <Group gap="xs" wrap="nowrap">
+        <Group gap="sm" wrap="nowrap">
           {isFolder ? (
             <ActionIcon
               size="sm"
               variant="subtle"
               onClick={handleToggle}
+              c="dimmed"
               style={{ flexShrink: 0 }}
             >
               {isExpanded ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
@@ -82,7 +95,7 @@ export const SelectionFolderTreeItem = ({
           ) : (
             <Box w={28} style={{ flexShrink: 0 }} />
           )}
-          <Box style={{ flexShrink: 0 }}>
+          <Box style={{ flexShrink: 0 }} c={isSelected ? undefined : "dimmed"}>
             {getIcon()}
           </Box>
           <Text
@@ -101,7 +114,7 @@ export const SelectionFolderTreeItem = ({
 
       {isFolder && (
         <Collapse in={isExpanded}>
-          <Stack gap="xs" mt="xs">
+          <Stack gap={2} mt={4}>
             {children.map((child) => (
               <SelectionFolderTreeItem
                 key={child.id}

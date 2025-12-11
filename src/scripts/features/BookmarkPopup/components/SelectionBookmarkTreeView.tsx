@@ -25,7 +25,7 @@ export const SelectionBookmarkTreeView = ({
   }
 
   return (
-    <Stack gap="xs">
+    <Stack gap={4}>
       {rootBookmarks.map((bookmark) => (
         <SelectionFolderTreeItem
           key={bookmark.id}

@@ -125,9 +125,10 @@ export const BookmarkSaveMenu = ({
     <Stack
       gap="0"
       p="sm"
-      py="0"
+      pt="0"
+      pb="xs"
       bdrs={12}
-      w="350px"
+      w="340px"
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
@@ -139,16 +140,15 @@ export const BookmarkSaveMenu = ({
       >
         Add Bookmark
       </Text>
-      <Text 
+      <Text
         size="sm"
         c="dimmed"
-        mt="0"
-        mb="xs"
+        mt={4}
       >
         Save this snippet for later
       </Text>
       <TextInput
-        mt={0}
+        mt={12}
         ref={inputRef}
         placeholder="Enter bookmark name..."
         value={bookmarkName}
@@ -162,9 +162,9 @@ export const BookmarkSaveMenu = ({
         bdrs="lg"
       />
 
-      <Divider />
+      <Divider my="md" />
 
-      <Text size="sm" fw={500} mb = "xs" mt = "sm">
+      <Text size="sm" fw={500} mb="md">
         Choose folder <Text span c="dimmed">(optional)</Text>
       </Text>
 
@@ -189,30 +189,30 @@ export const BookmarkSaveMenu = ({
       )}
 
 
-      <Stack gap="xs">
+      <Stack gap="xs" mt="md">
         <Button
           variant="filled"
           leftSection={<IconBookmarkPlus size={16} />}
           onClick={handleSaveToRoot}
           radius="md"
           size="md"
-          fw={600}
+          fw={500}
           disabled={saving}
         >
           Save in Root
         </Button>
         {selectedParent && (
           <Button
-            variant="filled"
+            variant="light"
             onClick={handleSave}
             disabled={saving}
             loading={saving}
             radius="md"
             size="md"
             leftSection={<IconFolderPlus size={16} />}
-            fw={600}
+            fw={500}
           >
-            Save in Parent Bookmark
+            Save in Selected Folder
           </Button>
         )}
       </Stack>
