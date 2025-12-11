@@ -1,7 +1,7 @@
 import { IconBookmarkFilled } from "@tabler/icons-react"
 import { ActionIcon } from "@mantine/core"
 import { motion, useMotionValue } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 interface OpenPanelBtnProps {
     onOpenSidebar: () => void
@@ -18,6 +18,7 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
 
     const x = useMotionValue(defaultX)
     const y = useMotionValue(defaultY)
+    const isDraggingRef = useRef(false)
 
     useEffect(() => {
         chrome.storage.local.get([STORAGE_KEY], (result) => {
@@ -28,6 +29,28 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
         })
     }, [])
 
+    // Push button out when sidebar opens
+    useEffect(() => {
+        if (isSidebarOpen) {
+            const currentX = x.get()
+            const sidebarLeftEdge = window.innerWidth - SIDEBAR_WIDTH
+            if (currentX + 64 > sidebarLeftEdge) {
+                const newX = sidebarLeftEdge - 64 - 24
+                x.set(newX)
+                chrome.storage.local.set({
+                    [STORAGE_KEY]: {
+                        x: newX,
+                        y: y.get()
+                    }
+                })
+            }
+        }
+    }, [isSidebarOpen, x, y])
+
+    const handleDragStart = () => {
+        isDraggingRef.current = true
+    }
+
     // Save position on drag end
     const handleDragEnd = () => {
         chrome.storage.local.set({
@@ -36,10 +59,15 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
                 y: y.get()
             }
         })
+        setTimeout(() => {
+            isDraggingRef.current = false
+        }, 50)
     }
 
     const handleClick = () => {
-        onOpenSidebar()
+        if (!isDraggingRef.current) {
+            onOpenSidebar()
+        }
     }
 
     // Calculate drag constraints based on sidebar state
@@ -61,6 +89,7 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
                 timeConstant: 200,
                 modifyTarget: (target) => Math.round(target)
             }}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             style={{
                 position: 'fixed',
@@ -77,12 +106,13 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen }: OpenPanelBtnProps
                 onClick={handleClick}
                 size={64}
                 radius="xl"
-                variant="filled"
+                variant="default"
                 style={{
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                     pointerEvents: 'auto'
                 }}
             >
-                <IconBookmarkFilled size={36} />
+                <IconBookmarkFilled size={30} />
             </ActionIcon>
         </motion.div>
     )
