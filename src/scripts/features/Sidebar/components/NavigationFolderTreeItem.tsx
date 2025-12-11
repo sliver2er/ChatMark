@@ -56,13 +56,6 @@ export const NavigationFolderTreeItem = ({
         w="100%"
         p="xs"
         pl={level * 20 + 12}
-        style={(theme) => ({
-          borderRadius: theme.radius.md,
-          transition: 'background-color 0.2s',
-          '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          },
-        })}
       >
         <Group gap="xs" wrap="nowrap">
           {isFolder ? (

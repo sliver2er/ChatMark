@@ -24,7 +24,7 @@ export const App = () => {
     <StrictMode>
         <MantineProvider defaultColorScheme="dark">
           <BookmarkPopup />
-          <OpenPanelBtn onOpenSidebar={handleOpenSidebar} />
+          <OpenPanelBtn onOpenSidebar={handleOpenSidebar} isSidebarOpen={isSidebarOpen} />
           <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
       </MantineProvider>
     </StrictMode>

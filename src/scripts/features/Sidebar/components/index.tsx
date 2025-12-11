@@ -14,7 +14,6 @@ export const BookmarkTree = () => {
     const [sessionId, setSessionId] = useState<string | null>(null)
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
 
-    // Debounce timer ref to prevent excessive re-fetches
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
     const fetchBookmarks = async (sid: string) => {
@@ -30,7 +29,6 @@ export const BookmarkTree = () => {
         }
     }
 
-    // Debounced fetch to prevent excessive API calls
     const debouncedFetchBookmarks = useCallback((sid: string) => {
         if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current)
@@ -41,7 +39,6 @@ export const BookmarkTree = () => {
         }, 300) 
     }, [])
 
-    // Storage sync callback
     const handleStorageChange = useCallback((newBookmarks: BookmarkItemType[]) => {
         if (sessionId) {
             debouncedFetchBookmarks(sessionId)
