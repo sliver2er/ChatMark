@@ -82,7 +82,7 @@ const PopupApp = () => {
     <MantineProvider forceColorScheme={colorScheme}>
       <Paper p="lg" w={320}>
         <Stack gap="lg">
-          <Title order={3}>{t('popup.title')}</Title>
+          <Title order={4}>{t('popup.title')}</Title>
 
           <Stack gap="xs">
             <Text size="sm" fw={500}>{t('popup.scrollBehavior')}</Text>
@@ -104,11 +104,9 @@ const PopupApp = () => {
               value={settings.highlightColor}
               onChange={handleHighlightColorChange}
               swatches={presetColors}
+              withPicker={false}
               fullWidth
             />
-            <Text size="xs" c="dimmed">
-              {t('popup.currentColor', { color: settings.highlightColor })}
-            </Text>
           </Stack>
         </Stack>
       </Paper>

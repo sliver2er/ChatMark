@@ -1,11 +1,10 @@
 {
   "popup": {
-    "title": "ChatMark Settings",
+    "title": "Settings",
     "scrollBehavior": "Scroll Behavior",
     "scrollInstant": "Instant",
     "scrollSmooth": "Smooth",
-    "highlightColor": "Highlight Color",
-    "currentColor": "Current: {{color}}"
+    "highlightColor": "Highlight Color"
   },
   "bookmark": {
     "addTitle": "Add Bookmark",

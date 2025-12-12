@@ -1,11 +1,10 @@
 {
   "popup": {
-    "title": "ChatMark 설정",
+    "title": "설정",
     "scrollBehavior": "북마크 위치 이동",
     "scrollInstant": "즉시이동",
     "scrollSmooth": "부드럽게",
-    "highlightColor": "하이라이트 색상",
-    "currentColor": "현재: {{color}}"
+    "highlightColor": "하이라이트 색상"
   },
   "bookmark": {
     "addTitle": "북마크 추가",
