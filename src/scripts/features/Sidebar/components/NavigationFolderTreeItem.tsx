@@ -1,4 +1,4 @@
-import { UnstyledButton, Group, Text, Box, Stack, Collapse, useMantineColorScheme } from "@mantine/core"
+import { UnstyledButton, Group, Text, Box, Stack, Collapse } from "@mantine/core"
 import {
   IconBookmark,
   IconFolder,
@@ -7,6 +7,7 @@ import {
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { NavigateApi } from "@/api/NavigateApi"
 import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils"
+import { useIsDark } from "@/shared/hooks/useIsDark"
 
 interface NavigationFolderTreeItemProps {
   bookmark: BookmarkItemType
@@ -27,8 +28,7 @@ export const NavigationFolderTreeItem = ({
   selectedId,
   onSelectBookmark,
 }: NavigationFolderTreeItemProps) => {
-  const { colorScheme } = useMantineColorScheme()
-  const isDark = colorScheme === 'dark'
+  const isDark = useIsDark()
   const children = sortBookmarksByDate(getChildBookmarks(bookmarks, bookmark.id))
   const isFolder = hasChildren(bookmarks, bookmark.id)
   const isExpanded = expandedIds.has(bookmark.id)

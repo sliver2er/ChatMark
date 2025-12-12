@@ -9,7 +9,7 @@ import { captureTextSelection } from "./utils/selectText";
 import { error, warn } from "@/shared/logger";
 import { useBookmark } from "@/hooks/useBookmark";
 import { BookmarkItem } from "@/types";
-import { useMantineColorScheme } from "@mantine/core";
+import { useIsDark } from "@/shared/hooks/useIsDark";
 
 
 export function BookmarkPopup() {
@@ -20,8 +20,7 @@ export function BookmarkPopup() {
 
   const [menuOpened, setMenuOpened] = useState(false);
   const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
-  const { colorScheme } = useMantineColorScheme()
-  const isDark = colorScheme === 'dark'
+  const isDark = useIsDark()
 
   // targetElement가 변경되면 Popover를 닫음 (재마운트 대응)
   useEffect(() => {

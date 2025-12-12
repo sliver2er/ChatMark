@@ -1,6 +1,7 @@
 import { ActionIcon, Box, rem } from "@mantine/core";
 import { IconBookmarkFilled } from "@tabler/icons-react";
 import { forwardRef } from "react";
+import { useThemeColors } from "@/shared/hooks/useThemeColors";
 
 interface BookmarkBtnProps {
   onClick?: () => void;
@@ -8,11 +9,13 @@ interface BookmarkBtnProps {
 
 export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(
   ({ onClick }, ref) => {
+    const colors = useThemeColors()
+
     return (
       <Box
         ref={ref}
         ml="xs"
-        bg="dark.6"
+        bg={colors.bg}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -23,12 +26,11 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(
       >
         <ActionIcon
           variant="subtle"
-          color="white"
+          color={colors.fg}
           size="md"
           onClick={onClick}
           style={{
             cursor: "pointer",
-            color: "white"
           }}
         >
           <IconBookmarkFilled size={20} />

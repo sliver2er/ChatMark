@@ -2,7 +2,8 @@ import { ScrollArea, Title, Box, Paper, CloseButton, Group, Stack, Divider, Them
 import { BookmarkTree } from './components'
 import { Resizable } from 're-resizable'
 import { IconBookmarks, IconXboxX } from '@tabler/icons-react'
-import { useMantineColorScheme } from '@mantine/core'
+import { useIsDark } from '@/shared/hooks/useIsDark'
+import { useThemeColors } from '@/shared/hooks/useThemeColors'
 
 
 interface SidebarProps {
@@ -13,8 +14,8 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps) => {
-  const { colorScheme } = useMantineColorScheme()
-  const isDark = colorScheme === 'dark'
+  const isDark = useIsDark()
+  const colors = useThemeColors()
 
   if (!isOpen) return null;
 
@@ -55,8 +56,8 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
         w="100%"
         h="100%"
         variant='default'
-        bg={isDark ? 'dark.8' : 'white'}
-        bd={`0.5px solid ${isDark ? '#424242' : 'black'}`}
+        bg={colors.bgSubtle}
+        bd={`0.5px solid ${colors.border}`}
       >
       <Stack gap={0} h="100%">
         {/* Header */}

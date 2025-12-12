@@ -2,6 +2,7 @@ import { IconBookmarkFilled } from "@tabler/icons-react"
 import { ActionIcon } from "@mantine/core"
 import { motion, useMotionValue } from "framer-motion"
 import { useEffect, useRef } from "react"
+import { useThemeColors } from "@/shared/hooks/useThemeColors"
 
 interface OpenPanelBtnProps {
     onOpenSidebar: () => void
@@ -19,6 +20,8 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen, sidebarWidth }: Ope
     const x = useMotionValue(defaultX)
     const y = useMotionValue(defaultY)
     const isDraggingRef = useRef(false)
+
+    const colors = useThemeColors()
 
     useEffect(() => {
         chrome.storage.local.get([STORAGE_KEY], (result) => {
@@ -98,7 +101,8 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen, sidebarWidth }: Ope
                 x,
                 y,
                 zIndex: 9999,
-                cursor: 'grab'
+                cursor: 'grab',
+                borderRadius: '50%',
             }}
             whileDrag={{ cursor: 'grabbing' }}
         >
@@ -106,13 +110,16 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen, sidebarWidth }: Ope
                 onClick={handleClick}
                 size={64}
                 radius="xl"
-                variant="default"
+                bg={colors.bg}
+                c={colors.fg}
                 style={{
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                    pointerEvents: 'auto'
+                    pointerEvents: 'auto',
                 }}
             >
-                <IconBookmarkFilled size={30} />
+                <IconBookmarkFilled
+                    size={30}
+                 />
             </ActionIcon>
         </motion.div>
     )

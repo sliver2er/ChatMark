@@ -1,4 +1,4 @@
-import { UnstyledButton, Group, Text, Box, Stack, Collapse, useMantineColorScheme } from "@mantine/core"
+import { UnstyledButton, Group, Text, Box, Stack, Collapse } from "@mantine/core"
 import {
   IconBookmark,
   IconFolderOpen,
@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils"
+import { useIsDark } from "@/shared/hooks/useIsDark"
 
 interface SelectionFolderTreeItemProps {
   bookmark: BookmarkItemType
@@ -26,8 +27,7 @@ export const SelectionFolderTreeItem = ({
   onSelectBookmark,
   selectedId,
 }: SelectionFolderTreeItemProps) => {
-  const { colorScheme } = useMantineColorScheme()
-  const isDark = colorScheme === 'dark'
+  const isDark = useIsDark()
   const children = sortBookmarksByDate(getChildBookmarks(bookmarks, bookmark.id))
   const isFolder = hasChildren(bookmarks, bookmark.id)
   const isExpanded = expandedIds.has(bookmark.id)
