@@ -17,8 +17,7 @@ export async function handleBookmarkGetAll(msg: any, sendResponse: Function) {
 }
 
 export async function handleBookmarkDelete(msg: any, sendResponse: Function) {
-  const { session_id, id } = msg;
-  await repo.deleteBookmark(session_id, id);
+  await repo.deleteBookmark(msg.session_id, msg.bookmark_id);
   sendResponse({ success: true });
 }
 

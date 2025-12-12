@@ -1,9 +1,10 @@
-import { UnstyledButton, Group, Text, Box, Stack, Collapse } from "@mantine/core";
-import { IconBookmark, IconFolder, IconFolderOpen } from "@tabler/icons-react";
+import { UnstyledButton, Group, Text, Box, Stack, Collapse, ActionIcon, Flex } from "@mantine/core";
+import { IconBookmark, IconFolder, IconFolderOpen, IconTrash } from "@tabler/icons-react";
 import { BookmarkItem as BookmarkItemType } from "@/types";
 import { NavigateApi } from "@/api/NavigateApi";
 import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils";
 import { useIsDark } from "@/shared/hooks/useIsDark";
+import { useBookmark } from "@/hooks/useBookmark";
 
 interface NavigationFolderTreeItemProps {
   bookmark: BookmarkItemType;
@@ -29,6 +30,7 @@ export const NavigationFolderTreeItem = ({
   const isFolder = hasChildren(bookmarks, bookmark.id);
   const isExpanded = expandedIds.has(bookmark.id);
   const isSelected = selectedId === bookmark.id;
+  const { deleteBookmark } = useBookmark(bookmark.session_id);
 
   const handleClick = async () => {
     if (isFolder) {
@@ -62,14 +64,22 @@ export const NavigationFolderTreeItem = ({
     return <IconBookmark size={16} />;
   };
 
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      e.stopPropagation;
+      await deleteBookmark(bookmark.id);
+    } catch (error) {
+      console.error("Failed to delete bookmark:", error);
+    }
+  };
+
   return (
     <>
-      <UnstyledButton
-        onClick={handleClick}
-        w="100%"
+      <Box
         py={10}
         px="sm"
         pl={level * 20 + 12}
+        display="flex"
         style={(theme) => ({
           borderRadius: theme.radius.md,
           transition: "all 0.15s ease",
@@ -92,24 +102,39 @@ export const NavigationFolderTreeItem = ({
           },
         })}
       >
-        <Group gap="sm" wrap="nowrap">
-          <Box style={{ flexShrink: 0 }} c={isSelected ? undefined : "dimmed"}>
-            {getIcon()}
-          </Box>
-          <Text
-            size="sm"
-            lh={1.35}
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              flex: 1,
-            }}
-          >
-            {bookmark.bookmark_name}
-          </Text>
-        </Group>
-      </UnstyledButton>
+        <UnstyledButton
+          onClick={handleClick}
+          w="100%"
+          p={0}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flex: 1,
+            min_width: 0,
+          }}
+        >
+          <Group gap="sm" wrap="nowrap">
+            <Box style={{ flexShrink: 0 }} c={isSelected ? undefined : "dimmed"}>
+              {getIcon()}
+            </Box>
+            <Text
+              size="sm"
+              lh={1.35}
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                flex: 1,
+              }}
+            >
+              {bookmark.bookmark_name}
+            </Text>
+          </Group>
+        </UnstyledButton>
+        <ActionIcon variant="subtle" size="sm" onClick={handleDelete} style={{ flexShrink: 0 }}>
+          <IconTrash size={16} color="red" />
+        </ActionIcon>
+      </Box>
 
       {isFolder && (
         <Collapse in={isExpanded}>

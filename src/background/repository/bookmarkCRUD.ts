@@ -31,7 +31,7 @@ export async function saveBookmark(session_id: string, bookmark: BookmarkItem): 
 export async function deleteBookmark(session_id: string, bookmark_id: string): Promise<boolean> {
   const bookmarks = await getBookmarks(session_id);
   const updated = bookmarks.filter((b) => b.id !== bookmark_id);
-
+  log("Bookmark deleted in repository");
   return new Promise((resolve) => {
     chrome.storage.local.set({ [key(session_id)]: updated }, () => {
       resolve(true);
