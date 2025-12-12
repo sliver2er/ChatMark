@@ -10,6 +10,7 @@ export function detectChatGPTTheme(): 'dark' | 'light' {
     return 'dark'
   }
 
+
   // Check for data-theme attribute
   const dataTheme = htmlElement.getAttribute('data-theme')
   if (dataTheme === 'dark') {
@@ -42,6 +43,7 @@ export function watchChatGPTTheme(callback: (theme: 'dark' | 'light') => void): 
     attributes: true,
     attributeFilter: ['class', 'data-theme']
   })
+  
 
   // Return cleanup function
   return () => {

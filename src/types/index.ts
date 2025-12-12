@@ -22,5 +22,17 @@ export enum MessageType {
   GetAll = "BOOKMARK_GET_ALL",
   Delete = "BOOKMARK_DELETE",
   Navigate = "BOOKMARK_NAVIGATE",
-  PanelRefresh = "PANEL_REFRESH"
+  PanelRefresh = "PANEL_REFRESH",
+  SettingsGet = "SETTINGS_GET",
+  SettingsUpdate = "SETTINGS_UPDATE"
+}
+
+export interface ChatMarkSettings {
+  highlightColor: string
+  scrollBehavior: 'instant' | 'smooth'
+}
+
+export const DEFAULT_SETTINGS: ChatMarkSettings = {
+  highlightColor: '#ffd93d',
+  scrollBehavior: 'instant'
 }
