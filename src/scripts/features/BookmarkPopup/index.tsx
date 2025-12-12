@@ -6,7 +6,7 @@ import { BookmarkBtn } from "./components/BookmarkBtn";
 import { BookmarkSaveMenu } from "./components/BookmarkSaveMenu";
 import { getSessionId } from "@/shared/functions/getSessionId";
 import { captureTextSelection } from "./utils/selectText";
-import { error } from "@/shared/logger";
+import { error, warn } from "@/shared/logger";
 import { useBookmark } from "@/hooks/useBookmark";
 import { BookmarkItem } from "@/types";
 
@@ -34,7 +34,7 @@ export function BookmarkPopup() {
     const bookmarkItem = captureTextSelection();
 
     if (!bookmarkItem) {
-      error("Failed to capture text selection");
+      warn("Failed to capture text selection");
       return;
     }
 

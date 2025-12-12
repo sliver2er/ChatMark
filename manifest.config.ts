@@ -4,6 +4,11 @@ export default defineManifest({
   manifest_version: 3,
   name: "ChatMark",
   version: "1.0.0",
+  icons:{
+    "16": "src/assets/icons/icon-16.png",
+    "48": "src/assets/icons/icon-48.png",
+    "128": "src/assets/icons/icon-128.png"
+  },
   action: {
     default_popup: "src/popup/index.html"
   },
