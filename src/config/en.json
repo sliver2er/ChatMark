@@ -1,0 +1,27 @@
+{
+  "popup": {
+    "title": "ChatMark Settings",
+    "scrollBehavior": "Scroll Behavior",
+    "scrollInstant": "Instant",
+    "scrollSmooth": "Smooth",
+    "highlightColor": "Highlight Color",
+    "currentColor": "Current: {{color}}"
+  },
+  "bookmark": {
+    "addTitle": "Add Bookmark",
+    "saveSnippet": "Save this snippet for later",
+    "enterName": "Enter bookmark name...",
+    "chooseFolder": "Choose folder",
+    "optional": "(optional)",
+    "noBookmarks": "No Bookmarks",
+    "saveInRoot": "Save in Root",
+    "saveInFolder": "Save in Selected Folder",
+    "enterNameAlert": "Please enter a bookmark name."
+  },
+  "sidebar": {
+    "title": "Bookmarks",
+    "noSessionId": "No session ID found. Please open from a ChatGPT conversation.",
+    "error": "Error",
+    "noBookmarksYet": "No bookmarks yet"
+  }
+}

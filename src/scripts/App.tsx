@@ -5,6 +5,29 @@ import { BookmarkPopup } from "./features/BookmarkPopup";
 import { OpenPanelBtn } from "./features/OpenPanelBtn";
 import { Sidebar } from "./features/Sidebar";
 import { watchChatGPTTheme } from "@/shared/functions/detectChatGPTTheme";
+import { initReactI18next } from "react-i18next";
+import i18n from "i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+import enTranslation from '@/config/en.json'
+import koTranslation from '@/config/ko.json'
+
+
+
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources: {
+      en: {translation: enTranslation},
+      ko: {translation: koTranslation}
+    },
+    fallbackLng: 'en',
+    debug: true,
+    interpolation: {
+      escapeValue: false,
+    },
+  })
 
 
 const SIDEBAR_WIDTH_STORAGE_KEY = 'chatmark.sidebar.width'

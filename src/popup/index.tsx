@@ -3,8 +3,37 @@ import { createRoot } from 'react-dom/client'
 import { MantineProvider, Stack, Title, Paper, Text, SegmentedControl, ColorPicker } from '@mantine/core'
 import '@mantine/core/styles.css'
 import { ChatMarkSettings, DEFAULT_SETTINGS, MessageType } from '@/types'
+import { useTranslation } from 'react-i18next'
+import i18n from 'i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import { initReactI18next } from 'react-i18next'
+import { watchChatGPTTheme } from '@/shared/functions/detectChatGPTTheme'
+
+import koTranslation from '@/config/ko.json'
+import enTranslation from '@/config/en.json'
+
+
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources: {
+      en: {translation: enTranslation},
+      ko: {translation: koTranslation}
+    },
+    fallbackLng: 'en',
+    debug: true,
+    interpolation: {
+      escapeValue: false,
+    },
+  })
+
+
+
+
 
 const PopupApp = () => {
+  const { t } = useTranslation()
   const [settings, setSettings] = useState<ChatMarkSettings>(DEFAULT_SETTINGS)
   useEffect(() => {
     chrome.runtime.sendMessage({ type: MessageType.SettingsGet }, (response) => {
@@ -41,28 +70,35 @@ const PopupApp = () => {
     '#f4a261', // Orange
     '#e76f51', // Red-orange
   ]
+  const [colorScheme, setColorScheme] = useState<'dark' | 'light'>('dark');
+  useEffect(() => {
+  const cleanup = watchChatGPTTheme((theme) => {
+    setColorScheme(theme);
+  });
 
+    return cleanup;
+  }, []);
   return (
-    <MantineProvider defaultColorScheme="dark">
+    <MantineProvider forceColorScheme={colorScheme}>
       <Paper p="lg" w={320}>
         <Stack gap="lg">
-          <Title order={3}>ChatMark Settings</Title>
+          <Title order={3}>{t('popup.title')}</Title>
 
           <Stack gap="xs">
-            <Text size="sm" fw={500}>Scroll Behavior</Text>
+            <Text size="sm" fw={500}>{t('popup.scrollBehavior')}</Text>
             <SegmentedControl
               fullWidth
               value={settings.scrollBehavior}
               onChange={handleScrollBehaviorChange}
               data={[
-                { label: 'Instant', value: 'instant' },
-                { label: 'Smooth', value: 'smooth' },
+                { label: t('popup.scrollInstant'), value: 'instant' },
+                { label: t('popup.scrollSmooth'), value: 'smooth' },
               ]}
             />
           </Stack>
 
           <Stack gap="xs">
-            <Text size="sm" fw={500}>Highlight Color</Text>
+            <Text size="sm" fw={500}>{t('popup.highlightColor')}</Text>
             <ColorPicker
               format="hex"
               value={settings.highlightColor}
@@ -71,7 +107,7 @@ const PopupApp = () => {
               fullWidth
             />
             <Text size="xs" c="dimmed">
-              Current: {settings.highlightColor}
+              {t('popup.currentColor', { color: settings.highlightColor })}
             </Text>
           </Stack>
         </Stack>

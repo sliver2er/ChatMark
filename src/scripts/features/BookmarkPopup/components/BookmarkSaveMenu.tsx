@@ -14,6 +14,7 @@ import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
 import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView"
 import { useMantineColorScheme} from "@mantine/core"
+import { useTranslation } from "react-i18next"
 
 interface BookmarkSaveMenuProps {
   opened: boolean
@@ -30,6 +31,7 @@ export const BookmarkSaveMenu = ({
   sessionId,
   defaultName,
 }: BookmarkSaveMenuProps) => {
+  const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
   const [bookmarkName, setBookmarkName] = useState(defaultName)
   const [selectedParent, setSelectedParent] = useState<string | undefined>()
@@ -37,7 +39,6 @@ export const BookmarkSaveMenu = ({
   const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
-
   useEffect(() => {
     if (opened && sessionId) {
       loadBookmarks()
@@ -88,7 +89,7 @@ export const BookmarkSaveMenu = ({
 
   const handleSave = async () => {
     if (!bookmarkName.trim()) {
-      alert("Please enter a bookmark name.")
+      alert(t('bookmark.enterNameAlert'))
       return
     }
     try {
@@ -106,7 +107,7 @@ export const BookmarkSaveMenu = ({
 
   const handleSaveToRoot = async () => {
     if (!bookmarkName.trim()) {
-      alert("Please enter a bookmark name.")
+      alert(t('bookmark.enterNameAlert'))
       return
     }
 
@@ -141,7 +142,7 @@ export const BookmarkSaveMenu = ({
         mt="sm"
         lh={1.35}
       >
-        Add Bookmark
+        {t('bookmark.addTitle')}
       </Text>
       <Text
         size="sm"
@@ -149,12 +150,12 @@ export const BookmarkSaveMenu = ({
         mt={4}
         lh={1.35}
       >
-        Save this snippet for later
+        {t('bookmark.saveSnippet')}
       </Text>
       <TextInput
         mt={12}
         ref={inputRef}
-        placeholder="Enter bookmark name..."
+        placeholder={t('bookmark.enterName')}
         value={bookmarkName}
         onChange={(e) => setBookmarkName(e.currentTarget.value)}
         onClick={(e) => e.stopPropagation()}
@@ -170,7 +171,7 @@ export const BookmarkSaveMenu = ({
       <Divider mt = "lg" mb="md" />
 
       <Text size="md" fw={500} mb="md" lh={1.45}>
-        Choose folder <Text span c="dimmed">(optional)</Text>
+        {t('bookmark.chooseFolder')} <Text span c="dimmed">{t('bookmark.optional')}</Text>
       </Text>
 
       {loading ? (
@@ -179,7 +180,7 @@ export const BookmarkSaveMenu = ({
         </Group>
       ) : bookmarks.length === 0 ? (
         <Text size="md" c="dimmed" ta="center" p="md">
-          No Bookmarks
+          {t('bookmark.noBookmarks')}
         </Text>
       ) : (
         <ScrollArea h={250} offsetScrollbars>
@@ -205,7 +206,7 @@ export const BookmarkSaveMenu = ({
           disabled={saving}
           mb="xs"
         >
-          Save in Root
+          {t('bookmark.saveInRoot')}
         </Button>
         {selectedParent && (
           <Button
@@ -218,7 +219,7 @@ export const BookmarkSaveMenu = ({
             leftSection={<IconFolderFilled size={16} />}
             fw={500}
           >
-            Save in Selected Folder
+            {t('bookmark.saveInFolder')}
           </Button>
         )}
       </Stack>

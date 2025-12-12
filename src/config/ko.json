@@ -1,0 +1,27 @@
+{
+  "popup": {
+    "title": "ChatMark 설정",
+    "scrollBehavior": "북마크 위치 이동",
+    "scrollInstant": "즉시이동",
+    "scrollSmooth": "부드럽게",
+    "highlightColor": "하이라이트 색상",
+    "currentColor": "현재: {{color}}"
+  },
+  "bookmark": {
+    "addTitle": "북마크 추가",
+    "saveSnippet": "저장하고 쉽게 찾아보세요",
+    "enterName": "북마크 이름 입력...",
+    "chooseFolder": "폴더 선택",
+    "optional": "(선택사항)",
+    "noBookmarks": "북마크 없음",
+    "saveInRoot": "루트에 저장",
+    "saveInFolder": "선택한 폴더에 저장",
+    "enterNameAlert": "북마크 이름을 입력해주세요."
+  },
+  "sidebar": {
+    "title": "북마크 목록",
+    "noSessionId": "세션 ID를 찾을 수 없습니다. ChatGPT 대화에서 열어주세요.",
+    "error": "오류",
+    "noBookmarksYet": "아직 북마크가 없습니다"
+  }
+}

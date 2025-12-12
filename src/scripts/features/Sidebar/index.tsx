@@ -4,6 +4,7 @@ import { Resizable } from 're-resizable'
 import { IconBookmarks, IconXboxX } from '@tabler/icons-react'
 import { useIsDark } from '@/shared/hooks/useIsDark'
 import { useThemeColors } from '@/shared/hooks/useThemeColors'
+import { useTranslation } from 'react-i18next'
 
 
 interface SidebarProps {
@@ -14,6 +15,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps) => {
+  const { t } = useTranslation()
   const isDark = useIsDark()
   const colors = useThemeColors()
 
@@ -65,7 +67,7 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
           <Group justify="space-between" align="center" wrap="nowrap">
             <Group gap="sm" align="center" wrap="nowrap">
               <IconBookmarks size={24} />
-              <Title order={3} fw={600} lh={1.2}>Bookmarks</Title>
+              <Title order={3} fw={600} lh={1.2}>{t('sidebar.title')}</Title>
             </Group>
             <CloseButton
               onClick={onClose}

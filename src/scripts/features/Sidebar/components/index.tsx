@@ -6,8 +6,11 @@ import { NavigationBookmarkTreeView } from "./NavigationBookmarkTreeView"
 import { getSessionId } from "@/shared/functions/getSessionId"
 import { useStorageSync } from "@/hooks/useStorageSync"
 import { DEBOUNCE_DELAY, URL_POLLING_INTERVAL, LOADING_CENTER_HEIGHT, EMPTY_STATE_HEIGHT } from "../config/constants"
+import { useTranslation } from "react-i18next"
+import { useState, useEffect, useCallback, useRef } from "react"
 
 export const BookmarkTree = () => {
+    const { t } = useTranslation()
     const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -63,7 +66,7 @@ export const BookmarkTree = () => {
         const initialSessionId = getSessionId()
 
         if (!initialSessionId) {
-            setError("No session ID found. Please open from a ChatGPT conversation.")
+            setError(t('sidebar.noSessionId'))
             setLoading(false)
             return
         }
@@ -104,7 +107,7 @@ export const BookmarkTree = () => {
         return (
             <Alert
               icon={<IconAlertCircle size={16} />}
-              title="Error"
+              title={t('sidebar.error')}
               color="red"
               variant="light"
             >
@@ -116,7 +119,7 @@ export const BookmarkTree = () => {
     if (bookmarks.length === 0) {
         return (
             <Center h={EMPTY_STATE_HEIGHT}>
-                <Text c="dimmed" size="sm">No bookmarks yet</Text>
+                <Text c="dimmed" size="sm">{t('sidebar.noBookmarksYet')}</Text>
             </Center>
         )
     }
