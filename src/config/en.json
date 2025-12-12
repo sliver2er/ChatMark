@@ -4,7 +4,9 @@
     "scrollBehavior": "Scroll Behavior",
     "scrollInstant": "Instant",
     "scrollSmooth": "Smooth",
-    "highlightColor": "Highlight Color"
+    "highlightColor": "Highlight Color",
+    "deleteAll": "Delete All Bookmarks",
+    "warning": "Warning : All bookmarks from all sessions will be deleted."
   },
   "bookmark": {
     "addTitle": "Add Bookmark",

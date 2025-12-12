@@ -8,14 +8,19 @@ import {
   Text,
   SegmentedControl,
   ColorPicker,
+  Box,
+  Group,
+  ActionIcon,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
+import { IconTrash } from "@tabler/icons-react";
 import { ChatMarkSettings, DEFAULT_SETTINGS, MessageType } from "@/types";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 import { watchChatGPTTheme } from "@/shared/functions/detectChatGPTTheme";
+import { useBookmark } from "@/hooks/useBookmark";
 
 import koTranslation from "@/config/ko.json";
 import enTranslation from "@/config/en.json";
@@ -45,6 +50,7 @@ const PopupApp = () => {
       }
     });
   }, []);
+  const { deleteAllBookmarks } = useBookmark("");
 
   const handleScrollBehaviorChange = (value: string) => {
     const newSettings = { ...settings, scrollBehavior: value as "instant" | "smooth" };
@@ -115,6 +121,24 @@ const PopupApp = () => {
               fullWidth
             />
           </Stack>
+          <Group justify="space-between" align="center" wrap="nowrap">
+            {/* 왼쪽: 텍스트 뭉치 */}
+            <Box>
+              <Text size="sm" fw={600} c="red">
+                {" "}
+                {/* 위험한 기능이니 빨간색 강조 추천 */}
+                {t("popup.deleteAll")}
+              </Text>
+              <Text size="xs" c="dimmed" lh={1.2}>
+                {t("popup.warning")}
+              </Text>
+            </Box>
+
+            {/* 오른쪽: 삭제 버튼 */}
+            <ActionIcon variant="light" color="red" size="lg" onClick={deleteAllBookmarks}>
+              <IconTrash size={18} />
+            </ActionIcon>
+          </Group>
         </Stack>
       </Paper>
     </MantineProvider>

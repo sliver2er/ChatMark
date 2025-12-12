@@ -43,6 +43,15 @@ export const useBookmark = (session_id: string) => {
     [session_id]
   );
 
+  const deleteAllBookmarks = useCallback(async () => {
+    try {
+      await bookmarkApi.deleteAll();
+      loadBookmarks();
+    } catch (err) {
+      error("Failed to delete all bookmarks : ", err);
+    }
+  }, []);
+
   useEffect(() => {
     loadBookmarks();
   }, [session_id]);
@@ -52,6 +61,6 @@ export const useBookmark = (session_id: string) => {
     loading,
     loadBookmarks,
     addBookmark,
-    deleteBookmark,
+    deleteAllBookmarks,
   };
 };
