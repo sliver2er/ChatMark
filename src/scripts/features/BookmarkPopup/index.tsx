@@ -11,7 +11,6 @@ import { useBookmark } from "@/hooks/useBookmark";
 import { BookmarkItem } from "@/types";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 
-
 export function BookmarkPopup() {
   const targetElement = useBookmarkPortal();
   const sessionId = getSessionId();
@@ -20,7 +19,7 @@ export function BookmarkPopup() {
 
   const [menuOpened, setMenuOpened] = useState(false);
   const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
-  const isDark = useIsDark()
+  const isDark = useIsDark();
 
   // targetElement가 변경되면 Popover를 닫음 (재마운트 대응)
   useEffect(() => {
@@ -83,7 +82,7 @@ export function BookmarkPopup() {
       <Popover.Dropdown
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
-        bg = {isDark ? 'dark.8' : 'white'}
+        bg={isDark ? "dark.8" : "white"}
       >
         <BookmarkSaveMenu
           opened={menuOpened}

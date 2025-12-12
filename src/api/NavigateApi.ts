@@ -6,7 +6,7 @@ export const NavigateApi = {
       chrome.runtime.sendMessage(
         {
           type: MessageType.Navigate,
-          bookmark
+          bookmark,
         },
         (response) => {
           if (!response?.success) {
@@ -17,5 +17,5 @@ export const NavigateApi = {
         }
       );
     });
-  }
+  },
 };

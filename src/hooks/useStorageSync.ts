@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from "react";
 
 interface StorageSyncOptions {
   keyPattern: string;
@@ -13,7 +13,7 @@ export const useStorageSync = ({ keyPattern, onChanged }: StorageSyncOptions) =>
   const handleStorageChange = useCallback(
     (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
       // Only listen to local storage changes
-      if (areaName !== 'local') return;
+      if (areaName !== "local") return;
 
       // Check if any changed key matches our pattern
       for (const key in changes) {

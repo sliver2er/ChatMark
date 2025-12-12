@@ -1,6 +1,6 @@
 import { BookmarkItem } from "@/types";
 import { getSessionId } from "@/shared/functions/getSessionId";
-import  { error }  from "@/shared/logger"
+import { error } from "@/shared/logger";
 
 /**
  * Find the closest parent element with data-message-id
@@ -72,10 +72,7 @@ export function captureTextSelection(): BookmarkItem | null {
   }
 
   // Extract context (50 characters before and after)
-  const context_before = fullText.substring(
-    Math.max(0, selectionIndex - 50),
-    selectionIndex
-  );
+  const context_before = fullText.substring(Math.max(0, selectionIndex - 50), selectionIndex);
   const context_after = fullText.substring(
     selectionIndex + selectedText.length,
     Math.min(fullText.length, selectionIndex + selectedText.length + 50)

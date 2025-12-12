@@ -1,22 +1,18 @@
-import { UnstyledButton, Group, Text, Box, Stack, Collapse } from "@mantine/core"
-import {
-  IconBookmark,
-  IconFolder,
-  IconFolderOpen
-} from "@tabler/icons-react"
-import { BookmarkItem as BookmarkItemType } from "@/types"
-import { NavigateApi } from "@/api/NavigateApi"
-import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils"
-import { useIsDark } from "@/shared/hooks/useIsDark"
+import { UnstyledButton, Group, Text, Box, Stack, Collapse } from "@mantine/core";
+import { IconBookmark, IconFolder, IconFolderOpen } from "@tabler/icons-react";
+import { BookmarkItem as BookmarkItemType } from "@/types";
+import { NavigateApi } from "@/api/NavigateApi";
+import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils";
+import { useIsDark } from "@/shared/hooks/useIsDark";
 
 interface NavigationFolderTreeItemProps {
-  bookmark: BookmarkItemType
-  level: number
-  bookmarks: BookmarkItemType[]
-  expandedIds: Set<string>
-  onToggleExpand: (id: string) => void
-  selectedId?: string
-  onSelectBookmark?: (bookmark: BookmarkItemType) => void
+  bookmark: BookmarkItemType;
+  level: number;
+  bookmarks: BookmarkItemType[];
+  expandedIds: Set<string>;
+  onToggleExpand: (id: string) => void;
+  selectedId?: string;
+  onSelectBookmark?: (bookmark: BookmarkItemType) => void;
 }
 
 export const NavigationFolderTreeItem = ({
@@ -28,43 +24,43 @@ export const NavigationFolderTreeItem = ({
   selectedId,
   onSelectBookmark,
 }: NavigationFolderTreeItemProps) => {
-  const isDark = useIsDark()
-  const children = sortBookmarksByDate(getChildBookmarks(bookmarks, bookmark.id))
-  const isFolder = hasChildren(bookmarks, bookmark.id)
-  const isExpanded = expandedIds.has(bookmark.id)
-  const isSelected = selectedId === bookmark.id
+  const isDark = useIsDark();
+  const children = sortBookmarksByDate(getChildBookmarks(bookmarks, bookmark.id));
+  const isFolder = hasChildren(bookmarks, bookmark.id);
+  const isExpanded = expandedIds.has(bookmark.id);
+  const isSelected = selectedId === bookmark.id;
 
   const handleClick = async () => {
     if (isFolder) {
       if (onSelectBookmark) {
-        onSelectBookmark(bookmark)
+        onSelectBookmark(bookmark);
       }
 
       if (isSelected) {
-        onToggleExpand(bookmark.id)
+        onToggleExpand(bookmark.id);
       } else {
         if (!isExpanded) {
-          onToggleExpand(bookmark.id)
+          onToggleExpand(bookmark.id);
         }
       }
     } else {
       if (onSelectBookmark) {
-        onSelectBookmark(bookmark)
+        onSelectBookmark(bookmark);
       }
       try {
-        await NavigateApi.navigateToBookmark(bookmark)
+        await NavigateApi.navigateToBookmark(bookmark);
       } catch (error) {
-        console.error("Failed to navigate to bookmark:", error)
+        console.error("Failed to navigate to bookmark:", error);
       }
     }
-  }
+  };
 
   const getIcon = () => {
     if (isFolder) {
-      return isExpanded ? <IconFolderOpen size={16} /> : <IconFolder size={16} />
+      return isExpanded ? <IconFolderOpen size={16} /> : <IconFolder size={16} />;
     }
-    return <IconBookmark size={16} />
-  }
+    return <IconBookmark size={16} />;
+  };
 
   return (
     <>
@@ -76,23 +72,23 @@ export const NavigationFolderTreeItem = ({
         pl={level * 20 + 12}
         style={(theme) => ({
           borderRadius: theme.radius.md,
-          transition: 'all 0.15s ease',
+          transition: "all 0.15s ease",
           backgroundColor: isSelected
             ? isDark
-              ? 'rgba(255, 255, 255, 0.06)'
-              : 'rgba(0, 0, 0, 0.04)'
-            : 'transparent',
+              ? "rgba(255, 255, 255, 0.06)"
+              : "rgba(0, 0, 0, 0.04)"
+            : "transparent",
           border: isSelected
-            ? `1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'}`
-            : '1px solid transparent',
-          '&:hover': {
+            ? `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`
+            : "1px solid transparent",
+          "&:hover": {
             backgroundColor: isSelected
               ? isDark
-                ? 'rgba(255, 255, 255, 0.08)'
-                : 'rgba(0, 0, 0, 0.06)'
+                ? "rgba(255, 255, 255, 0.08)"
+                : "rgba(0, 0, 0, 0.06)"
               : isDark
-                ? 'rgba(255, 255, 255, 0.04)'
-                : 'rgba(0, 0, 0, 0.03)',
+              ? "rgba(255, 255, 255, 0.04)"
+              : "rgba(0, 0, 0, 0.03)",
           },
         })}
       >
@@ -104,9 +100,9 @@ export const NavigationFolderTreeItem = ({
             size="sm"
             lh={1.35}
             style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
               flex: 1,
             }}
           >
@@ -134,5 +130,5 @@ export const NavigationFolderTreeItem = ({
         </Collapse>
       )}
     </>
-  )
-}
+  );
+};

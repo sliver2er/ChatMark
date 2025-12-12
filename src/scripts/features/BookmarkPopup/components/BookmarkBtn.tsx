@@ -7,35 +7,33 @@ interface BookmarkBtnProps {
   onClick?: () => void;
 }
 
-export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(
-  ({ onClick }, ref) => {
-    const colors = useThemeColors()
+export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(({ onClick }, ref) => {
+  const colors = useThemeColors();
 
-    return (
-      <Box
-        ref={ref}
-        ml="xs"
-        bg={colors.bg}
+  return (
+    <Box
+      ref={ref}
+      ml="xs"
+      bg={colors.bg}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "4px",
+        padding: "4px",
+      }}
+    >
+      <ActionIcon
+        variant="subtle"
+        color={colors.fg}
+        size="md"
+        onClick={onClick}
         style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: "4px",
-          padding: "4px",
+          cursor: "pointer",
         }}
       >
-        <ActionIcon
-          variant="subtle"
-          color={colors.fg}
-          size="md"
-          onClick={onClick}
-          style={{
-            cursor: "pointer",
-          }}
-        >
-          <IconBookmarkFilled size={20} />
-        </ActionIcon>
-      </Box>
-    );
-  }
-);
+        <IconBookmarkFilled size={20} />
+      </ActionIcon>
+    </Box>
+  );
+});

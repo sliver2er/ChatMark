@@ -1,14 +1,14 @@
-import { Stack } from "@mantine/core"
-import { BookmarkItem as BookmarkItemType } from "@/types"
-import { SelectionFolderTreeItem } from "./SelectionFolderTreeItem"
-import { getRootBookmarks, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils"
+import { Stack } from "@mantine/core";
+import { BookmarkItem as BookmarkItemType } from "@/types";
+import { SelectionFolderTreeItem } from "./SelectionFolderTreeItem";
+import { getRootBookmarks, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils";
 
 interface SelectionBookmarkTreeViewProps {
-  bookmarks: BookmarkItemType[]
-  expandedIds: Set<string>
-  onToggleExpand: (id: string) => void
-  onSelectBookmark: (bookmark: BookmarkItemType) => void
-  selectedId?: string
+  bookmarks: BookmarkItemType[];
+  expandedIds: Set<string>;
+  onToggleExpand: (id: string) => void;
+  onSelectBookmark: (bookmark: BookmarkItemType) => void;
+  selectedId?: string;
 }
 
 export const SelectionBookmarkTreeView = ({
@@ -18,10 +18,10 @@ export const SelectionBookmarkTreeView = ({
   onSelectBookmark,
   selectedId,
 }: SelectionBookmarkTreeViewProps) => {
-  const rootBookmarks = sortBookmarksByDate(getRootBookmarks(bookmarks))
+  const rootBookmarks = sortBookmarksByDate(getRootBookmarks(bookmarks));
 
   if (rootBookmarks.length === 0) {
-    return null
+    return null;
   }
 
   return (
@@ -39,5 +39,5 @@ export const SelectionBookmarkTreeView = ({
         />
       ))}
     </Stack>
-  )
-}
+  );
+};

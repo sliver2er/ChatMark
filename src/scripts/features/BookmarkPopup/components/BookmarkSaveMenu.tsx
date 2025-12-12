@@ -1,27 +1,18 @@
-import {
-  TextInput,
-  Button,
-  Stack,
-  Divider,
-  Text,
-  ScrollArea,
-  Group,
-  Loader,
-} from "@mantine/core"
-import { IconBookmarkFilled, IconFolderFilled } from "@tabler/icons-react"
-import { useEffect, useState, useRef } from "react"
-import { BookmarkItem as BookmarkItemType } from "@/types"
-import { bookmarkApi } from "@/api/bookmarkApi"
-import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView"
-import { useMantineColorScheme} from "@mantine/core"
-import { useTranslation } from "react-i18next"
+import { TextInput, Button, Stack, Divider, Text, ScrollArea, Group, Loader } from "@mantine/core";
+import { IconBookmarkFilled, IconFolderFilled } from "@tabler/icons-react";
+import { useEffect, useState, useRef } from "react";
+import { BookmarkItem as BookmarkItemType } from "@/types";
+import { bookmarkApi } from "@/api/bookmarkApi";
+import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView";
+import { useMantineColorScheme } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 interface BookmarkSaveMenuProps {
-  opened: boolean
-  onClose: () => void
-  onSave: (name: string, parentId?: string) => Promise<void>
-  sessionId: string
-  defaultName: string
+  opened: boolean;
+  onClose: () => void;
+  onSave: (name: string, parentId?: string) => Promise<void>;
+  sessionId: string;
+  defaultName: string;
 }
 
 export const BookmarkSaveMenu = ({
@@ -31,98 +22,97 @@ export const BookmarkSaveMenu = ({
   sessionId,
   defaultName,
 }: BookmarkSaveMenuProps) => {
-  const { t } = useTranslation()
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [bookmarkName, setBookmarkName] = useState(defaultName)
-  const [selectedParent, setSelectedParent] = useState<string | undefined>()
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
-  const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([])
-  const [loading, setLoading] = useState(false)
-  const [saving, setSaving] = useState(false)
+  const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [bookmarkName, setBookmarkName] = useState(defaultName);
+  const [selectedParent, setSelectedParent] = useState<string | undefined>();
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   useEffect(() => {
     if (opened && sessionId) {
-      loadBookmarks()
+      loadBookmarks();
     }
-  }, [opened, sessionId])
+  }, [opened, sessionId]);
 
   useEffect(() => {
-    setBookmarkName(defaultName)
-  }, [defaultName])
+    setBookmarkName(defaultName);
+  }, [defaultName]);
 
   useEffect(() => {
     if (opened && inputRef.current) {
       setTimeout(() => {
-        inputRef.current?.focus()
-        inputRef.current?.select()
-      }, 100)
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }, 100);
     }
-  }, [opened])
-
+  }, [opened]);
 
   const loadBookmarks = async () => {
     try {
-      setLoading(true)
-      const data = await bookmarkApi.getAll(sessionId)
-      setBookmarks(data)
+      setLoading(true);
+      const data = await bookmarkApi.getAll(sessionId);
+      setBookmarks(data);
     } catch (err) {
-      console.error("Failed to load bookmarks:", err)
+      console.error("Failed to load bookmarks:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleToggleExpand = (id: string) => {
     setExpandedIds((prev) => {
-      const newSet = new Set(prev)
+      const newSet = new Set(prev);
       if (newSet.has(id)) {
-        newSet.delete(id)
+        newSet.delete(id);
       } else {
-        newSet.add(id)
+        newSet.add(id);
       }
-      return newSet
-    })
-  }
+      return newSet;
+    });
+  };
 
   const handleSelectBookmark = (bookmark: BookmarkItemType) => {
-    setSelectedParent(bookmark.id)
-  }
+    setSelectedParent(bookmark.id);
+  };
 
   const handleSave = async () => {
     if (!bookmarkName.trim()) {
-      alert(t('bookmark.enterNameAlert'))
-      return
+      alert(t("bookmark.enterNameAlert"));
+      return;
     }
     try {
-      setSaving(true)
-      await onSave(bookmarkName.trim(), selectedParent)
-      setBookmarkName("")
-      setSelectedParent(undefined)
-      onClose()
+      setSaving(true);
+      await onSave(bookmarkName.trim(), selectedParent);
+      setBookmarkName("");
+      setSelectedParent(undefined);
+      onClose();
     } catch (err) {
-      console.error("Failed to save bookmark:", err)
+      console.error("Failed to save bookmark:", err);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const handleSaveToRoot = async () => {
     if (!bookmarkName.trim()) {
-      alert(t('bookmark.enterNameAlert'))
-      return
+      alert(t("bookmark.enterNameAlert"));
+      return;
     }
 
     try {
-      setSaving(true)
-      await onSave(bookmarkName.trim(), undefined)
-      setBookmarkName("")
-      setSelectedParent(undefined)
-      onClose()
+      setSaving(true);
+      await onSave(bookmarkName.trim(), undefined);
+      setBookmarkName("");
+      setSelectedParent(undefined);
+      onClose();
     } catch (err) {
-      console.error("Failed to save bookmark:", err)
+      console.error("Failed to save bookmark:", err);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <Stack
@@ -136,26 +126,16 @@ export const BookmarkSaveMenu = ({
       onMouseUp={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >
-      <Text
-        size="lg"
-        fw={600}
-        mt="sm"
-        lh={1.35}
-      >
-        {t('bookmark.addTitle')}
+      <Text size="lg" fw={600} mt="sm" lh={1.35}>
+        {t("bookmark.addTitle")}
       </Text>
-      <Text
-        size="sm"
-        c="dimmed"
-        mt={4}
-        lh={1.35}
-      >
-        {t('bookmark.saveSnippet')}
+      <Text size="sm" c="dimmed" mt={4} lh={1.35}>
+        {t("bookmark.saveSnippet")}
       </Text>
       <TextInput
         mt={12}
         ref={inputRef}
-        placeholder={t('bookmark.enterName')}
+        placeholder={t("bookmark.enterName")}
         value={bookmarkName}
         onChange={(e) => setBookmarkName(e.currentTarget.value)}
         onClick={(e) => e.stopPropagation()}
@@ -168,10 +148,13 @@ export const BookmarkSaveMenu = ({
         mb={4}
       />
 
-      <Divider mt = "lg" mb="md" />
+      <Divider mt="lg" mb="md" />
 
       <Text size="md" fw={500} mb="md" lh={1.45}>
-        {t('bookmark.chooseFolder')} <Text span c="dimmed">{t('bookmark.optional')}</Text>
+        {t("bookmark.chooseFolder")}{" "}
+        <Text span c="dimmed">
+          {t("bookmark.optional")}
+        </Text>
       </Text>
 
       {loading ? (
@@ -180,7 +163,7 @@ export const BookmarkSaveMenu = ({
         </Group>
       ) : bookmarks.length === 0 ? (
         <Text size="md" c="dimmed" ta="center" p="md">
-          {t('bookmark.noBookmarks')}
+          {t("bookmark.noBookmarks")}
         </Text>
       ) : (
         <ScrollArea h={250} offsetScrollbars>
@@ -194,7 +177,6 @@ export const BookmarkSaveMenu = ({
         </ScrollArea>
       )}
 
-
       <Stack gap="xs" mt="md" mb="xs">
         <Button
           variant="filled"
@@ -206,7 +188,7 @@ export const BookmarkSaveMenu = ({
           disabled={saving}
           mb="xs"
         >
-          {t('bookmark.saveInRoot')}
+          {t("bookmark.saveInRoot")}
         </Button>
         {selectedParent && (
           <Button
@@ -219,10 +201,10 @@ export const BookmarkSaveMenu = ({
             leftSection={<IconFolderFilled size={16} />}
             fw={500}
           >
-            {t('bookmark.saveInFolder')}
+            {t("bookmark.saveInFolder")}
           </Button>
         )}
       </Stack>
     </Stack>
-  )
-}
+  );
+};
