@@ -1,6 +1,9 @@
-import { ScrollArea, Title, Box, Paper, CloseButton, Group, Stack } from '@mantine/core'
+import { ScrollArea, Title, Box, Paper, CloseButton, Group, Stack, Divider, ThemeIcon } from '@mantine/core'
 import { BookmarkTree } from './components'
 import { Resizable } from 're-resizable'
+import { IconBookmarks, IconXboxX } from '@tabler/icons-react'
+import { useMantineColorScheme } from '@mantine/core'
+
 
 interface SidebarProps {
   isOpen: boolean
@@ -10,7 +13,8 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps) => {
-  console.log('[ChatMark] Sidebar render, isOpen:', isOpen);
+  const { colorScheme } = useMantineColorScheme()
+  const isDark = colorScheme === 'dark'
 
   if (!isOpen) return null;
 
@@ -47,40 +51,31 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
       }}
     >
       <Paper
-        shadow="xl"
         radius={0}
         w="100%"
         h="100%"
-        style={(theme) => ({
-          borderLeft: `1px solid ${theme.colors.dark[4]}`,
-          backgroundColor: theme.colors.dark[7],
-        })}
-        bg='dark.7'
         variant='default'
+        bg={isDark ? 'dark.8' : 'white'}
+        bd={`0.5px solid ${isDark ? '#424242' : 'black'}`}
       >
       <Stack gap={0} h="100%">
         {/* Header */}
-        <Box
-          py="md"
-          px="lg"
-          style={(theme) => ({
-            borderBottom: `2px solid ${theme.colors.dark[4]}`,
-          })}
-          
-        >
-          <Group justify="space-between" align="center">
-            <Title order={3} fw={600} lh={1.35} size={"xl"}>Bookmarks</Title>
+        <Box py="md" px="lg">
+          <Group justify="space-between" align="center" wrap="nowrap">
+            <Group gap="sm" align="center" wrap="nowrap">
+              <IconBookmarks size={24} />
+              <Title order={3} fw={600} lh={1.2}>Bookmarks</Title>
+            </Group>
             <CloseButton
               onClick={onClose}
-              size="md"
-              variant="subtle"
-              c="dimmed"
+              size="lg"
             />
           </Group>
         </Box>
+        <Divider px = "sm" mx="sm"/>
 
         {/* Content */}
-        <Box style={{ flex: 1, overflow: 'hidden' }}>
+        <Box flex={1} style={{ overflow: 'hidden' }}>
           <ScrollArea h="100%">
             <Box p="md" pt="lg">
               <BookmarkTree />

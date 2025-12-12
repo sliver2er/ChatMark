@@ -13,6 +13,7 @@ import { useEffect, useState, useRef } from "react"
 import { BookmarkItem as BookmarkItemType } from "@/types"
 import { bookmarkApi } from "@/api/bookmarkApi"
 import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView"
+import { useMantineColorScheme} from "@mantine/core"
 
 interface BookmarkSaveMenuProps {
   opened: boolean
@@ -55,6 +56,7 @@ export const BookmarkSaveMenu = ({
       }, 100)
     }
   }, [opened])
+
 
   const loadBookmarks = async () => {
     try {
@@ -129,7 +131,6 @@ export const BookmarkSaveMenu = ({
       pb="xs"
       bdrs={12}
       w="370px"
-      bg="dark.7"
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}

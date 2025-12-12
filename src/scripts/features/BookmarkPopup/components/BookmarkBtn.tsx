@@ -28,10 +28,10 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(
           onClick={onClick}
           style={{
             cursor: "pointer",
-            color: "white",
+            color: "white"
           }}
         >
-          <IconBookmarkFilled size={20} style={{ color: "white" }} />
+          <IconBookmarkFilled size={20} />
         </ActionIcon>
       </Box>
     );
