@@ -4,10 +4,10 @@
 
 // ===== Sidebar 레이아웃 =====
 export const SIDEBAR_MIN_WIDTH = 200;
-export const SIDEBAR_MAX_WIDTH = 800;
-export const SIDEBAR_DEFAULT_WIDTH = 400;
+export const SIDEBAR_MAX_WIDTH = 700;
+export const SIDEBAR_DEFAULT_WIDTH = 300;
 export const SIDEBAR_Z_INDEX = 10000;
-export const SIDEBAR_RESIZE_HANDLE_WIDTH = "8px";
+export const SIDEBAR_RESIZE_HANDLE_WIDTH = "12px";
 
 // ===== 타이밍 (밀리초) =====
 export const DEBOUNCE_DELAY = 300;
