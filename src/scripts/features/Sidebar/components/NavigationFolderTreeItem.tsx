@@ -131,8 +131,13 @@ export const NavigationFolderTreeItem = ({
             </Text>
           </Group>
         </UnstyledButton>
-        <ActionIcon variant="subtle" size="sm" onClick={handleDelete} style={{ flexShrink: 0 }}>
-          <IconTrash size={16} color="red" />
+        <ActionIcon
+          variant="transparent"
+          size="sm"
+          onClick={handleDelete}
+          style={{ flexShrink: 0 }}
+        >
+          <IconTrash size={16} />
         </ActionIcon>
       </Box>
 

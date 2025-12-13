@@ -19,7 +19,6 @@ import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
-import { watchChatGPTTheme } from "@/shared/functions/detectChatGPTTheme";
 import { useBookmark } from "@/hooks/useBookmark";
 
 import koTranslation from "@/config/ko.json";
@@ -43,10 +42,13 @@ i18n
 const PopupApp = () => {
   const { t } = useTranslation();
   const [settings, setSettings] = useState<ChatMarkSettings>(DEFAULT_SETTINGS);
+  const [colorScheme, setColorScheme] = useState<"dark" | "light">(DEFAULT_SETTINGS.colorScheme);
+
   useEffect(() => {
     chrome.runtime.sendMessage({ type: MessageType.SettingsGet }, (response) => {
       if (response.success) {
         setSettings(response.data);
+        setColorScheme(response.data.colorScheme || DEFAULT_SETTINGS.colorScheme);
       }
     });
   }, []);
@@ -79,14 +81,25 @@ const PopupApp = () => {
     "#f4a261", // Orange
     "#e76f51", // Red-orange
   ];
-  const [colorScheme, setColorScheme] = useState<"dark" | "light">("dark");
 
+  // Listen for settings changes (including theme updates from content script)
   useEffect(() => {
-    const cleanup = watchChatGPTTheme((theme) => {
-      setColorScheme(theme);
-    });
+    const handleStorageChange = (
+      changes: { [key: string]: chrome.storage.StorageChange },
+      areaName: string
+    ) => {
+      if (areaName === "local" && changes["chatmark.settings"]) {
+        const newSettings = changes["chatmark.settings"].newValue;
+        if (newSettings?.colorScheme) {
+          setColorScheme(newSettings.colorScheme);
+        }
+      }
+    };
+    chrome.storage.onChanged.addListener(handleStorageChange);
 
-    return cleanup;
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
   }, []);
 
   return (
@@ -123,21 +136,25 @@ const PopupApp = () => {
               fullWidth
             />
           </Stack>
-          <Group justify="space-between" align="center" wrap="nowrap">
+          <Group justify="space-between" align="center" wrap="nowrap" gap="md">
             {/* 왼쪽: 텍스트 뭉치 */}
-            <Box>
-              <Text size="sm" fw={600} c="red">
-                {" "}
-                {/* 위험한 기능이니 빨간색 강조 추천 */}
+            <Box style={{ flex: "1 1 0", minWidth: 0 }}>
+              <Text size="sm" fw={600} c="red" truncate="end">
                 {t("popup.deleteAll")}
               </Text>
-              <Text size="xs" c="dimmed" lh={1.2}>
+              <Text size="xs" c="dimmed" lh={1.2} style={{ wordBreak: "break-word", display: "block" }}>
                 {t("popup.warning")}
               </Text>
             </Box>
 
             {/* 오른쪽: 삭제 버튼 */}
-            <ActionIcon variant="light" color="red" size="lg" onClick={deleteAllBookmarks}>
+            <ActionIcon
+              variant="light"
+              color="red"
+              size="lg"
+              onClick={deleteAllBookmarks}
+              style={{ flexShrink: 0 }}
+            >
               <IconTrash size={18} />
             </ActionIcon>
           </Group>

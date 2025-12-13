@@ -31,9 +31,11 @@ export enum MessageType {
 export interface ChatMarkSettings {
   highlightColor: string;
   scrollBehavior: "instant" | "smooth";
+  colorScheme: "dark" | "light";
 }
 
 export const DEFAULT_SETTINGS: ChatMarkSettings = {
   highlightColor: "#ffd93d",
   scrollBehavior: "instant",
+  colorScheme: "dark",
 };

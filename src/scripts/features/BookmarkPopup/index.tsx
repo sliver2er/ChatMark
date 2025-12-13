@@ -40,7 +40,7 @@ export function BookmarkPopup() {
     }
 
     if (!sessionId) {
-      error("Failed to get session ID");
+      warn("Failed to get session ID");
       return;
     }
 

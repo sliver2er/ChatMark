@@ -1,6 +1,6 @@
 import { StrictMode, useState, useEffect } from "react";
 import { MantineProvider } from "@mantine/core";
-import '@mantine/core/styles.css';
+import "@mantine/core/styles.css";
 import { BookmarkPopup } from "./features/BookmarkPopup";
 import { OpenPanelBtn } from "./features/OpenPanelBtn";
 import { Sidebar } from "./features/Sidebar";
@@ -8,35 +8,33 @@ import { watchChatGPTTheme } from "@/shared/functions/detectChatGPTTheme";
 import { initReactI18next } from "react-i18next";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import { MessageType } from "@/types";
 
-import enTranslation from '@/config/en.json'
-import koTranslation from '@/config/ko.json'
-
-
+import enTranslation from "@/config/en.json";
+import koTranslation from "@/config/ko.json";
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
-      en: {translation: enTranslation},
-      ko: {translation: koTranslation}
+      en: { translation: enTranslation },
+      ko: { translation: koTranslation },
     },
-    fallbackLng: 'en',
+    fallbackLng: "en",
     debug: true,
     interpolation: {
       escapeValue: false,
     },
-  })
+  });
 
-
-const SIDEBAR_WIDTH_STORAGE_KEY = 'chatmark.sidebar.width'
-const DEFAULT_SIDEBAR_WIDTH = 400
+const SIDEBAR_WIDTH_STORAGE_KEY = "chatmark.sidebar.width";
+const DEFAULT_SIDEBAR_WIDTH = 400;
 
 export const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
-  const [colorScheme, setColorScheme] = useState<'dark' | 'light'>('dark');
+  const [colorScheme, setColorScheme] = useState<"dark" | "light">("dark");
 
   // Load saved sidebar width
   useEffect(() => {
@@ -51,19 +49,24 @@ export const App = () => {
   useEffect(() => {
     const cleanup = watchChatGPTTheme((theme) => {
       setColorScheme(theme);
+      // Save theme to settings so popup can access it
+      chrome.runtime.sendMessage({
+        type: MessageType.SettingsUpdate,
+        payload: { colorScheme: theme },
+      });
     });
 
     return cleanup;
   }, []);
 
   const handleOpenSidebar = () => {
-    console.log('[ChatMark] Opening sidebar, current state:', isSidebarOpen);
+    console.log("[ChatMark] Opening sidebar, current state:", isSidebarOpen);
     setIsSidebarOpen(true);
-    console.log('[ChatMark] Sidebar state set to true');
+    console.log("[ChatMark] Sidebar state set to true");
   };
 
   const handleCloseSidebar = () => {
-    console.log('[ChatMark] Closing sidebar');
+    console.log("[ChatMark] Closing sidebar");
     setIsSidebarOpen(false);
   };
 
@@ -74,22 +77,21 @@ export const App = () => {
 
   return (
     <StrictMode>
-        <MantineProvider forceColorScheme={colorScheme}>
-          <BookmarkPopup />
-          <OpenPanelBtn
-            onOpenSidebar={handleOpenSidebar}
-            isSidebarOpen={isSidebarOpen}
-            sidebarWidth={sidebarWidth}
-          />
-          <Sidebar
-            isOpen={isSidebarOpen}
-            onClose={handleCloseSidebar}
-            width={sidebarWidth}
-            onWidthChange={handleSidebarWidthChange}
-          />
+      <MantineProvider forceColorScheme={colorScheme}>
+        <BookmarkPopup />
+        <OpenPanelBtn
+          onOpenSidebar={handleOpenSidebar}
+          isSidebarOpen={isSidebarOpen}
+          sidebarWidth={sidebarWidth}
+        />
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={handleCloseSidebar}
+          width={sidebarWidth}
+          onWidthChange={handleSidebarWidthChange}
+        />
       </MantineProvider>
     </StrictMode>
-
   );
 };
 
