@@ -46,6 +46,14 @@ export async function deleteBookmark(session_id: string, bookmark_id: string): P
   });
 }
 
+export async function deleteBookmarksInSession(session_id: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    chrome.storage.local.remove([key(session_id)], () => {
+      resolve(true);
+    });
+  });
+}
+
 export async function deleteAllBookmarks(): Promise<void> {
   return new Promise((resolve) => {
     chrome.storage.local.get(null, (items) => {

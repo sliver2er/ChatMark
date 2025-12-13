@@ -43,6 +43,15 @@ export const useBookmark = (session_id: string) => {
     [session_id]
   );
 
+  const deleteAllBookmarksinSession = useCallback(async (session_id: string) => {
+    try {
+      await bookmarkApi.deleteSession(session_id);
+      loadBookmarks();
+    } catch (err) {
+      error("Failed to delete session bookmarks : ", err);
+    }
+  }, []);
+
   const deleteAllBookmarks = useCallback(async () => {
     try {
       await bookmarkApi.deleteAll();
@@ -63,5 +72,6 @@ export const useBookmark = (session_id: string) => {
     addBookmark,
     deleteBookmark,
     deleteAllBookmarks,
+    deleteAllBookmarksinSession,
   };
 };

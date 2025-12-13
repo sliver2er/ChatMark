@@ -8,13 +8,18 @@ import {
   Stack,
   Divider,
   ThemeIcon,
+  Text,
+  ActionIcon,
 } from "@mantine/core";
 import { BookmarkTree } from "./components";
 import { Resizable } from "re-resizable";
-import { IconBookmarks, IconXboxX } from "@tabler/icons-react";
+import { IconBookmarks, IconXboxX, IconTrash } from "@tabler/icons-react";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 import { useTranslation } from "react-i18next";
+import { useState, useEffect } from "react";
+import { getSessionId } from "@/shared/functions/getSessionId";
+import { useBookmark } from "@/hooks/useBookmark";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -25,8 +30,23 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps) => {
   const { t } = useTranslation();
-  const isDark = useIsDark();
   const colors = useThemeColors();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const isdark = useIsDark();
+  const { deleteAllBookmarksinSession } = useBookmark(sessionId ? sessionId : "");
+  useEffect(() => {
+    const sid = getSessionId();
+    setSessionId(sid);
+  }, []);
+
+  const handleDeleteSession = async () => {
+    if (!sessionId) return;
+    try {
+      await deleteAllBookmarksinSession(sessionId);
+    } catch (err) {
+      console.error("Failed to delete session bookmarks:", err);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -93,6 +113,27 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
                 <BookmarkTree />
               </Box>
             </ScrollArea>
+          </Box>
+
+          {/* Footer - Delete Session */}
+          <Box>
+            <Divider px="sm" mx="sm" />
+            <Box py="md" px="lg">
+              <Group justify="space-between" align="center" wrap="nowrap">
+                <Text size="sm" c={colors.deleteColor}>
+                  {t("sidebar.deleteSession")}
+                </Text>
+                <ActionIcon
+                  variant="subtle"
+                  color={colors.deleteColor}
+                  onClick={handleDeleteSession}
+                  disabled={!sessionId}
+                  size="lg"
+                >
+                  <IconTrash size={18} />
+                </ActionIcon>
+              </Group>
+            </Box>
           </Box>
         </Stack>
       </Paper>

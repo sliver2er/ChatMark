@@ -79,13 +79,10 @@ export const App = () => {
   }, [isInSession, isSidebarOpen]);
 
   const handleOpenSidebar = () => {
-    console.log("[ChatMark] Opening sidebar, current state:", isSidebarOpen);
     setIsSidebarOpen(true);
-    console.log("[ChatMark] Sidebar state set to true");
   };
 
   const handleCloseSidebar = () => {
-    console.log("[ChatMark] Closing sidebar");
     setIsSidebarOpen(false);
   };
 

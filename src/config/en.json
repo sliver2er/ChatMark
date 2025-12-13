@@ -23,6 +23,8 @@
     "title": "Bookmarks",
     "noSessionId": "No session ID found. Please open from a ChatGPT conversation.",
     "error": "Error",
-    "noBookmarksYet": "No bookmarks yet"
+    "noBookmarksYet": "No bookmarks yet",
+    "deleteSession": "Delete all bookmarks in this session",
+    "deleteSessionWarning": "Warning : All bookmarks in this session will be deleted."
   }
 }

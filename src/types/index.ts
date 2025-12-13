@@ -22,6 +22,7 @@ export enum MessageType {
   GetAll = "BOOKMARK_GET_ALL",
   Delete = "BOOKMARK_DELETE",
   DeleteAll = "BOOKMARK_DELETE_ALL",
+  DeleteSession = "BOOKMARK_DELETE_SESSION",
   Navigate = "BOOKMARK_NAVIGATE",
   PanelRefresh = "PANEL_REFRESH",
   SettingsGet = "SETTINGS_GET",

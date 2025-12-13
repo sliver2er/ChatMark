@@ -40,6 +40,17 @@ export const bookmarkApi = {
       );
     });
   },
+  deleteSession(session_id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ type: "BOOKMARK_DELETE_SESSION", session_id }, (response) => {
+        if (!response?.success) {
+          error("Failed to delete session bookmarks : ", response?.error);
+          reject(response?.error);
+        } else resolve();
+      });
+    });
+  },
+
   deleteAll(): Promise<void> {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ type: "BOOKMARK_DELETE_ALL" }, (response) => {

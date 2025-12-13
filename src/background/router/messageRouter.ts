@@ -4,6 +4,7 @@ import {
   handleBookmarkDelete,
   handleBookmarkNavigate,
   handleBookmarkDeleteAll,
+  handleBookmarkDeleteAllInSession,
 } from "../services/bookmarkService";
 import { getSettings, updateSettings } from "../repository/settingsCRUD";
 import { MessageType } from "@/types/index";
@@ -22,6 +23,7 @@ export function routeMessage(
     "SETTINGS_GET": handleSettingsGet,
     "SETTINGS_UPDATE": handleSettingsUpdate,
     "BOOKMARK_DELETE_ALL": handleBookmarkDeleteAll,
+    "BOOKMARK_DELETE_SESSION": handleBookmarkDeleteAllInSession,
   };
 
   const handler = map[msg.type];

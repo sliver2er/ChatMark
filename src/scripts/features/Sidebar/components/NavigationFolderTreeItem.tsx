@@ -5,6 +5,7 @@ import { NavigateApi } from "@/api/NavigateApi";
 import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 import { useBookmark } from "@/hooks/useBookmark";
+import { useThemeColors } from "@/shared/hooks/useThemeColors";
 
 interface NavigationFolderTreeItemProps {
   bookmark: BookmarkItemType;
@@ -30,6 +31,7 @@ export const NavigationFolderTreeItem = ({
   const isFolder = hasChildren(bookmarks, bookmark.id);
   const isExpanded = expandedIds.has(bookmark.id);
   const isSelected = selectedId === bookmark.id;
+  const colors = useThemeColors();
   const { deleteBookmark } = useBookmark(bookmark.session_id);
 
   const handleClick = async () => {
@@ -139,7 +141,7 @@ export const NavigationFolderTreeItem = ({
           size="sm"
           onClick={handleDelete}
           style={{ flexShrink: 0, marginLeft: 4 }}
-          c={isDark ? "red.4" : "red.6"}
+          c={colors.deleteColor}
         >
           <IconTrash size={16} />
         </ActionIcon>

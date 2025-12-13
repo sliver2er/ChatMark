@@ -5,8 +5,6 @@ import { log } from "@/shared/logger";
 export async function handleBookmarkAdd(msg: any, sendResponse: Function) {
   const item: BookmarkItem = msg.payload;
   await repo.saveBookmark(item.session_id, item);
-  log("Bookmark add signal received");
-  log("Bookmark", item);
 
   sendResponse({ success: true });
 }
@@ -18,6 +16,11 @@ export async function handleBookmarkGetAll(msg: any, sendResponse: Function) {
 
 export async function handleBookmarkDelete(msg: any, sendResponse: Function) {
   await repo.deleteBookmark(msg.session_id, msg.bookmark_id);
+  sendResponse({ success: true });
+}
+
+export async function handleBookmarkDeleteAllInSession(msg: any, sendResponse: Function) {
+  await repo.deleteBookmarksInSession(msg.session_id);
   sendResponse({ success: true });
 }
 
