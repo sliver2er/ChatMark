@@ -1,1 +1,2 @@
-export * from "./getSessionId"
+export * from "./getSessionId";
+export * from "./isInChatSession";

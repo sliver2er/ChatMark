@@ -1,11 +1,14 @@
 import { TextInput, Button, Stack, Divider, Text, ScrollArea, Group, Loader } from "@mantine/core";
 import { IconBookmarkFilled, IconFolderFilled } from "@tabler/icons-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { BookmarkItem as BookmarkItemType } from "@/types";
 import { bookmarkApi } from "@/api/bookmarkApi";
 import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView";
 import { useMantineColorScheme } from "@mantine/core";
 import { useTranslation } from "react-i18next";
+import { useStorageSync } from "@/hooks/useStorageSync";
+
+const DEBOUNCE_DELAY = 300; // 300ms, same as BookmarkTree
 
 interface BookmarkSaveMenuProps {
   opened: boolean;
@@ -24,12 +27,15 @@ export const BookmarkSaveMenu = ({
 }: BookmarkSaveMenuProps) => {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [bookmarkName, setBookmarkName] = useState(defaultName);
   const [selectedParent, setSelectedParent] = useState<string | undefined>();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Load bookmarks when menu opens
   useEffect(() => {
     if (opened && sessionId) {
       loadBookmarks();
@@ -60,6 +66,38 @@ export const BookmarkSaveMenu = ({
       setLoading(false);
     }
   };
+
+  // Debounced reload for storage changes
+  const debouncedReloadBookmarks = useCallback(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      if (opened && sessionId) {
+        loadBookmarks();
+      }
+    }, DEBOUNCE_DELAY);
+  }, [opened, sessionId]);
+
+  // Real-time sync when menu is open
+  const handleStorageChange = useCallback(() => {
+    debouncedReloadBookmarks();
+  }, [debouncedReloadBookmarks]);
+
+  useStorageSync({
+    keyPattern: opened && sessionId ? `chatmark.bookmarks.${sessionId}` : "",
+    onChanged: handleStorageChange,
+  });
+
+  // Cleanup debounce timer
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleToggleExpand = (id: string) => {
     setExpandedIds((prev) => {
@@ -166,7 +204,7 @@ export const BookmarkSaveMenu = ({
           {t("bookmark.noBookmarks")}
         </Text>
       ) : (
-        <ScrollArea h={250} offsetScrollbars>
+        <ScrollArea mih={150} mah={300} offsetScrollbars>
           <SelectionBookmarkTreeView
             bookmarks={bookmarks}
             expandedIds={expandedIds}

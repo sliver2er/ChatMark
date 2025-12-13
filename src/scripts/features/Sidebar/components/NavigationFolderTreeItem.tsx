@@ -33,28 +33,19 @@ export const NavigationFolderTreeItem = ({
   const { deleteBookmark } = useBookmark(bookmark.session_id);
 
   const handleClick = async () => {
-    if (isFolder) {
-      if (onSelectBookmark) {
-        onSelectBookmark(bookmark);
-      }
-
-      if (isSelected) {
-        onToggleExpand(bookmark.id);
-      } else {
-        if (!isExpanded) {
-          onToggleExpand(bookmark.id);
-        }
-      }
-    } else {
-      if (onSelectBookmark) {
-        onSelectBookmark(bookmark);
-      }
-      try {
-        await NavigateApi.navigateToBookmark(bookmark);
-      } catch (error) {
-        console.error("Failed to navigate to bookmark:", error);
-      }
+    if (onSelectBookmark) {
+      onSelectBookmark(bookmark);
     }
+    try {
+      await NavigateApi.navigateToBookmark(bookmark);
+    } catch (error) {
+      console.error("Failed to navigate to bookmark:", error);
+    }
+  };
+
+  const handleToggleFolder = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onToggleExpand(bookmark.id);
   };
 
   const getIcon = () => {
@@ -66,7 +57,7 @@ export const NavigationFolderTreeItem = ({
 
   const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
-      e.stopPropagation;
+      e.stopPropagation();
       await deleteBookmark(bookmark.id);
     } catch (error) {
       console.error("Failed to delete bookmark:", error);
@@ -102,21 +93,32 @@ export const NavigationFolderTreeItem = ({
           },
         })}
       >
-        <UnstyledButton
-          onClick={handleClick}
-          w="100%"
-          p={0}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flex: 1,
-            min_width: 0,
-          }}
-        >
-          <Group gap="sm" wrap="nowrap">
+        <Group gap="sm" wrap="nowrap" style={{ width: "100%", minWidth: 0, flex: "1 1 0" }}>
+          {isFolder ? (
+            <ActionIcon
+              variant="subtle"
+              size="md"
+              onClick={handleToggleFolder}
+              style={{ flexShrink: 0 }}
+              c={isSelected ? undefined : "dimmed"}
+            >
+              {getIcon()}
+            </ActionIcon>
+          ) : (
             <Box style={{ flexShrink: 0 }} c={isSelected ? undefined : "dimmed"}>
               {getIcon()}
             </Box>
+          )}
+          <UnstyledButton
+            onClick={handleClick}
+            p={0}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flex: "1 1 0",
+              minWidth: 0,
+            }}
+          >
             <Text
               size="sm"
               lh={1.35}
@@ -124,18 +126,20 @@ export const NavigationFolderTreeItem = ({
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-                flex: 1,
+                flex: "1 1 0",
+                minWidth: 0,
               }}
             >
               {bookmark.bookmark_name}
             </Text>
-          </Group>
-        </UnstyledButton>
+          </UnstyledButton>
+        </Group>
         <ActionIcon
-          variant="transparent"
+          variant="subtle"
           size="sm"
           onClick={handleDelete}
-          style={{ flexShrink: 0 }}
+          style={{ flexShrink: 0, marginLeft: 4 }}
+          c={isDark ? "red.4" : "red.6"}
         >
           <IconTrash size={16} />
         </ActionIcon>

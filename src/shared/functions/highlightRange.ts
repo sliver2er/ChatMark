@@ -16,7 +16,7 @@ export async function highlightRange(range: Range): Promise<void> {
       highlightColor = response.data.highlightColor;
     }
   } catch (error) {
-    console.error('[ChatMark] Failed to get settings:', error);
+    console.error("[ChatMark] Failed to get settings:", error);
   }
 
   const styleElement = document.createElement("style");
@@ -39,5 +39,5 @@ export async function highlightRange(range: Range): Promise<void> {
       selection.removeAllRanges();
     }
     styleElement.remove();
-  }, 2000);
+  }, 3000);
 }

@@ -75,6 +75,11 @@ export function BookmarkPopup() {
       closeOnClickOutside={false}
       clickOutsideEvents={[]}
       withinPortal={false}
+      middlewares={{
+        shift: { padding: 8 },
+        flip: { padding: 8 },
+      }}
+      offset={8}
     >
       <Popover.Target>
         <BookmarkBtn onClick={handleBookmarkClick} />

@@ -18,9 +18,6 @@ export async function getBookmarks(session_id: string): Promise<BookmarkItem[]> 
 export async function saveBookmark(session_id: string, bookmark: BookmarkItem): Promise<boolean> {
   const bookmarks = await getBookmarks(session_id);
   bookmarks.push(bookmark);
-  log("Bookmark saved successfully. Bookmark : ");
-  log(bookmark);
-
   return new Promise((resolve) => {
     chrome.storage.local.set({ [key(session_id)]: bookmarks }, () => {
       resolve(true);
@@ -30,8 +27,18 @@ export async function saveBookmark(session_id: string, bookmark: BookmarkItem): 
 
 export async function deleteBookmark(session_id: string, bookmark_id: string): Promise<boolean> {
   const bookmarks = await getBookmarks(session_id);
-  const updated = bookmarks.filter((b) => b.id !== bookmark_id);
-  log("Bookmark deleted in repository");
+
+  const idsToDelete = new Set<string>();
+
+  const collectChildrenIds = (parentId: string) => {
+    idsToDelete.add(parentId);
+    const children = bookmarks.filter((b) => b.parent_bookmark === parentId);
+    children.forEach((child) => collectChildrenIds(child.id));
+  };
+
+  collectChildrenIds(bookmark_id);
+  const updated = bookmarks.filter((b) => !idsToDelete.has(b.id));
+
   return new Promise((resolve) => {
     chrome.storage.local.set({ [key(session_id)]: updated }, () => {
       resolve(true);

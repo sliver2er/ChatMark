@@ -5,6 +5,7 @@ import { BookmarkPopup } from "./features/BookmarkPopup";
 import { OpenPanelBtn } from "./features/OpenPanelBtn";
 import { Sidebar } from "./features/Sidebar";
 import { watchChatGPTTheme } from "@/shared/functions/detectChatGPTTheme";
+import { isInChatSession } from "@/shared/functions/isInChatSession";
 import { initReactI18next } from "react-i18next";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -30,11 +31,13 @@ i18n
 
 const SIDEBAR_WIDTH_STORAGE_KEY = "chatmark.sidebar.width";
 const DEFAULT_SIDEBAR_WIDTH = 400;
+const URL_CHECK_INTERVAL = 300;
 
 export const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
   const [colorScheme, setColorScheme] = useState<"dark" | "light">("dark");
+  const [isInSession, setIsInSession] = useState(isInChatSession());
 
   // Load saved sidebar width
   useEffect(() => {
@@ -59,6 +62,22 @@ export const App = () => {
     return cleanup;
   }, []);
 
+  // Monitor URL changes to detect session transitions
+  useEffect(() => {
+    const checkSessionStatus = () => {
+      const currentlyInSession = isInChatSession();
+      if (currentlyInSession !== isInSession) {
+        setIsInSession(currentlyInSession);
+        if (!currentlyInSession && isSidebarOpen) {
+          setIsSidebarOpen(false);
+        }
+      }
+    };
+
+    const intervalId = setInterval(checkSessionStatus, URL_CHECK_INTERVAL);
+    return () => clearInterval(intervalId);
+  }, [isInSession, isSidebarOpen]);
+
   const handleOpenSidebar = () => {
     console.log("[ChatMark] Opening sidebar, current state:", isSidebarOpen);
     setIsSidebarOpen(true);
@@ -79,11 +98,13 @@ export const App = () => {
     <StrictMode>
       <MantineProvider forceColorScheme={colorScheme}>
         <BookmarkPopup />
-        <OpenPanelBtn
-          onOpenSidebar={handleOpenSidebar}
-          isSidebarOpen={isSidebarOpen}
-          sidebarWidth={sidebarWidth}
-        />
+        {isInSession && (
+          <OpenPanelBtn
+            onOpenSidebar={handleOpenSidebar}
+            isSidebarOpen={isSidebarOpen}
+            sidebarWidth={sidebarWidth}
+          />
+        )}
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={handleCloseSidebar}
