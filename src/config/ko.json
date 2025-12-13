@@ -6,7 +6,7 @@
     "scrollSmooth": "부드럽게",
     "highlightColor": "하이라이트 색상",
     "deleteAll": "북마크 전체 삭제",
-    "warning": "주의 : 모든 세션의 북마크가 삭제됩니다.ㄴ"
+    "warning": "주의 : 모든 세션의 북마크가 삭제됩니다."
   },
   "bookmark": {
     "addTitle": "북마크 추가",

@@ -80,6 +80,7 @@ const PopupApp = () => {
     "#e76f51", // Red-orange
   ];
   const [colorScheme, setColorScheme] = useState<"dark" | "light">("dark");
+
   useEffect(() => {
     const cleanup = watchChatGPTTheme((theme) => {
       setColorScheme(theme);
@@ -87,6 +88,7 @@ const PopupApp = () => {
 
     return cleanup;
   }, []);
+
   return (
     <MantineProvider forceColorScheme={colorScheme}>
       <Paper p="lg" w={320}>
