@@ -160,12 +160,28 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
           <Box>
             <Divider px="sm" mx="sm" />
             {/* Scroll to Bottom */}
-            <Box py="md" px="lg">
+            <Box
+              py="md"
+              px="lg"
+              onClick={handleScrollToBottom}
+              style={{ cursor: "pointer", transition: "background-color 0.2s" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.bg;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+            >
               <Group justify="space-between" align="center" wrap="nowrap">
                 <Text size="sm" c={colors.fgSubtle}>
                   {t("sidebar.scrollToBottom")}
                 </Text>
-                <ActionIcon variant="subtle" color="gray" onClick={handleScrollToBottom} size="lg">
+                <ActionIcon
+                  variant="subtle"
+                  color="gray"
+                  size="lg"
+                  style={{ pointerEvents: "none" }}
+                >
                   <IconArrowDown size={18} />
                 </ActionIcon>
               </Group>

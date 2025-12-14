@@ -48,14 +48,18 @@ const PopupApp = () => {
   const { t } = useTranslation();
   const [settings, setSettings] = useState<ChatMarkSettings>(DEFAULT_SETTINGS);
   const [colorScheme, setColorScheme] = useState<"dark" | "light">(DEFAULT_SETTINGS.colorScheme);
+
+  // Load all settings on mount
   useEffect(() => {
     chrome.runtime.sendMessage({ type: MessageType.SettingsGet }, (response) => {
       if (response.success) {
         const loadedSettings = response.data;
+        setSettings(loadedSettings);
         setColorScheme(loadedSettings.colorScheme || DEFAULT_SETTINGS.colorScheme);
       }
     });
   }, []);
+
   const deleteAllBookmarks = useBookmarkStore((state) => state.deleteAllBookmarks);
 
   const handleScrollBehaviorChange = (value: string) => {
