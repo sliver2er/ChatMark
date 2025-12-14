@@ -80,8 +80,8 @@ export function BookmarkPopup() {
       withArrow
       shadow="md"
       middlewares={{
-        shift: { padding: 16 },
-        flip: { fallbackPlacements: ["top"], fallbackStrategy: "bestFit", padding: 16 },
+        shift: { padding: 32 },
+        flip: { fallbackPlacements: ["top"], padding: 32 },
         inline: true,
       }}
       offset={12}

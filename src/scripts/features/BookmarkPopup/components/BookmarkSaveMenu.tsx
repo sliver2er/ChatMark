@@ -153,7 +153,7 @@ export const BookmarkSaveMenu = ({
   return (
     <Stack
       gap="0"
-      p="sm"
+      p="xs"
       pt="0"
       pb="xs"
       bdrs={12}
@@ -162,14 +162,14 @@ export const BookmarkSaveMenu = ({
       onMouseUp={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >
-      <Text size="lg" fw={600} mt="sm" lh={1.35}>
+      <Text size="md" fw={600} mt="xs" lh={1.3}>
         {t("bookmark.addTitle")}
       </Text>
-      <Text size="sm" c="dimmed" mt={4} lh={1.35}>
+      <Text size="xs" c="dimmed" mt={2} lh={1.3}>
         {t("bookmark.saveSnippet")}
       </Text>
       <TextInput
-        mt={12}
+        mt={8}
         ref={inputRef}
         placeholder={t("bookmark.enterName")}
         value={bookmarkName}
@@ -181,16 +181,15 @@ export const BookmarkSaveMenu = ({
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
-        leftSection={<IconBookmarkFilled size={16} />}
+        leftSection={<IconBookmarkFilled size={14} />}
         disabled={saving}
         variant="filled"
         bdrs="lg"
-        mb={4}
+        size="sm"
+        mb={12}
       />
 
-      <Divider mt="lg" mb="md" />
-
-      <Text size="md" fw={500} mb="md" lh={1.45}>
+      <Text size="sm" fw={500} mb="xs" lh={1.35}>
         {t("bookmark.chooseFolder")}{" "}
         <Text span c="dimmed">
           {t("bookmark.optional")}
@@ -198,15 +197,15 @@ export const BookmarkSaveMenu = ({
       </Text>
 
       {loading ? (
-        <Group justify="center" p="md">
+        <Group justify="center" p="xs">
           <Loader size="sm" />
         </Group>
       ) : bookmarks.length === 0 ? (
-        <Text size="md" c="dimmed" ta="center" p="md">
+        <Text size="sm" c="dimmed" ta="center" p="xs">
           {t("bookmark.noBookmarks")}
         </Text>
       ) : (
-        <ScrollArea mih={150} mah={300} offsetScrollbars>
+        <ScrollArea h={150} offsetScrollbars>
           <SelectionBookmarkTreeView
             bookmarks={bookmarks}
             expandedIds={expandedIds}
@@ -217,10 +216,10 @@ export const BookmarkSaveMenu = ({
         </ScrollArea>
       )}
 
-      <Stack gap="xs" mt="md" mb="xs">
+      <Stack gap={6} mt="xs" mb="0">
         <Button
           variant="filled"
-          leftSection={<IconBookmarkFilled size={16} />}
+          leftSection={<IconBookmarkFilled size={14} />}
           rightSection={
             <Text size="xs" fw={400} opacity={0.9}>
               ⏎
@@ -228,32 +227,29 @@ export const BookmarkSaveMenu = ({
           }
           onClick={handleSaveToRoot}
           radius="md"
-          size="md"
+          size="sm"
           fw={500}
           disabled={saving}
-          mb="xs"
         >
           {t("bookmark.saveInRoot")}
         </Button>
-        {selectedParent && (
-          <Button
-            variant="filled"
-            onClick={handleSave}
-            disabled={saving}
-            loading={saving}
-            radius="md"
-            size="md"
-            leftSection={<IconFolderFilled size={16} />}
-            rightSection={
-              <Text size="xs" fw={400} opacity={0.9}>
-                ⇧⏎
-              </Text>
-            }
-            fw={500}
-          >
-            {t("bookmark.saveInFolder")}
-          </Button>
-        )}
+        <Button
+          variant="filled"
+          onClick={handleSave}
+          disabled={saving || !selectedParent}
+          loading={saving}
+          radius="md"
+          size="sm"
+          leftSection={<IconFolderFilled size={14} />}
+          rightSection={
+            <Text size="xs" fw={400} opacity={0.9}>
+              ⇧⏎
+            </Text>
+          }
+          fw={500}
+        >
+          {t("bookmark.saveInFolder")}
+        </Button>
       </Stack>
     </Stack>
   );
