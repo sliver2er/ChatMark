@@ -25,9 +25,14 @@ import koTranslation from "@/config/ko.json";
 import enTranslation from "@/config/en.json";
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
+  .use(LanguageDetector)
   .init({
+    detection: {
+      order: ["navigator", "localStorage"],
+      lookupLocalStorage: "i18nextLng",
+      caches: ["localStorage"],
+    },
     resources: {
       en: { translation: enTranslation },
       ko: { translation: koTranslation },
@@ -43,12 +48,11 @@ const PopupApp = () => {
   const { t } = useTranslation();
   const [settings, setSettings] = useState<ChatMarkSettings>(DEFAULT_SETTINGS);
   const [colorScheme, setColorScheme] = useState<"dark" | "light">(DEFAULT_SETTINGS.colorScheme);
-
   useEffect(() => {
     chrome.runtime.sendMessage({ type: MessageType.SettingsGet }, (response) => {
       if (response.success) {
-        setSettings(response.data);
-        setColorScheme(response.data.colorScheme || DEFAULT_SETTINGS.colorScheme);
+        const loadedSettings = response.data;
+        setColorScheme(loadedSettings.colorScheme || DEFAULT_SETTINGS.colorScheme);
       }
     });
   }, []);
@@ -142,7 +146,12 @@ const PopupApp = () => {
               <Text size="sm" fw={600} c="red" truncate="end">
                 {t("popup.deleteAll")}
               </Text>
-              <Text size="xs" c="dimmed" lh={1.2} style={{ wordBreak: "break-word", display: "block" }}>
+              <Text
+                size="xs"
+                c="dimmed"
+                lh={1.2}
+                style={{ wordBreak: "break-word", display: "block" }}
+              >
                 {t("popup.warning")}
               </Text>
             </Box>

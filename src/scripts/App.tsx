@@ -15,9 +15,14 @@ import enTranslation from "@/config/en.json";
 import koTranslation from "@/config/ko.json";
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
+  .use(LanguageDetector)
   .init({
+    detection: {
+      order: ["navigator", "localStorage"],
+      lookupLocalStorage: "i18nextLng",
+      caches: ["localStorage"],
+    },
     resources: {
       en: { translation: enTranslation },
       ko: { translation: koTranslation },
@@ -52,7 +57,6 @@ export const App = () => {
   useEffect(() => {
     const cleanup = watchChatGPTTheme((theme) => {
       setColorScheme(theme);
-      // Save theme to settings so popup can access it
       chrome.runtime.sendMessage({
         type: MessageType.SettingsUpdate,
         payload: { colorScheme: theme },

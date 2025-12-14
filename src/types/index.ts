@@ -33,10 +33,12 @@ export interface ChatMarkSettings {
   highlightColor: string;
   scrollBehavior: "instant" | "smooth";
   colorScheme: "dark" | "light";
+  language?: "en" | "ko";
 }
 
 export const DEFAULT_SETTINGS: ChatMarkSettings = {
   highlightColor: "#ffd93d",
   scrollBehavior: "instant",
   colorScheme: "dark",
+  language: "en",
 };

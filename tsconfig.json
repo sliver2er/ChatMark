@@ -10,8 +10,8 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "paths" : {
-        "@/*": ["./src/*"]
+    "paths": {
+      "@/*": ["./src/*"]
     },
     "types": ["chrome"]
   },
