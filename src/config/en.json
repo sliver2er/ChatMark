@@ -25,6 +25,7 @@
     "error": "Error",
     "noBookmarksYet": "No bookmarks yet",
     "deleteSession": "Delete all bookmarks in this session",
-    "deleteSessionWarning": "Warning : All bookmarks in this session will be deleted."
+    "deleteSessionWarning": "Warning : All bookmarks in this session will be deleted.",
+    "closeTooltip": "Close (ESC)"
   }
 }

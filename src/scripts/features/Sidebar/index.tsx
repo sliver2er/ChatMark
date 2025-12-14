@@ -3,7 +3,6 @@ import {
   Title,
   Box,
   Paper,
-  CloseButton,
   Group,
   Stack,
   Divider,
@@ -12,7 +11,7 @@ import {
 } from "@mantine/core";
 import { BookmarkTree } from "./components";
 import { Resizable } from "re-resizable";
-import { IconBookmarks, IconTrash } from "@tabler/icons-react";
+import { IconBookmarks, IconTrash, IconX } from "@tabler/icons-react";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 import { useTranslation } from "react-i18next";
 import { useSessionStore } from "@/stores/useSessionStore";
@@ -29,7 +28,10 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
   const { t } = useTranslation();
   const colors = useThemeColors();
   const sessionId = useSessionStore((state) => state.sessionId);
-  const deleteAllBookmarksinSession = useBookmarkStore((state) => state.deleteAllBookmarksinSession);
+  const deleteAllBookmarksinSession = useBookmarkStore(
+    (state) => state.deleteAllBookmarksinSession
+  );
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const handleDeleteSession = async () => {
     if (!sessionId) return;
@@ -39,6 +41,22 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
       console.error("Failed to delete session bookmarks:", err);
     }
   };
+
+  // ESC 키로 사이드바 닫기
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -93,7 +111,33 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
                   {t("sidebar.title")}
                 </Title>
               </Group>
-              <CloseButton onClick={onClose} size="lg" />
+              <Box
+                style={{ position: "relative" }}
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
+                <ActionIcon variant="subtle" color="gray" onClick={onClose} size="lg">
+                  <IconX size={18} />
+                </ActionIcon>
+                {showTooltip && (
+                  <Paper
+                    shadow="md"
+                    p="xs"
+                    style={{
+                      position: "absolute",
+                      right: "calc(100% + 8px)",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      zIndex: 10001,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    <Text size="xs" style={{ whiteSpace: "nowrap" }}>
+                      {t("sidebar.closeTooltip")}
+                    </Text>
+                  </Paper>
+                )}
+              </Box>
             </Group>
           </Box>
           <Divider px="sm" mx="sm" />
