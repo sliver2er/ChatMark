@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { TextSelectionState } from "./useTextSelection";
 
 const PORTAL_ID = "chatmark-bookmark-floating-portal";
@@ -10,18 +9,7 @@ export function useFloatingPortal(
   const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    // Don't create portal if disabled (e.g., when legacy portal is active)
-    if (!enabled) {
-      const existing = document.getElementById(PORTAL_ID);
-      if (existing) {
-        existing.style.display = "none";
-      }
-      setPortalElement(null);
-      return;
-    }
-
-    if (!selectionState.hasValidSelection || !selectionState.position) {
-      // Hide portal if no valid selection
+    if (!enabled || !selectionState.hasValidSelection || !selectionState.position) {
       const existing = document.getElementById(PORTAL_ID);
       if (existing) {
         existing.style.display = "none";
@@ -53,14 +41,12 @@ export function useFloatingPortal(
     setPortalElement(container);
 
     return () => {
-      // Don't remove container, just hide it (reused)
       if (container) {
         container.style.display = "none";
       }
     };
   }, [selectionState, enabled]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       const container = document.getElementById(PORTAL_ID);

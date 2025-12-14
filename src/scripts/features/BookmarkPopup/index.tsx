@@ -1,5 +1,4 @@
 import { createPortal } from "react-dom";
-import { useState, useEffect } from "react";
 import { Popover } from "@mantine/core";
 import { useBookmarkPortal } from "./hooks/useBookmarkPortal";
 import { useTextSelection } from "./hooks/useTextSelection";
@@ -17,8 +16,12 @@ export function BookmarkPopup() {
   // OLD: Button-anchored portal (keep for backward compatibility)
   const legacyPortal = useBookmarkPortal();
 
+  const [menuOpened, setMenuOpened] = useState(false);
+  const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
+
   // NEW: Text selection-based portal (only active if legacy is not available)
-  const selectionState = useTextSelection();
+  // Disable selection tracking when menu is open to prevent it from disappearing during streaming
+  const selectionState = useTextSelection(!menuOpened);
   const floatingPortal = useFloatingPortal(selectionState, !legacyPortal);
 
   // Use legacy portal if available, otherwise use floating portal
@@ -27,8 +30,6 @@ export function BookmarkPopup() {
   const sessionId = getSessionId();
   const { addBookmark } = useBookmark(sessionId || "");
 
-  const [menuOpened, setMenuOpened] = useState(false);
-  const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
   const isDark = useIsDark();
 
   // Close menu when selection changes or disappears

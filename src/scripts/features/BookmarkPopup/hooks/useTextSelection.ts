@@ -1,4 +1,3 @@
-import { useState, useEffect, useCallback } from "react";
 import { isValidChatSelection, getSelectionPosition } from "../utils/selectionHelpers";
 
 export interface TextSelectionState {
@@ -7,7 +6,7 @@ export interface TextSelectionState {
   range: Range | null;
 }
 
-export function useTextSelection(): TextSelectionState {
+export function useTextSelection(enabled: boolean = true): TextSelectionState {
   const [state, setState] = useState<TextSelectionState>({
     hasValidSelection: false,
     position: null,
@@ -39,6 +38,11 @@ export function useTextSelection(): TextSelectionState {
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      // Don't track selection changes when disabled (e.g., when menu is open)
+      return;
+    }
+
     // Debounce to avoid excessive updates
     let timeoutId: NodeJS.Timeout;
 
@@ -53,7 +57,7 @@ export function useTextSelection(): TextSelectionState {
       clearTimeout(timeoutId);
       document.removeEventListener("selectionchange", debouncedHandler);
     };
-  }, [handleSelectionChange]);
+  }, [handleSelectionChange, enabled]);
 
   return state;
 }
