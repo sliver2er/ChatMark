@@ -7,12 +7,12 @@ import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView";
 import { useTranslation } from "react-i18next";
 import { useStorageSync } from "@/hooks/useStorageSync";
 import { getHotkeyHandler } from "@mantine/hooks";
+import { useSessionStore } from "@/stores/useSessionStore";
 
 interface BookmarkSaveMenuProps {
   opened: boolean;
   onClose: () => void;
   onSave: (name: string, parentId?: string) => Promise<void>;
-  sessionId: string;
   defaultName: string;
 }
 
@@ -20,10 +20,10 @@ export const BookmarkSaveMenu = ({
   opened,
   onClose,
   onSave,
-  sessionId,
   defaultName,
 }: BookmarkSaveMenuProps) => {
   const { t } = useTranslation();
+  const sessionId = useSessionStore((state) => state.sessionId);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [bookmarkName, setBookmarkName] = useState(defaultName);
@@ -54,6 +54,8 @@ export const BookmarkSaveMenu = ({
   }, [opened]);
 
   const loadBookmarks = async () => {
+    if (!sessionId) return;
+
     try {
       setLoading(true);
       const data = await bookmarkApi.getAll(sessionId);

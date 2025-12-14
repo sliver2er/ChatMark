@@ -13,10 +13,9 @@ import {
 import { BookmarkTree } from "./components";
 import { Resizable } from "re-resizable";
 import { IconBookmarks, IconTrash } from "@tabler/icons-react";
-import { useIsDark } from "@/shared/hooks/useIsDark";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 import { useTranslation } from "react-i18next";
-import { getSessionId } from "@/shared/functions/getSessionId";
+import { useSessionStore } from "@/stores/useSessionStore";
 import { useBookmark } from "@/hooks/useBookmark";
 
 interface SidebarProps {
@@ -29,13 +28,8 @@ interface SidebarProps {
 export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const { deleteAllBookmarksinSession } = useBookmark(sessionId ? sessionId : "");
-
-  useEffect(() => {
-    const sid = getSessionId();
-    setSessionId(sid);
-  }, []);
+  const sessionId = useSessionStore((state) => state.sessionId);
+  const { deleteAllBookmarksinSession } = useBookmark(sessionId || "");
 
   const handleDeleteSession = async () => {
     if (!sessionId) return;

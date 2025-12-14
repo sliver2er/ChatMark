@@ -4,7 +4,7 @@ import { useTextSelection } from "./hooks/useTextSelection";
 import { useFloatingPortal } from "./hooks/useFloatingPortal";
 import { BookmarkBtn } from "./components/BookmarkBtn";
 import { BookmarkSaveMenu } from "./components/BookmarkSaveMenu";
-import { getSessionId } from "@/shared/functions/getSessionId";
+import { useSessionStore } from "@/stores/useSessionStore";
 import { captureTextSelection } from "./utils/selectText";
 import { error, warn } from "@/shared/logger";
 import { useBookmark } from "@/hooks/useBookmark";
@@ -22,9 +22,8 @@ export function BookmarkPopup() {
 
   const targetElement = floatingPortal;
 
-  const sessionId = getSessionId();
+  const sessionId = useSessionStore((state) => state.sessionId);
   const { addBookmark } = useBookmark(sessionId || "");
-
   const isDark = useIsDark();
 
   // Cleanup: close menu if target element disappears
@@ -99,7 +98,6 @@ export function BookmarkPopup() {
           opened={menuOpened}
           onClose={() => setMenuOpened(false)}
           onSave={handleSave}
-          sessionId={sessionId || ""}
           defaultName={capturedBookmark?.bookmark_name || ""}
         />
       </Popover.Dropdown>
