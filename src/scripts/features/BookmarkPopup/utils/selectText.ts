@@ -1,22 +1,7 @@
 import { BookmarkItem } from "@/types";
 import { getSessionId } from "@/shared/functions/getSessionId";
 import { error } from "@/shared/logger";
-
-/**
- * Find the closest parent element with data-message-id
- */
-function findMessageId(node: Node): HTMLElement | null {
-  let current = node instanceof Text ? node.parentElement : (node as HTMLElement);
-
-  while (current) {
-    if (current.dataset?.messageId) {
-      return current;
-    }
-    current = current.parentElement;
-  }
-
-  return null;
-}
+import { findMessageId } from "./selectionHelpers";
 
 /**
  * Find the closest parent element with data-start attribute

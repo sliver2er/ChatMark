@@ -2,6 +2,8 @@ import { createPortal } from "react-dom";
 import { useState, useEffect } from "react";
 import { Popover } from "@mantine/core";
 import { useBookmarkPortal } from "./hooks/useBookmarkPortal";
+import { useTextSelection } from "./hooks/useTextSelection";
+import { useFloatingPortal } from "./hooks/useFloatingPortal";
 import { BookmarkBtn } from "./components/BookmarkBtn";
 import { BookmarkSaveMenu } from "./components/BookmarkSaveMenu";
 import { getSessionId } from "@/shared/functions/getSessionId";
@@ -12,16 +14,32 @@ import { BookmarkItem } from "@/types";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 
 export function BookmarkPopup() {
-  const targetElement = useBookmarkPortal();
-  const sessionId = getSessionId();
+  // OLD: Button-anchored portal (keep for backward compatibility)
+  const legacyPortal = useBookmarkPortal();
 
+  // NEW: Text selection-based portal (only active if legacy is not available)
+  const selectionState = useTextSelection();
+  const floatingPortal = useFloatingPortal(selectionState, !legacyPortal);
+
+  // Use legacy portal if available, otherwise use floating portal
+  const targetElement = legacyPortal || floatingPortal;
+
+  const sessionId = getSessionId();
   const { addBookmark } = useBookmark(sessionId || "");
 
   const [menuOpened, setMenuOpened] = useState(false);
   const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
   const isDark = useIsDark();
 
-  // targetElement가 변경되면 Popover를 닫음 (재마운트 대응)
+  // Close menu when selection changes or disappears
+  useEffect(() => {
+    if (!selectionState.hasValidSelection && menuOpened && floatingPortal) {
+      setMenuOpened(false);
+      setCapturedBookmark(null);
+    }
+  }, [selectionState.hasValidSelection, menuOpened, floatingPortal]);
+
+  // Existing cleanup logic for legacy portal
   useEffect(() => {
     if (!targetElement && menuOpened) {
       setMenuOpened(false);

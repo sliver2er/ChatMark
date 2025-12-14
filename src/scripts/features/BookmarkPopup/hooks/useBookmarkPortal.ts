@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 function findAskGPTButton(): HTMLElement | null {
   const buttons = document.querySelectorAll("button");
   for (const btn of Array.from(buttons)) {
