@@ -46,3 +46,25 @@ export function selectElement(element: HTMLElement) {
     selection.removeAllRanges();
   }, SELECTION_REMOVE_DELAY);
 }
+
+export async function scrollToBottom() {
+  const behavior = await getScrollBehavior();
+
+  // ChatGPT uses a specific scrollable container, not window
+  // Find the main scrollable element
+  const scrollableElement =
+    document.querySelector("main") ||
+    document.querySelector('[class*="scroll"]') ||
+    document.documentElement;
+
+  console.log("[ChatMark] Scrolling element:", scrollableElement.tagName, {
+    scrollHeight: scrollableElement.scrollHeight,
+    scrollTop: scrollableElement.scrollTop,
+    behavior,
+  });
+
+  scrollableElement.scrollTo({
+    top: scrollableElement.scrollHeight,
+    behavior,
+  });
+}

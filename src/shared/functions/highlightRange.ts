@@ -39,5 +39,5 @@ export async function highlightRange(range: Range): Promise<void> {
       selection.removeAllRanges();
     }
     styleElement.remove();
-  }, 3000);
+  }, 5000);
 }

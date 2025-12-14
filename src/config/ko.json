@@ -26,6 +26,7 @@
     "noBookmarksYet": "아직 북마크가 없습니다",
     "deleteSession": "이 세션의 북마크 전체 삭제",
     "deleteSessionWarning": "주의 : 현재 세션의 모든 북마크가 삭제됩니다.",
-    "closeTooltip": "닫기 (ESC)"
+    "closeTooltip": "닫기 (ESC)",
+    "scrollToBottom": "맨 아래로 이동"
   }
 }

@@ -82,8 +82,8 @@ export const App = () => {
     return () => clearInterval(intervalId);
   }, [isInSession, isSidebarOpen]);
 
-  const handleOpenSidebar = () => {
-    setIsSidebarOpen(true);
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
   };
 
   const handleCloseSidebar = () => {
@@ -101,7 +101,7 @@ export const App = () => {
         <BookmarkPopup />
         {isInSession && (
           <OpenPanelBtn
-            onOpenSidebar={handleOpenSidebar}
+            onToggleSidebar={handleToggleSidebar}
             isSidebarOpen={isSidebarOpen}
             sidebarWidth={sidebarWidth}
           />

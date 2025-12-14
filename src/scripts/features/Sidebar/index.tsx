@@ -11,11 +11,12 @@ import {
 } from "@mantine/core";
 import { BookmarkTree } from "./components";
 import { Resizable } from "re-resizable";
-import { IconBookmarks, IconTrash, IconX } from "@tabler/icons-react";
+import { IconBookmarks, IconTrash, IconX, IconArrowDown } from "@tabler/icons-react";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 import { useTranslation } from "react-i18next";
 import { useSessionStore } from "@/stores/useSessionStore";
 import { useBookmarkStore } from "@/stores/useBookmarkStore";
+import { scrollToBottom } from "./utils/scrollUtils";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -32,7 +33,10 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
     (state) => state.deleteAllBookmarksinSession
   );
   const [showTooltip, setShowTooltip] = useState(false);
-
+  const handleCloseSidebar = () => {
+    onClose();
+    setShowTooltip(false);
+  };
   const handleDeleteSession = async () => {
     if (!sessionId) return;
     try {
@@ -42,16 +46,17 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
     }
   };
 
-  // ESC 키로 사이드바 닫기
+  const handleScrollToBottom = async () => {
+    await scrollToBottom();
+  };
+
   useEffect(() => {
     if (!isOpen) return;
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
@@ -116,7 +121,7 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
               >
-                <ActionIcon variant="subtle" color="gray" onClick={onClose} size="lg">
+                <ActionIcon variant="subtle" color="gray" onClick={handleCloseSidebar} size="lg">
                   <IconX size={18} />
                 </ActionIcon>
                 {showTooltip && (
@@ -151,9 +156,22 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
             </ScrollArea>
           </Box>
 
-          {/* Footer - Delete Session */}
+          {/* Footer */}
           <Box>
             <Divider px="sm" mx="sm" />
+            {/* Scroll to Bottom */}
+            <Box py="md" px="lg">
+              <Group justify="space-between" align="center" wrap="nowrap">
+                <Text size="sm" c={colors.fgSubtle}>
+                  {t("sidebar.scrollToBottom")}
+                </Text>
+                <ActionIcon variant="subtle" color="gray" onClick={handleScrollToBottom} size="lg">
+                  <IconArrowDown size={18} />
+                </ActionIcon>
+              </Group>
+            </Box>
+            <Divider px="sm" mx="sm" />
+            {/* Delete Session */}
             <Box py="md" px="lg">
               <Group justify="space-between" align="center" wrap="nowrap">
                 <Text size="sm" c={colors.deleteColor}>

@@ -5,14 +5,18 @@ import { useEffect, useRef } from "react";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 
 interface OpenPanelBtnProps {
-  onOpenSidebar: () => void;
+  onToggleSidebar: () => void;
   isSidebarOpen: boolean;
   sidebarWidth: number;
 }
 
 const STORAGE_KEY = "chatmark.openPanelBtn.position";
 
-export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen, sidebarWidth }: OpenPanelBtnProps) => {
+export const OpenPanelBtn = ({
+  onToggleSidebar,
+  isSidebarOpen,
+  sidebarWidth,
+}: OpenPanelBtnProps) => {
   // Default position: bottom-right corner
   const defaultX = window.innerWidth - 120;
   const defaultY = window.innerHeight - 112;
@@ -69,7 +73,7 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen, sidebarWidth }: Ope
 
   const handleClick = () => {
     if (!isDraggingRef.current) {
-      onOpenSidebar();
+      onToggleSidebar();
     }
   };
 
