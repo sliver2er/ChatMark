@@ -4,7 +4,7 @@ import { BookmarkItem as BookmarkItemType } from "@/types";
 import { NavigateApi } from "@/api/NavigateApi";
 import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils";
 import { useIsDark } from "@/shared/hooks/useIsDark";
-import { useBookmark } from "@/hooks/useBookmark";
+import { useBookmarkStore } from "@/stores/useBookmarkStore";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 
 interface NavigationFolderTreeItemProps {
@@ -32,7 +32,7 @@ export const NavigationFolderTreeItem = ({
   const isExpanded = expandedIds.has(bookmark.id);
   const isSelected = selectedId === bookmark.id;
   const colors = useThemeColors();
-  const { deleteBookmark } = useBookmark(bookmark.session_id);
+  const deleteBookmark = useBookmarkStore((state) => state.deleteBookmark);
 
   const handleClick = async () => {
     if (onSelectBookmark) {

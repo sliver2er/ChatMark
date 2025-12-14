@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
-import { useBookmark } from "@/hooks/useBookmark";
+import { useBookmarkStore } from "@/stores/useBookmarkStore";
 
 import koTranslation from "@/config/ko.json";
 import enTranslation from "@/config/en.json";
@@ -56,7 +56,7 @@ const PopupApp = () => {
       }
     });
   }, []);
-  const { deleteAllBookmarks } = useBookmark("");
+  const deleteAllBookmarks = useBookmarkStore((state) => state.deleteAllBookmarks);
 
   const handleScrollBehaviorChange = (value: string) => {
     const newSettings = { ...settings, scrollBehavior: value as "instant" | "smooth" };

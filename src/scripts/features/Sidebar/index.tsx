@@ -16,7 +16,7 @@ import { IconBookmarks, IconTrash } from "@tabler/icons-react";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 import { useTranslation } from "react-i18next";
 import { useSessionStore } from "@/stores/useSessionStore";
-import { useBookmark } from "@/hooks/useBookmark";
+import { useBookmarkStore } from "@/stores/useBookmarkStore";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
   const { t } = useTranslation();
   const colors = useThemeColors();
   const sessionId = useSessionStore((state) => state.sessionId);
-  const { deleteAllBookmarksinSession } = useBookmark(sessionId || "");
+  const deleteAllBookmarksinSession = useBookmarkStore((state) => state.deleteAllBookmarksinSession);
 
   const handleDeleteSession = async () => {
     if (!sessionId) return;
