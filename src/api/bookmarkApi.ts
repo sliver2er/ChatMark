@@ -1,5 +1,5 @@
 import { BookmarkItem } from "@/types";
-import { error, log } from "@/shared/logger";
+import { error } from "@/shared/logger";
 
 export const bookmarkApi = {
   getAll(session_id: string): Promise<BookmarkItem[]> {
@@ -20,7 +20,6 @@ export const bookmarkApi = {
           error("Failed to add bookmark : ", response?.error);
           reject(response?.error);
         } else {
-          log("Bookmark add signal sent successfully");
           resolve();
         }
       });
