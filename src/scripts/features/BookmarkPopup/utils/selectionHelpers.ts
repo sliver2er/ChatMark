@@ -40,7 +40,14 @@ export function isValidChatSelection(selection: Selection): boolean {
  * Position at bottom-right corner to avoid overlapping with AskChatGPT button
  */
 export function getSelectionPosition(range: Range): { x: number; y: number } {
-  const rect = range.getBoundingClientRect();
+  const endRange = range.cloneRange();
+  endRange.collapse(false);
+  let rect = endRange.getClientRects()[0];
+
+  if (!rect) {
+    const rects = range.getClientRects();
+    rect = rects.length > 0 ? rects[rects.length - 1] : range.getBoundingClientRect();
+  }
 
   // Position at the bottom-right corner of selection
   let x = rect.right + 8; // 8px offset to the right
