@@ -2,7 +2,7 @@ import { StrictMode, useState, useEffect } from "react";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { BookmarkPopup } from "./features/BookmarkPopup";
-import { OpenPanelBtn } from "./features/OpenPanelBtn";
+import { OpenPanelBtn } from "./features/TogglePanelBtn";
 import { Sidebar } from "./features/Sidebar";
 import { watchChatGPTTheme } from "@/shared/functions/detectChatGPTTheme";
 import { isInChatSession } from "@/shared/functions/isInChatSession";
