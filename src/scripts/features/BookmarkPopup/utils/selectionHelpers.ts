@@ -37,23 +37,30 @@ export function isValidChatSelection(selection: Selection): boolean {
 
 /**
  * Calculate optimal position for floating button based on selection
+ * Position at bottom-right corner to avoid overlapping with AskChatGPT button
  */
 export function getSelectionPosition(range: Range): { x: number; y: number } {
   const rect = range.getBoundingClientRect();
 
-  // Position at the end (bottom-right) of selection
+  // Position at the bottom-right corner of selection
   let x = rect.right + 8; // 8px offset to the right
-  let y = rect.bottom;
+  let y = rect.bottom + 4; // 4px offset below
 
   // Boundary detection - prevent overflow
   const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
   const buttonApproxWidth = 50; // Approximate button width
+  const buttonApproxHeight = 40; // Approximate button height
 
   // Adjust horizontal position if too close to right edge
   if (x + buttonApproxWidth > viewportWidth) {
-    x = rect.left - buttonApproxWidth - 8; // Position to left instead
+    x = rect.right - buttonApproxWidth - 8; // Position to left of selection end
   }
 
-  // Keep vertical position (will be adjusted by useFloatingPortal if needed)
+  // Adjust vertical position if too close to bottom edge
+  if (y + buttonApproxHeight > viewportHeight) {
+    y = rect.top - buttonApproxHeight - 4; // Position above selection
+  }
+
   return { x, y };
 }

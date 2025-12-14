@@ -1,6 +1,5 @@
 import { createPortal } from "react-dom";
 import { Popover } from "@mantine/core";
-import { useBookmarkPortal } from "./hooks/useBookmarkPortal";
 import { useTextSelection } from "./hooks/useTextSelection";
 import { useFloatingPortal } from "./hooks/useFloatingPortal";
 import { BookmarkBtn } from "./components/BookmarkBtn";
@@ -13,34 +12,22 @@ import { BookmarkItem } from "@/types";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 
 export function BookmarkPopup() {
-  // OLD: Button-anchored portal (keep for backward compatibility)
-  const legacyPortal = useBookmarkPortal();
-
   const [menuOpened, setMenuOpened] = useState(false);
   const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
 
-  // NEW: Text selection-based portal (only active if legacy is not available)
+  // Text selection-based portal
   // Disable selection tracking when menu is open to prevent it from disappearing during streaming
   const selectionState = useTextSelection(!menuOpened);
-  const floatingPortal = useFloatingPortal(selectionState, !legacyPortal);
+  const floatingPortal = useFloatingPortal(selectionState, true);
 
-  // Use legacy portal if available, otherwise use floating portal
-  const targetElement = legacyPortal || floatingPortal;
+  const targetElement = floatingPortal;
 
   const sessionId = getSessionId();
   const { addBookmark } = useBookmark(sessionId || "");
 
   const isDark = useIsDark();
 
-  // Close menu when selection changes or disappears
-  useEffect(() => {
-    if (!selectionState.hasValidSelection && menuOpened && floatingPortal) {
-      setMenuOpened(false);
-      setCapturedBookmark(null);
-    }
-  }, [selectionState.hasValidSelection, menuOpened, floatingPortal]);
-
-  // Existing cleanup logic for legacy portal
+  // Cleanup: close menu if target element disappears
   useEffect(() => {
     if (!targetElement && menuOpened) {
       setMenuOpened(false);
@@ -88,17 +75,17 @@ export function BookmarkPopup() {
   return createPortal(
     <Popover
       opened={menuOpened}
+      onChange={setMenuOpened}
       position="bottom"
       withArrow
       shadow="md"
-      closeOnClickOutside={false}
-      clickOutsideEvents={[]}
-      withinPortal={false}
       middlewares={{
-        shift: { padding: 8 },
-        flip: { padding: 8 },
+        shift: { padding: 16 },
+        flip: { fallbackPlacements: ["top"], fallbackStrategy: "bestFit", padding: 16 },
+        inline: true,
       }}
-      offset={8}
+      offset={12}
+      floatingStrategy="fixed"
     >
       <Popover.Target>
         <BookmarkBtn onClick={handleBookmarkClick} />

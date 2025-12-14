@@ -157,7 +157,7 @@ export const BookmarkSaveMenu = ({
       pt="0"
       pb="xs"
       bdrs={12}
-      w="370px"
+      w="360px"
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}

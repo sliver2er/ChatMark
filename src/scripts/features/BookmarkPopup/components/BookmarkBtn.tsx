@@ -15,12 +15,15 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(({ onCli
       ref={ref}
       ml="xs"
       bg={colors.bg}
+      bdrs="50%"
+      bd={`0.5px solid ${colors.border}`}
       style={{
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: "4px",
         padding: "4px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+        pointerEvents: "auto",
       }}
     >
       <ActionIcon

@@ -30,13 +30,13 @@ export function useFloatingPortal(
       document.body.appendChild(container);
     }
 
-    // Update position - always position above selected text
+    // Update position to bottom-right of selection
     const { x, y } = selectionState.position;
 
     container.style.display = "block";
     container.style.left = `${x}px`;
     container.style.top = `${y}px`;
-    container.style.transform = "translateY(-100%)"; // Position above the selection
+    container.style.transform = ""; // No transform needed - position is already calculated
 
     setPortalElement(container);
 

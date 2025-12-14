@@ -112,6 +112,7 @@ export const OpenPanelBtn = ({ onOpenSidebar, isSidebarOpen, sidebarWidth }: Ope
         radius="xl"
         bg={colors.bg}
         c={colors.fg}
+        bd={`0.5px solid ${colors.border}`}
         style={{
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
           pointerEvents: "auto",
