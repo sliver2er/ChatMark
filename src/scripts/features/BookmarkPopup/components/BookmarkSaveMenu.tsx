@@ -4,11 +4,9 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { BookmarkItem as BookmarkItemType } from "@/types";
 import { bookmarkApi } from "@/api/bookmarkApi";
 import { SelectionBookmarkTreeView } from "./SelectionBookmarkTreeView";
-import { useMantineColorScheme } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useStorageSync } from "@/hooks/useStorageSync";
-
-const DEBOUNCE_DELAY = 300; // 300ms, same as BookmarkTree
+import { getHotkeyHandler } from "@mantine/hooks";
 
 interface BookmarkSaveMenuProps {
   opened: boolean;
@@ -176,6 +174,10 @@ export const BookmarkSaveMenu = ({
         placeholder={t("bookmark.enterName")}
         value={bookmarkName}
         onChange={(e) => setBookmarkName(e.currentTarget.value)}
+        onKeyDown={getHotkeyHandler([
+          ["Enter", handleSaveToRoot],
+          ["shift+Enter", handleSave],
+        ])}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
@@ -219,6 +221,11 @@ export const BookmarkSaveMenu = ({
         <Button
           variant="filled"
           leftSection={<IconBookmarkFilled size={16} />}
+          rightSection={
+            <Text size="xs" fw={400} opacity={0.9}>
+              ⏎
+            </Text>
+          }
           onClick={handleSaveToRoot}
           radius="md"
           size="md"
@@ -237,6 +244,11 @@ export const BookmarkSaveMenu = ({
             radius="md"
             size="md"
             leftSection={<IconFolderFilled size={16} />}
+            rightSection={
+              <Text size="xs" fw={400} opacity={0.9}>
+                ⇧⏎
+              </Text>
+            }
             fw={500}
           >
             {t("bookmark.saveInFolder")}

@@ -7,17 +7,15 @@ import {
   Group,
   Stack,
   Divider,
-  ThemeIcon,
   Text,
   ActionIcon,
 } from "@mantine/core";
 import { BookmarkTree } from "./components";
 import { Resizable } from "re-resizable";
-import { IconBookmarks, IconXboxX, IconTrash } from "@tabler/icons-react";
+import { IconBookmarks, IconTrash } from "@tabler/icons-react";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
 import { getSessionId } from "@/shared/functions/getSessionId";
 import { useBookmark } from "@/hooks/useBookmark";
 
@@ -32,8 +30,8 @@ export const Sidebar = ({ isOpen, onClose, width, onWidthChange }: SidebarProps)
   const { t } = useTranslation();
   const colors = useThemeColors();
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const isdark = useIsDark();
   const { deleteAllBookmarksinSession } = useBookmark(sessionId ? sessionId : "");
+
   useEffect(() => {
     const sid = getSessionId();
     setSessionId(sid);
