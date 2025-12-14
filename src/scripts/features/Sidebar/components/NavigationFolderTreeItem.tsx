@@ -69,8 +69,8 @@ export const NavigationFolderTreeItem = ({
   return (
     <>
       <Box
-        py={10}
-        px="sm"
+        py={4}
+        px={4}
         pl={level * 20 + 12}
         display="flex"
         style={(theme) => ({
@@ -99,7 +99,8 @@ export const NavigationFolderTreeItem = ({
           {isFolder ? (
             <ActionIcon
               variant="subtle"
-              size="md"
+              w="24px"
+              h="24px"
               onClick={handleToggleFolder}
               style={{ flexShrink: 0 }}
               c={isSelected ? undefined : "dimmed"}
@@ -107,7 +108,17 @@ export const NavigationFolderTreeItem = ({
               {getIcon()}
             </ActionIcon>
           ) : (
-            <Box style={{ flexShrink: 0 }} c={isSelected ? undefined : "dimmed"}>
+            <Box
+              w="24px"
+              h="24px"
+              style={{
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              c={isSelected ? undefined : "dimmed"}
+            >
               {getIcon()}
             </Box>
           )}
