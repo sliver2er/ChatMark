@@ -12,7 +12,7 @@ export default defineManifest({
   action: {
     default_popup: "src/popup/index.html",
   },
-  permissions: ["storage", "activeTab", "scripting", "tabs"],
+  permissions: ["storage", "activeTab"],
   background: {
     service_worker: "src/background/index.ts",
     type: "module",

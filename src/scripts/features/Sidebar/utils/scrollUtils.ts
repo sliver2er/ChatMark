@@ -50,21 +50,13 @@ export function selectElement(element: HTMLElement) {
 export async function scrollToBottom() {
   const behavior = await getScrollBehavior();
 
-  // ChatGPT uses a specific scrollable container, not window
-  // Find the main scrollable element
-  const scrollableElement =
-    document.querySelector("main") ||
-    document.querySelector('[class*="scroll"]') ||
-    document.documentElement;
+  const scrollRoot = document.querySelector('div[data-scroll-root="true"]');
 
-  console.log("[ChatMark] Scrolling element:", scrollableElement.tagName, {
-    scrollHeight: scrollableElement.scrollHeight,
-    scrollTop: scrollableElement.scrollTop,
-    behavior,
-  });
-
-  scrollableElement.scrollTo({
-    top: scrollableElement.scrollHeight,
-    behavior,
-  });
+  if (scrollRoot) {
+    scrollRoot.scrollTo({
+      top: scrollRoot.scrollHeight,
+      behavior: behavior,
+    });
+  } else {
+  }
 }
