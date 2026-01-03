@@ -21,6 +21,15 @@ export interface ThemeColors {
     bgHover: string;
     border: string;
   };
+  // Root drop zone colors
+  rootDropZone: {
+    bg: string;
+    bgHover: string;
+    border: string;
+    borderHover: string;
+    text: string;
+    textHover: string;
+  };
   // Bookmark item colors
   bookmarkItem: {
     bg: string;
@@ -54,6 +63,14 @@ export function getThemeColors(isDark: boolean): ThemeColors {
           bgHover: "rgba(239, 68, 68, 0.2)",
           border: "rgba(239, 68, 68, 0.5)",
         },
+        rootDropZone: {
+          bg: "rgba(99, 102, 241, 0.05)",
+          bgHover: "rgba(99, 102, 241, 0.15)",
+          border: "rgba(99, 102, 241, 0.2)",
+          borderHover: "rgba(99, 102, 241, 0.5)",
+          text: "rgba(156, 163, 175, 0.6)",
+          textHover: "rgba(99, 102, 241, 1)",
+        },
         bookmarkItem: {
           bg: "transparent",
           bgSelected: "rgba(255, 255, 255, 0.06)",
@@ -79,6 +96,14 @@ export function getThemeColors(isDark: boolean): ThemeColors {
           bg: "rgba(239, 68, 68, 0.1)",
           bgHover: "rgba(239, 68, 68, 0.15)",
           border: "rgba(239, 68, 68, 0.5)",
+        },
+        rootDropZone: {
+          bg: "rgba(99, 102, 241, 0.03)",
+          bgHover: "rgba(99, 102, 241, 0.1)",
+          border: "rgba(99, 102, 241, 0.15)",
+          borderHover: "rgba(99, 102, 241, 0.5)",
+          text: "rgba(107, 114, 128, 0.6)",
+          textHover: "rgba(99, 102, 241, 1)",
         },
         bookmarkItem: {
           bg: "transparent",

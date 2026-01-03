@@ -153,18 +153,31 @@ export const BookmarkTree = () => {
   const handleMoveToRoot = async (activeBookmark: BookmarkItemType) => {
     if (!sessionId) return;
 
-    if (!activeBookmark.parent_bookmark) return;
-    const rootBookmarks = bookmarks.filter((b) => !b.parent_bookmark);
+    // 이미 루트면 무시 (undefined 또는 null 체크)
+    if (activeBookmark.parent_bookmark == null) {
+      return;
+    }
+
+    const rootBookmarks = bookmarks.filter((b) => b.parent_bookmark == null);
     const newOrder = rootBookmarks.length;
-    await bookmarkApi.update(sessionId, activeBookmark.id, {
-      parent_bookmark: undefined,
-      order: newOrder,
-    });
-    setBookmarks((prev) =>
-      prev.map((b) =>
-        b.id === activeBookmark.id ? { ...b, parent_bookmark: undefined, order: newOrder } : b
-      )
-    );
+
+    try {
+      await bookmarkApi.update(sessionId, activeBookmark.id, {
+        parent_bookmark: undefined,
+        order: newOrder,
+      });
+
+      setBookmarks((prev) =>
+        prev.map((b) =>
+          b.id === activeBookmark.id ? { ...b, parent_bookmark: undefined, order: newOrder } : b
+        )
+      );
+    } catch (error) {
+      console.error("Failed to move to root:", error);
+      if (sessionId) {
+        await fetchBookmarks(sessionId);
+      }
+    }
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -184,7 +197,7 @@ export const BookmarkTree = () => {
     // over.id 파싱: "bookmarkId-before", "bookmarkId-nest", "bookmarkId-after" 형식
     const overIdStr = String(over.id);
     let targetBookmarkId: string;
-    let dropType: "before" | "nest" | "after";
+    let dropType: "before" | "nest" | "after" | "reorder";
 
     if (overIdStr.endsWith("-before")) {
       targetBookmarkId = overIdStr.replace(/-before$/, "");
@@ -196,9 +209,9 @@ export const BookmarkTree = () => {
       targetBookmarkId = overIdStr.replace(/-after$/, "");
       dropType = "after";
     } else {
-      // 파싱 실패 시 무시
-      console.warn("Unable to parse drop zone ID:", over.id);
-      return;
+      // 파싱 실패 = useSortable ID (같은 부모 내 순서 변경)
+      targetBookmarkId = overIdStr;
+      dropType = "reorder";
     }
 
     // 자기 자신 위에 드롭한 경우 무시
@@ -214,6 +227,15 @@ export const BookmarkTree = () => {
     }
 
     try {
+      if (dropType === "reorder") {
+        // useSortable로 감지된 경우: 같은 부모 내에서 순서만 변경
+        if (activeBookmark.parent_bookmark === overBookmark.parent_bookmark) {
+          await handleReorderInSameParent(activeBookmark, overBookmark);
+        }
+        // 다른 부모면 무시 (드롭존으로만 부모 변경 가능)
+        return;
+      }
+
       if (dropType === "before" || dropType === "after") {
         // 같은 부모를 가지는지 확인
         if (activeBookmark.parent_bookmark !== overBookmark.parent_bookmark) {

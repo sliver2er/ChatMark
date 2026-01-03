@@ -35,7 +35,7 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(({ onCli
           cursor: "pointer",
         }}
       >
-        <IconBookmarkFilled size={32} />
+        <IconBookmarkFilled size={24} />
       </ActionIcon>
     </Box>
   );

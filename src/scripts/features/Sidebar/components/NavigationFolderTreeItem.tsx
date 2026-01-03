@@ -250,51 +250,53 @@ export const NavigationFolderTreeItem = ({
           />
         )}
 
-        {/* 3개의 드롭존 (투명 오버레이) */}
-        <Box
-          ref={setBeforeRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "20%",
-            pointerEvents: "auto",
-            zIndex: 5,
-            // 디버그용: isOverBefore일 때만 배경색 표시
-            backgroundColor: isOverBefore ? "rgba(99, 102, 241, 0.1)" : "transparent",
-          }}
-        />
-        <Box
-          ref={setNestRef}
-          style={{
-            position: "absolute",
-            top: "20%",
-            left: 0,
-            right: 0,
-            height: "60%",
-            pointerEvents: "auto",
-            zIndex: 5,
-            // 디버그용: isOverNest일 때만 배경색 표시
-            backgroundColor: isOverNest ? "rgba(99, 102, 241, 0.1)" : "transparent",
-          }}
-        />
-        <Box
-          ref={setAfterRef}
-          style={{
-            position: "absolute",
-            top: "80%",
-            left: 0,
-            right: 0,
-            height: "20%",
-            pointerEvents: "auto",
-            zIndex: 5,
-            // 디버그용: isOverAfter일 때만 배경색 표시
-            backgroundColor: isOverAfter ? "rgba(99, 102, 241, 0.1)" : "transparent",
-          }}
-        />
+        {/* 3개의 드롭존 (드래그 중일 때만 렌더링) */}
+        {active && (
+          <>
+            <Box
+              ref={setBeforeRef}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "15%",
+                zIndex: 15,
+                backgroundColor: isOverBefore ? "rgba(99, 102, 241, 0.1)" : "transparent",
+              }}
+            />
+            <Box
+              ref={setNestRef}
+              style={{
+                position: "absolute",
+                top: "20%",
+                left: 0,
+                right: 0,
+                height: "70%",
+                zIndex: 15,
+                backgroundColor: isOverNest ? "rgba(99, 102, 241, 0.1)" : "transparent",
+              }}
+            />
+            <Box
+              ref={setAfterRef}
+              style={{
+                position: "absolute",
+                top: "80%",
+                left: 0,
+                right: 0,
+                height: "15%",
+                zIndex: 15,
+                backgroundColor: isOverAfter ? "rgba(99, 102, 241, 0.1)" : "transparent",
+              }}
+            />
+          </>
+        )}
 
-        <Group gap="sm" wrap="nowrap" style={{ width: "100%", minWidth: 0, flex: "1 1 0", position: "relative", zIndex: 10 }}>
+        <Group
+          gap="sm"
+          wrap="nowrap"
+          style={{ width: "100%", minWidth: 0, flex: "1 1 0", position: "relative", zIndex: 10 }}
+        >
           {isFolder ? (
             <ActionIcon
               variant="subtle"

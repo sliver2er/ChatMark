@@ -1,21 +1,19 @@
-import { Stack, Box, Text } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { BookmarkItem as BookmarkItemType } from "@/types";
 import { NavigationFolderTreeItem } from "./NavigationFolderTreeItem";
+import { RootDropZone } from "./RootDropZone";
 import { getRootBookmarks, sortBookmarksByOrder } from "@/utils/bookmarkTreeUtils";
 import {
   DndContext,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  closestCenter,
+  pointerWithin,
   PointerSensor,
   useSensor,
   useSensors,
-  useDroppable,
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useIsDark } from "@/shared/hooks/useIsDark";
-import { useTranslation } from "react-i18next";
 
 interface NavigationBookmarkTreeViewProps {
   bookmarks: BookmarkItemType[];
@@ -34,10 +32,11 @@ export const NavigationBookmarkTreeView = ({
   onSelectBookmark,
   onDragEnd,
 }: NavigationBookmarkTreeViewProps) => {
-  const rootBookmarks = sortBookmarksByOrder(getRootBookmarks(bookmarks));
+  const rootBookmarks = useMemo(
+    () => sortBookmarksByOrder(getRootBookmarks(bookmarks)),
+    [bookmarks]
+  );
   const [activeId, setActiveId] = useState<string | null>(null);
-  const isDark = useIsDark();
-  const { t } = useTranslation();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -46,14 +45,6 @@ export const NavigationBookmarkTreeView = ({
       },
     })
   );
-
-  // 외부 드롭 존 설정
-  const { setNodeRef: setRootDropZoneRef, isOver: isOverRootZone } = useDroppable({
-    id: 'root-drop-zone',
-    data: {
-      type: 'root-zone',
-    },
-  });
 
   if (rootBookmarks.length === 0) {
     return null;
@@ -75,7 +66,7 @@ export const NavigationBookmarkTreeView = ({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
@@ -100,37 +91,8 @@ export const NavigationBookmarkTreeView = ({
         </Stack>
       </SortableContext>
 
-      {/* 외부 드롭 존 */}
-      <Box
-        ref={setRootDropZoneRef}
-        style={{
-          minHeight: isOverRootZone ? '80px' : '40px',
-          marginTop: '12px',
-          border: isOverRootZone
-            ? '2px dashed rgba(99, 102, 241, 0.6)'
-            : `2px dashed ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-          borderRadius: '8px',
-          backgroundColor: isOverRootZone
-            ? 'rgba(99, 102, 241, 0.08)'
-            : isDark
-            ? 'rgba(255, 255, 255, 0.02)'
-            : 'rgba(0, 0, 0, 0.02)',
-          transition: 'all 0.2s ease',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {isOverRootZone ? (
-          <Text size="sm" fw={500} c="blue.6">
-            {t('sidebar.dropToMakeRoot')}
-          </Text>
-        ) : (
-          <Text size="xs" c="dimmed" opacity={0.5}>
-            {t('sidebar.dropToMakeRoot')}
-          </Text>
-        )}
-      </Box>
+      {/* 외부 드롭 존 - DndContext 내부에서 사용 */}
+      <RootDropZone />
 
       <DragOverlay>
         {activeId ? (
