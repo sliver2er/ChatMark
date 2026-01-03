@@ -12,7 +12,7 @@ export const BookmarkItemSchema = z.object({
   end: z.number().optional(), // DOM offset (unreliable, for reference only)
   created_at: z.date(),
   note: z.string().optional(),
-  parent_bookmark: z.string().optional(), // UUID of parent folder/bookmark
+  parent_bookmark: z.string().nullable(), // UUID of parent folder/bookmark (null = root)
   order: z.number(), // Order within the same parent (0-indexed)
 });
 

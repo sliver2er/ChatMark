@@ -97,6 +97,7 @@ export function captureTextSelection(): BookmarkItem | null {
     start,
     end,
     created_at: new Date(),
+    parent_bookmark: null, // Root by default
     order: 0, // Initial order, will be recalculated by API
   };
 

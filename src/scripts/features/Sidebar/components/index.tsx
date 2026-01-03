@@ -163,13 +163,13 @@ export const BookmarkTree = () => {
 
     try {
       await bookmarkApi.update(sessionId, activeBookmark.id, {
-        parent_bookmark: undefined,
+        parent_bookmark: null,
         order: newOrder,
       });
 
       setBookmarks((prev) =>
         prev.map((b) =>
-          b.id === activeBookmark.id ? { ...b, parent_bookmark: undefined, order: newOrder } : b
+          b.id === activeBookmark.id ? { ...b, parent_bookmark: null, order: newOrder } : b
         )
       );
     } catch (error) {

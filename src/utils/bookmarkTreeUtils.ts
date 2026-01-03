@@ -1,10 +1,10 @@
 import { BookmarkItem } from "../types";
 
 /**
- * 루트 북마크만 필터링 (parent_bookmark가 없는 북마크)
+ * 루트 북마크만 필터링 (parent_bookmark가 null인 북마크)
  */
 export function getRootBookmarks(bookmarks: BookmarkItem[]): BookmarkItem[] {
-  return bookmarks.filter((bookmark) => !bookmark.parent_bookmark);
+  return bookmarks.filter((bookmark) => bookmark.parent_bookmark === null);
 }
 
 /**

@@ -59,7 +59,7 @@ export function BookmarkPopup() {
     const finalBookmark: BookmarkItem = {
       ...capturedBookmark,
       bookmark_name: name,
-      parent_bookmark: parentId,
+      parent_bookmark: parentId ?? null,
     };
 
     try {
