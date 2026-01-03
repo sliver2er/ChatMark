@@ -47,16 +47,23 @@ export function selectElement(element: HTMLElement) {
   }, SELECTION_REMOVE_DELAY);
 }
 
-export async function scrollToBottom() {
+export async function scrollToBottom(scrollContainerSelector?: string) {
   const behavior = await getScrollBehavior();
 
-  const scrollRoot = document.querySelector('div[data-scroll-root="true"]');
+  const selectors = scrollContainerSelector
+    ? [scrollContainerSelector]
+    : ['div[data-scroll-root="true"]', "infinite-scroller.chat-history", "#chat-history"];
+
+  let scrollRoot: Element | null = null;
+  for (const selector of selectors) {
+    scrollRoot = document.querySelector(selector);
+    if (scrollRoot) break;
+  }
 
   if (scrollRoot) {
     scrollRoot.scrollTo({
       top: scrollRoot.scrollHeight,
       behavior: behavior,
     });
-  } else {
   }
 }

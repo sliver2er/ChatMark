@@ -2,7 +2,9 @@ import {
   getAllSessionMetas,
   getSessionMeta,
   saveSessionMeta,
+  deleteSessionMeta,
 } from "../repository/sessionCRUD";
+import { deleteBookmarksInSession } from "../repository/bookmarkCRUD";
 
 export async function handleSessionGetAll(
   msg: any,
@@ -37,6 +39,20 @@ export async function handleSessionSaveMeta(
 ) {
   try {
     await saveSessionMeta(msg.payload);
+    sendResponse({ success: true });
+  } catch (err) {
+    sendResponse({ success: false, error: String(err) });
+  }
+}
+
+export async function handleSessionDelete(
+  msg: any,
+  sendResponse: Function,
+  sender: chrome.runtime.MessageSender
+) {
+  try {
+    await deleteBookmarksInSession(msg.session_id);
+    await deleteSessionMeta(msg.session_id);
     sendResponse({ success: true });
   } catch (err) {
     sendResponse({ success: false, error: String(err) });

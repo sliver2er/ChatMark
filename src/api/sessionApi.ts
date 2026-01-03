@@ -40,4 +40,17 @@ export const sessionApi = {
       });
     });
   },
+
+  delete(session_id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ type: "SESSION_DELETE", session_id }, (response) => {
+        if (!response?.success) {
+          error("Failed to delete session:", response?.error);
+          reject(response?.error);
+        } else {
+          resolve();
+        }
+      });
+    });
+  },
 };

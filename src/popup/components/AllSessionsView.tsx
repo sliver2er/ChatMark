@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Flex, Box, Text, Button, Loader, Divider, SegmentedControl } from "@mantine/core";
-import { IconExternalLink } from "@tabler/icons-react";
+import { Flex, Box, Text, Button, Loader, Divider, SegmentedControl, Group } from "@mantine/core";
+import { IconExternalLink, IconTrash } from "@tabler/icons-react";
 import { SessionMeta, BookmarkItem, LLMProvider } from "@/types";
 import { sessionApi } from "@/api/sessionApi";
 import { bookmarkApi } from "@/api/bookmarkApi";
@@ -125,6 +125,13 @@ export const AllSessionsView = () => {
     chrome.tabs.create({ url });
   };
 
+  const handleDeleteSession = async () => {
+    if (!selectedSession) return;
+    await sessionApi.delete(selectedSession.session_id);
+    setAllSessions((prev) => prev.filter((s) => s.session_id !== selectedSession.session_id));
+    setSelectedSession(null);
+  };
+
   const handleSelectSession = (sessionId: string) => {
     const session = allSessions.find((s) => s.session_id === sessionId);
     setSelectedSession(session || null);
@@ -190,15 +197,26 @@ export const AllSessionsView = () => {
               </Box>
               <Divider />
               <Box p="xs">
-                <Button
-                  variant="light"
-                  size="xs"
-                  fullWidth
-                  leftSection={<IconExternalLink size={14} />}
-                  onClick={handleGoToSession}
-                >
-                  {t("popup.goToSession")}
-                </Button>
+                <Group gap="xs">
+                  <Button
+                    variant="light"
+                    size="xs"
+                    style={{ flex: 1 }}
+                    leftSection={<IconExternalLink size={14} />}
+                    onClick={handleGoToSession}
+                  >
+                    {t("popup.goToSession")}
+                  </Button>
+                  <Button
+                    variant="light"
+                    color="red"
+                    size="xs"
+                    leftSection={<IconTrash size={14} />}
+                    onClick={handleDeleteSession}
+                  >
+                    {t("popup.deleteSession")}
+                  </Button>
+                </Group>
               </Box>
             </>
           )}

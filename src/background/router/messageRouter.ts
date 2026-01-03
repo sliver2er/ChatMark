@@ -15,6 +15,7 @@ import {
   handleSessionGetAll,
   handleSessionGetMeta,
   handleSessionSaveMeta,
+  handleSessionDelete,
 } from "../services/sessionService";
 
 export function routeMessage(
@@ -37,6 +38,7 @@ export function routeMessage(
     "SESSION_GET_ALL": handleSessionGetAll,
     "SESSION_GET_META": handleSessionGetMeta,
     "SESSION_SAVE_META": handleSessionSaveMeta,
+    "SESSION_DELETE": handleSessionDelete,
   };
 
   const handler = map[msg.type];

@@ -50,6 +50,7 @@ export enum MessageType {
   SessionGetAll = "SESSION_GET_ALL",
   SessionSaveMeta = "SESSION_SAVE_META",
   SessionGetMeta = "SESSION_GET_META",
+  SessionDelete = "SESSION_DELETE",
 }
 
 export interface ChatMarkSettings {

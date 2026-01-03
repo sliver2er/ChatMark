@@ -14,6 +14,7 @@
     "noSessions": "저장된 북마크가 없습니다",
     "noBookmarksInSession": "이 세션에 북마크가 없습니다",
     "goToSession": "세션으로 이동",
+    "deleteSession": "세션 삭제",
     "providerChatGPT": "ChatGPT",
     "providerGemini": "Gemini"
   },

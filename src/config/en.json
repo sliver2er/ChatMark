@@ -14,6 +14,7 @@
     "noSessions": "No saved bookmarks",
     "noBookmarksInSession": "No bookmarks in this session",
     "goToSession": "Go to Session",
+    "deleteSession": "Delete Session",
     "providerChatGPT": "ChatGPT",
     "providerGemini": "Gemini"
   },
