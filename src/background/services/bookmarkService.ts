@@ -63,3 +63,21 @@ export async function handleBookmarkNavigate(msg: any, sendResponse: Function) {
     sendResponse({ success: false, error: String(error) });
   }
 }
+
+export async function handleBookmarkUpdate(msg: any, sendResponse: Function) {
+  try {
+    await repo.updateBookmark(msg.session_id, msg.bookmark_id, msg.updates);
+    sendResponse({ success: true });
+  } catch (error) {
+    sendResponse({ success: false, error: String(error) });
+  }
+}
+
+export async function handleBookmarksUpdate(msg: any, sendResponse: Function) {
+  try {
+    await repo.updateBookmarks(msg.session_id, msg.updates);
+    sendResponse({ success: true });
+  } catch (error) {
+    sendResponse({ success: false, error: String(error) });
+  }
+}

@@ -5,6 +5,8 @@ import {
   handleBookmarkNavigate,
   handleBookmarkDeleteAll,
   handleBookmarkDeleteAllInSession,
+  handleBookmarkUpdate,
+  handleBookmarksUpdate,
 } from "../services/bookmarkService";
 import { getSettings, updateSettings } from "../repository/settingsCRUD";
 import { MessageType } from "@/types/index";
@@ -20,6 +22,8 @@ export function routeMessage(
     "BOOKMARK_GET_ALL": handleBookmarkGetAll,
     "BOOKMARK_DELETE": handleBookmarkDelete,
     "BOOKMARK_NAVIGATE": handleBookmarkNavigate,
+    "BOOKMARK_UPDATE": handleBookmarkUpdate,
+    "BOOKMARKS_UPDATE": handleBookmarksUpdate,
     "SETTINGS_GET": handleSettingsGet,
     "SETTINGS_UPDATE": handleSettingsUpdate,
     "BOOKMARK_DELETE_ALL": handleBookmarkDeleteAll,

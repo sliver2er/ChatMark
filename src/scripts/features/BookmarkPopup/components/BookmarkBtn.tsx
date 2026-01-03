@@ -13,7 +13,7 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(({ onCli
   return (
     <Box
       ref={ref}
-      ml="xs"
+      ml="sm"
       bg={colors.bg}
       bdrs="50%"
       bd={`0.5px solid ${colors.border}`}
@@ -35,7 +35,7 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(({ onCli
           cursor: "pointer",
         }}
       >
-        <IconBookmarkFilled size={20} />
+        <IconBookmarkFilled size={32} />
       </ActionIcon>
     </Box>
   );

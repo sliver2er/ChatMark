@@ -17,7 +17,20 @@ export async function getBookmarks(session_id: string): Promise<BookmarkItem[]> 
 
 export async function saveBookmark(session_id: string, bookmark: BookmarkItem): Promise<boolean> {
   const bookmarks = await getBookmarks(session_id);
-  bookmarks.push(bookmark);
+
+  // 같은 부모를 가진 북마크들 중 최대 order 찾기
+  const siblings = bookmarks.filter(b => b.parent_bookmark === bookmark.parent_bookmark);
+  const maxOrder = siblings.length > 0
+    ? Math.max(...siblings.map(b => b.order ?? -1))
+    : -1;
+
+  // 새 북마크의 order는 최대 order + 1
+  const newBookmark = {
+    ...bookmark,
+    order: maxOrder + 1,
+  };
+
+  bookmarks.push(newBookmark);
   return new Promise((resolve) => {
     chrome.storage.local.set({ [key(session_id)]: bookmarks }, () => {
       resolve(true);
@@ -66,6 +79,53 @@ export async function deleteAllBookmarks(): Promise<void> {
       chrome.storage.local.remove(bookmarkKeys, () => {
         resolve();
       });
+    });
+  });
+}
+
+export async function updateBookmark(
+  session_id: string,
+  bookmark_id: string,
+  updates: Partial<BookmarkItem>
+): Promise<boolean> {
+  const bookmarks = await getBookmarks(session_id);
+  const index = bookmarks.findIndex((b) => b.id === bookmark_id);
+
+  if (index === -1) {
+    throw new Error(`Bookmark not found: ${bookmark_id}`);
+  }
+
+  bookmarks[index] = {
+    ...bookmarks[index],
+    ...updates,
+  };
+
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ [key(session_id)]: bookmarks }, () => {
+      resolve(true);
+    });
+  });
+}
+
+export async function updateBookmarks(
+  session_id: string,
+  updates: Array<{ id: string; updates: Partial<BookmarkItem> }>
+): Promise<boolean> {
+  const bookmarks = await getBookmarks(session_id);
+
+  const updateMap = new Map(updates.map((u) => [u.id, u.updates]));
+
+  const updatedBookmarks = bookmarks.map((bookmark) => {
+    const update = updateMap.get(bookmark.id);
+    if (update) {
+      return { ...bookmark, ...update };
+    }
+    return bookmark;
+  });
+
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ [key(session_id)]: updatedBookmarks }, () => {
+      resolve(true);
     });
   });
 }

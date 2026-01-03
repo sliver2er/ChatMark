@@ -13,6 +13,9 @@ import {
 } from "../config/constants";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { wouldCreateCycle, hasChildren } from "@/utils/bookmarkTreeUtils";
 
 export const BookmarkTree = () => {
   const { t } = useTranslation();
@@ -23,7 +26,7 @@ export const BookmarkTree = () => {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | undefined>();
 
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<number | null>(null);
 
   const fetchBookmarks = async (sid: string) => {
     try {
@@ -147,6 +150,118 @@ export const BookmarkTree = () => {
     setSelectedId(bookmark.id);
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const activeBookmark = bookmarks.find((b) => b.id === active.id);
+    const overBookmark = bookmarks.find((b) => b.id === over.id);
+
+    if (!activeBookmark || !overBookmark) return;
+
+    // 순환 참조 체크
+    if (wouldCreateCycle(bookmarks, activeBookmark.id, overBookmark.id)) {
+      console.warn("Cannot move bookmark: would create cycle");
+      return;
+    }
+
+    try {
+      // Case 1: 같은 부모 내에서 순서 변경
+      if (activeBookmark.parent_bookmark === overBookmark.parent_bookmark) {
+        await handleReorderInSameParent(activeBookmark, overBookmark);
+      }
+      // Case 2: 다른 폴더로 이동
+      else {
+        await handleMoveToNewParent(activeBookmark, overBookmark);
+      }
+    } catch (error) {
+      console.error("Failed to handle drag:", error);
+      // 에러 발생 시 북마크 다시 로드하여 원래 상태로 복구
+      if (sessionId) {
+        await fetchBookmarks(sessionId);
+      }
+    }
+  };
+
+  const handleReorderInSameParent = async (
+    activeBookmark: BookmarkItemType,
+    overBookmark: BookmarkItemType
+  ) => {
+    if (!sessionId) return;
+
+    const parentId = activeBookmark.parent_bookmark;
+
+    // 같은 부모를 가진 모든 형제 북마크 가져오기
+    const siblings = bookmarks
+      .filter((b) => b.parent_bookmark === parentId)
+      .sort((a, b) => a.order - b.order);
+
+    const oldIndex = siblings.findIndex((b) => b.id === activeBookmark.id);
+    const newIndex = siblings.findIndex((b) => b.id === overBookmark.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // 배열 순서 변경
+    const reorderedSiblings = arrayMove(siblings, oldIndex, newIndex);
+
+    // 각 북마크에 새로운 order 할당
+    const updates = reorderedSiblings.map((bookmark, index) => ({
+      id: bookmark.id,
+      updates: { order: index },
+    }));
+
+    // API 호출하여 일괄 업데이트
+    await bookmarkApi.updateMany(sessionId, updates);
+
+    // 로컬 상태 업데이트 (optimistic update)
+    setBookmarks((prev) =>
+      prev.map((b) => {
+        const update = updates.find((u) => u.id === b.id);
+        return update ? { ...b, ...update.updates } : b;
+      })
+    );
+  };
+
+  const handleMoveToNewParent = async (
+    activeBookmark: BookmarkItemType,
+    overBookmark: BookmarkItemType
+  ) => {
+    if (!sessionId) return;
+
+    // overBookmark이 폴더인지 확인
+    const isOverFolder = hasChildren(bookmarks, overBookmark.id);
+
+    // 새로운 부모 ID 결정
+    const newParentId = isOverFolder ? overBookmark.id : overBookmark.parent_bookmark;
+
+    // 새 부모의 자식들 가져오기
+    const newSiblings = bookmarks
+      .filter((b) => b.parent_bookmark === newParentId)
+      .sort((a, b) => a.order - b.order);
+
+    // 이동한 북마크를 맨 끝에 추가
+    const newOrder = newSiblings.length;
+
+    // 북마크 업데이트
+    await bookmarkApi.update(sessionId, activeBookmark.id, {
+      parent_bookmark: newParentId,
+      order: newOrder,
+    });
+
+    // 로컬 상태 업데이트
+    setBookmarks((prev) =>
+      prev.map((b) =>
+        b.id === activeBookmark.id ? { ...b, parent_bookmark: newParentId, order: newOrder } : b
+      )
+    );
+
+    // 폴더를 자동으로 확장
+    if (isOverFolder) {
+      setExpandedIds((prev) => new Set([...prev, overBookmark.id]));
+    }
+  };
+
   return (
     <NavigationBookmarkTreeView
       bookmarks={bookmarks}
@@ -154,6 +269,7 @@ export const BookmarkTree = () => {
       onToggleExpand={handleToggleExpand}
       selectedId={selectedId}
       onSelectBookmark={handleSelectBookmark}
+      onDragEnd={handleDragEnd}
     />
   );
 };

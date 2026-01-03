@@ -60,4 +60,43 @@ export const bookmarkApi = {
       });
     });
   },
+
+  update(
+    session_id: string,
+    bookmark_id: string,
+    updates: Partial<BookmarkItem>
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { type: "BOOKMARK_UPDATE", session_id, bookmark_id, updates },
+        (response) => {
+          if (!response?.success) {
+            error("Failed to update bookmark:", response?.error);
+            reject(response?.error);
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+  },
+
+  updateMany(
+    session_id: string,
+    updates: Array<{ id: string; updates: Partial<BookmarkItem> }>
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { type: "BOOKMARKS_UPDATE", session_id, updates },
+        (response) => {
+          if (!response?.success) {
+            error("Failed to update bookmarks:", response?.error);
+            reject(response?.error);
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+  },
 };

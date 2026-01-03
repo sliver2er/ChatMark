@@ -13,6 +13,7 @@ export const BookmarkItemSchema = z.object({
   created_at: z.date(),
   note: z.string().optional(),
   parent_bookmark: z.string().optional(), // UUID of parent folder/bookmark
+  order: z.number(), // Order within the same parent (0-indexed)
 });
 
 export type BookmarkItem = z.infer<typeof BookmarkItemSchema>;
@@ -24,6 +25,8 @@ export enum MessageType {
   DeleteAll = "BOOKMARK_DELETE_ALL",
   DeleteSession = "BOOKMARK_DELETE_SESSION",
   Navigate = "BOOKMARK_NAVIGATE",
+  Update = "BOOKMARK_UPDATE",
+  UpdateMany = "BOOKMARKS_UPDATE",
   PanelRefresh = "PANEL_REFRESH",
   SettingsGet = "SETTINGS_GET",
   SettingsUpdate = "SETTINGS_UPDATE",

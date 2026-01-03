@@ -27,6 +27,13 @@ export function sortBookmarksByDate(bookmarks: BookmarkItem[]): BookmarkItem[] {
 }
 
 /**
+ * 북마크를 order 기준으로 정렬
+ */
+export function sortBookmarksByOrder(bookmarks: BookmarkItem[]): BookmarkItem[] {
+  return [...bookmarks].sort((a, b) => a.order - b.order);
+}
+
+/**
  * 특정 부모 북마크의 모든 자손 ID를 재귀적으로 가져오기
  * (폴더 삭제 시 cascade 삭제에 사용)
  */

@@ -2,10 +2,13 @@ import { UnstyledButton, Group, Text, Box, Stack, Collapse, ActionIcon, Flex } f
 import { IconBookmark, IconFolder, IconFolderOpen, IconTrash } from "@tabler/icons-react";
 import { BookmarkItem as BookmarkItemType } from "@/types";
 import { NavigateApi } from "@/api/NavigateApi";
-import { getChildBookmarks, hasChildren, sortBookmarksByDate } from "@/utils/bookmarkTreeUtils";
+import { getChildBookmarks, hasChildren, sortBookmarksByOrder } from "@/utils/bookmarkTreeUtils";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 import { useBookmarkStore } from "@/stores/useBookmarkStore";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 interface NavigationFolderTreeItemProps {
   bookmark: BookmarkItemType;
@@ -27,12 +30,26 @@ export const NavigationFolderTreeItem = ({
   onSelectBookmark,
 }: NavigationFolderTreeItemProps) => {
   const isDark = useIsDark();
-  const children = sortBookmarksByDate(getChildBookmarks(bookmarks, bookmark.id));
+  const children = sortBookmarksByOrder(getChildBookmarks(bookmarks, bookmark.id));
   const isFolder = hasChildren(bookmarks, bookmark.id);
   const isExpanded = expandedIds.has(bookmark.id);
   const isSelected = selectedId === bookmark.id;
   const colors = useThemeColors();
   const deleteBookmark = useBookmarkStore((state) => state.deleteBookmark);
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: bookmark.id,
+    data: {
+      type: "bookmark",
+      bookmark,
+    },
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const handleClick = async () => {
     if (onSelectBookmark) {
@@ -69,13 +86,16 @@ export const NavigationFolderTreeItem = ({
   return (
     <>
       <Box
+        ref={setNodeRef}
         py={4}
         px={4}
         pl={level * 20 + 12}
         display="flex"
+        {...attributes}
+        {...listeners}
         style={(theme) => ({
+          ...style,
           borderRadius: theme.radius.md,
-          transition: "all 0.15s ease",
           backgroundColor: isSelected
             ? isDark
               ? "rgba(255, 255, 255, 0.06)"
@@ -84,6 +104,7 @@ export const NavigationFolderTreeItem = ({
           border: isSelected
             ? `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`
             : "1px solid transparent",
+          cursor: isDragging ? "grabbing" : "grab",
           "&:hover": {
             backgroundColor: isSelected
               ? isDark
@@ -160,20 +181,22 @@ export const NavigationFolderTreeItem = ({
 
       {isFolder && (
         <Collapse in={isExpanded}>
-          <Stack gap={4}>
-            {children.map((child) => (
-              <NavigationFolderTreeItem
-                key={child.id}
-                bookmark={child}
-                level={level + 1}
-                bookmarks={bookmarks}
-                expandedIds={expandedIds}
-                onToggleExpand={onToggleExpand}
-                selectedId={selectedId}
-                onSelectBookmark={onSelectBookmark}
-              />
-            ))}
-          </Stack>
+          <SortableContext items={children.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+            <Stack gap={4}>
+              {children.map((child) => (
+                <NavigationFolderTreeItem
+                  key={child.id}
+                  bookmark={child}
+                  level={level + 1}
+                  bookmarks={bookmarks}
+                  expandedIds={expandedIds}
+                  onToggleExpand={onToggleExpand}
+                  selectedId={selectedId}
+                  onSelectBookmark={onSelectBookmark}
+                />
+              ))}
+            </Stack>
+          </SortableContext>
         </Collapse>
       )}
     </>
