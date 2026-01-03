@@ -25,7 +25,7 @@ export const BookmarkSaveMenu = ({
   const { t } = useTranslation();
   const sessionId = useSessionStore((state) => state.sessionId);
   const inputRef = useRef<HTMLInputElement>(null);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<number | null>(null);
   const [bookmarkName, setBookmarkName] = useState(defaultName);
   const [selectedParent, setSelectedParent] = useState<string | undefined>();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());

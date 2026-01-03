@@ -27,6 +27,7 @@
     "deleteSession": "Delete all bookmarks in this session",
     "deleteSessionWarning": "Warning : All bookmarks in this session will be deleted.",
     "closeTooltip": "Close (ESC)",
-    "scrollToBottom": "Scroll to bottom"
+    "scrollToBottom": "Scroll to bottom",
+    "dropToMakeRoot": "Drop here to move to root level"
   }
 }

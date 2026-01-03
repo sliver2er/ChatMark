@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { wouldCreateCycle, hasChildren } from "@/utils/bookmarkTreeUtils";
+import { wouldCreateCycle } from "@/utils/bookmarkTreeUtils";
 
 export const BookmarkTree = () => {
   const { t } = useTranslation();
@@ -150,29 +150,106 @@ export const BookmarkTree = () => {
     setSelectedId(bookmark.id);
   };
 
+  const handleMoveToRoot = async (activeBookmark: BookmarkItemType) => {
+    if (!sessionId) return;
+
+    if (!activeBookmark.parent_bookmark) return;
+    const rootBookmarks = bookmarks.filter((b) => !b.parent_bookmark);
+    const newOrder = rootBookmarks.length;
+    await bookmarkApi.update(sessionId, activeBookmark.id, {
+      parent_bookmark: undefined,
+      order: newOrder,
+    });
+    setBookmarks((prev) =>
+      prev.map((b) =>
+        b.id === activeBookmark.id ? { ...b, parent_bookmark: undefined, order: newOrder } : b
+      )
+    );
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over || active.id === over.id) return;
+    if (!over) return;
 
     const activeBookmark = bookmarks.find((b) => b.id === active.id);
-    const overBookmark = bookmarks.find((b) => b.id === over.id);
+    if (!activeBookmark) return;
 
-    if (!activeBookmark || !overBookmark) return;
+    // 외부 드롭 존에 드롭한 경우
+    if (over.id === "root-drop-zone") {
+      await handleMoveToRoot(activeBookmark);
+      return;
+    }
 
-    // 순환 참조 체크
-    if (wouldCreateCycle(bookmarks, activeBookmark.id, overBookmark.id)) {
+    // over.id 파싱: "bookmarkId-before", "bookmarkId-nest", "bookmarkId-after" 형식
+    const overIdStr = String(over.id);
+    let targetBookmarkId: string;
+    let dropType: "before" | "nest" | "after";
+
+    if (overIdStr.endsWith("-before")) {
+      targetBookmarkId = overIdStr.replace(/-before$/, "");
+      dropType = "before";
+    } else if (overIdStr.endsWith("-nest")) {
+      targetBookmarkId = overIdStr.replace(/-nest$/, "");
+      dropType = "nest";
+    } else if (overIdStr.endsWith("-after")) {
+      targetBookmarkId = overIdStr.replace(/-after$/, "");
+      dropType = "after";
+    } else {
+      // 파싱 실패 시 무시
+      console.warn("Unable to parse drop zone ID:", over.id);
+      return;
+    }
+
+    // 자기 자신 위에 드롭한 경우 무시
+    if (active.id === targetBookmarkId) return;
+
+    const overBookmark = bookmarks.find((b) => b.id === targetBookmarkId);
+    if (!overBookmark) return;
+
+    // 순환 참조 체크 (nest의 경우에만)
+    if (dropType === "nest" && wouldCreateCycle(bookmarks, activeBookmark.id, overBookmark.id)) {
       console.warn("Cannot move bookmark: would create cycle");
       return;
     }
 
     try {
-      // Case 1: 같은 부모 내에서 순서 변경
-      if (activeBookmark.parent_bookmark === overBookmark.parent_bookmark) {
-        await handleReorderInSameParent(activeBookmark, overBookmark);
-      }
-      // Case 2: 다른 폴더로 이동
-      else {
+      if (dropType === "before" || dropType === "after") {
+        // 같은 부모를 가지는지 확인
+        if (activeBookmark.parent_bookmark !== overBookmark.parent_bookmark) {
+          // 다른 부모: 부모를 변경하고 삽입
+          const targetParent = overBookmark.parent_bookmark;
+          const siblings = bookmarks
+            .filter((b) => b.parent_bookmark === targetParent)
+            .sort((a, b) => a.order - b.order);
+
+          const overIndex = siblings.findIndex((b) => b.id === overBookmark.id);
+          const insertIndex = dropType === "before" ? overIndex : overIndex + 1;
+          const newSiblings = siblings.filter((b) => b.id !== activeBookmark.id);
+          newSiblings.splice(insertIndex, 0, { ...activeBookmark, parent_bookmark: targetParent });
+
+          const updates = newSiblings.map((bookmark, index) => ({
+            id: bookmark.id,
+            updates: {
+              parent_bookmark: targetParent,
+              order: index,
+            },
+          }));
+
+          await bookmarkApi.updateMany(sessionId!, updates);
+
+          setBookmarks((prev) =>
+            prev.map((b) => {
+              const update = updates.find((u) => u.id === b.id);
+              return update ? { ...b, ...update.updates } : b;
+            })
+          );
+        } else {
+          // 같은 부모 내에서 순서만 변경
+          await handleReorderInSameParent(activeBookmark, overBookmark, dropType);
+        }
+      } else if (dropType === "nest") {
+        // 부모-자식 관계 설정
         await handleMoveToNewParent(activeBookmark, overBookmark);
       }
     } catch (error) {
@@ -186,7 +263,8 @@ export const BookmarkTree = () => {
 
   const handleReorderInSameParent = async (
     activeBookmark: BookmarkItemType,
-    overBookmark: BookmarkItemType
+    overBookmark: BookmarkItemType,
+    dropPosition?: "before" | "after"
   ) => {
     if (!sessionId) return;
 
@@ -198,12 +276,26 @@ export const BookmarkTree = () => {
       .sort((a, b) => a.order - b.order);
 
     const oldIndex = siblings.findIndex((b) => b.id === activeBookmark.id);
-    const newIndex = siblings.findIndex((b) => b.id === overBookmark.id);
+    const overIndex = siblings.findIndex((b) => b.id === overBookmark.id);
 
-    if (oldIndex === -1 || newIndex === -1) return;
+    if (oldIndex === -1 || overIndex === -1) return;
 
-    // 배열 순서 변경
-    const reorderedSiblings = arrayMove(siblings, oldIndex, newIndex);
+    let reorderedSiblings;
+
+    // dropPosition이 있으면 정확한 위치에 삽입
+    if (dropPosition === "before" || dropPosition === "after") {
+      // active를 제거한 새 배열
+      const newSiblings = siblings.filter((b) => b.id !== activeBookmark.id);
+      // 제거 후 over의 새로운 인덱스 찾기
+      const newOverIndex = newSiblings.findIndex((b) => b.id === overBookmark.id);
+      // before: 앞에 삽입, after: 뒤에 삽입
+      const insertIndex = dropPosition === "before" ? newOverIndex : newOverIndex + 1;
+      newSiblings.splice(insertIndex, 0, activeBookmark);
+      reorderedSiblings = newSiblings;
+    } else {
+      // 기존 방식: 단순히 두 위치 교환
+      reorderedSiblings = arrayMove(siblings, oldIndex, overIndex);
+    }
 
     // 각 북마크에 새로운 order 할당
     const updates = reorderedSiblings.map((bookmark, index) => ({
@@ -229,11 +321,8 @@ export const BookmarkTree = () => {
   ) => {
     if (!sessionId) return;
 
-    // overBookmark이 폴더인지 확인
-    const isOverFolder = hasChildren(bookmarks, overBookmark.id);
-
-    // 새로운 부모 ID 결정
-    const newParentId = isOverFolder ? overBookmark.id : overBookmark.parent_bookmark;
+    // 모든 북마크는 잠재적 폴더: overBookmark를 항상 새로운 부모로 설정
+    const newParentId = overBookmark.id;
 
     // 새 부모의 자식들 가져오기
     const newSiblings = bookmarks
@@ -257,9 +346,7 @@ export const BookmarkTree = () => {
     );
 
     // 폴더를 자동으로 확장
-    if (isOverFolder) {
-      setExpandedIds((prev) => new Set([...prev, overBookmark.id]));
-    }
+    setExpandedIds((prev) => new Set([...prev, overBookmark.id]));
   };
 
   return (

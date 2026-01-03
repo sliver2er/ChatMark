@@ -21,7 +21,7 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(({ onCli
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "4px",
+        padding: "6px",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
         pointerEvents: "auto",
       }}
@@ -29,7 +29,7 @@ export const BookmarkBtn = forwardRef<HTMLDivElement, BookmarkBtnProps>(({ onCli
       <ActionIcon
         variant="subtle"
         color={colors.fg}
-        size="md"
+        size="40"
         onClick={onClick}
         style={{
           cursor: "pointer",

@@ -2,13 +2,19 @@ import { UnstyledButton, Group, Text, Box, Stack, Collapse, ActionIcon, Flex } f
 import { IconBookmark, IconFolder, IconFolderOpen, IconTrash } from "@tabler/icons-react";
 import { BookmarkItem as BookmarkItemType } from "@/types";
 import { NavigateApi } from "@/api/NavigateApi";
-import { getChildBookmarks, hasChildren, sortBookmarksByOrder } from "@/utils/bookmarkTreeUtils";
+import {
+  getChildBookmarks,
+  hasChildren,
+  sortBookmarksByOrder,
+  wouldCreateCycle,
+} from "@/utils/bookmarkTreeUtils";
 import { useIsDark } from "@/shared/hooks/useIsDark";
 import { useBookmarkStore } from "@/stores/useBookmarkStore";
 import { useThemeColors } from "@/shared/hooks/useThemeColors";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useDroppable, useDndContext } from "@dnd-kit/core";
 
 interface NavigationFolderTreeItemProps {
   bookmark: BookmarkItemType;
@@ -29,7 +35,6 @@ export const NavigationFolderTreeItem = ({
   selectedId,
   onSelectBookmark,
 }: NavigationFolderTreeItemProps) => {
-  const isDark = useIsDark();
   const children = sortBookmarksByOrder(getChildBookmarks(bookmarks, bookmark.id));
   const isFolder = hasChildren(bookmarks, bookmark.id);
   const isExpanded = expandedIds.has(bookmark.id);
@@ -37,13 +42,93 @@ export const NavigationFolderTreeItem = ({
   const colors = useThemeColors();
   const deleteBookmark = useBookmarkStore((state) => state.deleteBookmark);
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  // 자동 펼침 타이머
+  const [expandTimer, setExpandTimer] = useState<number | null>(null);
+
+  // dnd-kit 훅들
+  const { active, over } = useDndContext();
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setSortableRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: bookmark.id,
     data: {
       type: "bookmark",
       bookmark,
     },
   });
+
+  // 3개의 독립적인 드롭존
+  const { isOver: isOverBefore, setNodeRef: setBeforeRef } = useDroppable({
+    id: `${bookmark.id}-before`,
+    data: {
+      type: "insert-before",
+      bookmark,
+    },
+  });
+
+  const { isOver: isOverNest, setNodeRef: setNestRef } = useDroppable({
+    id: `${bookmark.id}-nest`,
+    data: {
+      type: "nest",
+      bookmark,
+    },
+  });
+
+  const { isOver: isOverAfter, setNodeRef: setAfterRef } = useDroppable({
+    id: `${bookmark.id}-after`,
+    data: {
+      type: "insert-after",
+      bookmark,
+    },
+  });
+
+  // 드롭 가능 여부 판정
+  const canDrop = useMemo(() => {
+    if (!active || active.id === bookmark.id) return false;
+
+    const activeBookmark = bookmarks.find((b) => b.id === active.id);
+    if (!activeBookmark) return false;
+
+    // 순환 참조 체크
+    if (wouldCreateCycle(bookmarks, activeBookmark.id, bookmark.id)) {
+      return false;
+    }
+
+    return true;
+  }, [active, bookmark.id, bookmarks]);
+
+  const isOver = isOverBefore || isOverNest || isOverAfter;
+  const isValidDropTarget = isOver && canDrop;
+  const isInvalidDropTarget = isOver && !canDrop;
+
+  // 스타일 헬퍼 함수들
+  const getBackgroundColor = useCallback(() => {
+    // 삽입 위치(상단/하단)는 배경색 변경 안 함
+    if (isValidDropTarget && isOverNest) return colors.dropValid.bg;
+    if (isInvalidDropTarget && isOverNest) return colors.dropInvalid.bg;
+    if (isSelected) return colors.bookmarkItem.bgSelected;
+    return colors.bookmarkItem.bg;
+  }, [isValidDropTarget, isInvalidDropTarget, isOverNest, isSelected, colors]);
+
+  const getBorderStyle = useCallback(() => {
+    // 삽입 위치는 테두리 변경 안 함
+    if (isValidDropTarget && isOverNest) return `2px solid ${colors.dropValid.border}`;
+    if (isInvalidDropTarget && isOverNest) return `2px solid ${colors.dropInvalid.border}`;
+    if (isSelected) return `1px solid ${colors.bookmarkItem.borderSelected}`;
+    return `1px solid ${colors.bookmarkItem.border}`;
+  }, [isValidDropTarget, isInvalidDropTarget, isOverNest, isSelected, colors]);
+
+  const getHoverBackgroundColor = useCallback(() => {
+    if (isValidDropTarget && isOverNest) return colors.dropValid.bgHover;
+    if (isInvalidDropTarget && isOverNest) return colors.dropInvalid.bgHover;
+    if (isSelected) return colors.bookmarkItem.bgSelectedHover;
+    return colors.bookmarkItem.bgHover;
+  }, [isValidDropTarget, isInvalidDropTarget, isOverNest, isSelected, colors]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -83,40 +168,133 @@ export const NavigationFolderTreeItem = ({
     }
   };
 
+  useEffect(() => {
+    if (!isFolder || isExpanded) return;
+
+    // nest 드롭존에 over되었을 때만 자동 펼침
+    if (over?.id === `${bookmark.id}-nest`) {
+      const timer = window.setTimeout(() => {
+        onToggleExpand(bookmark.id);
+      }, 1000);
+
+      setExpandTimer(timer);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    } else {
+      if (expandTimer) {
+        clearTimeout(expandTimer);
+        setExpandTimer(null);
+      }
+    }
+  }, [over?.id, bookmark.id, isFolder, isExpanded, onToggleExpand, expandTimer]);
+  useEffect(() => {
+    return () => {
+      if (expandTimer) {
+        clearTimeout(expandTimer);
+      }
+    };
+  }, [expandTimer]);
+
   return (
     <>
       <Box
-        ref={setNodeRef}
+        ref={setSortableRef}
         py={4}
         px={4}
         pl={level * 20 + 12}
         display="flex"
-        {...attributes}
-        {...listeners}
         style={(theme) => ({
           ...style,
+          position: "relative",
           borderRadius: theme.radius.md,
-          backgroundColor: isSelected
-            ? isDark
-              ? "rgba(255, 255, 255, 0.06)"
-              : "rgba(0, 0, 0, 0.04)"
-            : "transparent",
-          border: isSelected
-            ? `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`
-            : "1px solid transparent",
+          backgroundColor: getBackgroundColor(),
+          border: getBorderStyle(),
           cursor: isDragging ? "grabbing" : "grab",
+          transition: "all 0.15s ease",
           "&:hover": {
-            backgroundColor: isSelected
-              ? isDark
-                ? "rgba(255, 255, 255, 0.08)"
-                : "rgba(0, 0, 0, 0.06)"
-              : isDark
-              ? "rgba(255, 255, 255, 0.04)"
-              : "rgba(0, 0, 0, 0.03)",
+            backgroundColor: getHoverBackgroundColor(),
           },
         })}
+        {...attributes}
+        {...listeners}
       >
-        <Group gap="sm" wrap="nowrap" style={{ width: "100%", minWidth: 0, flex: "1 1 0" }}>
+        {/* 상단 삽입 라인 */}
+        {isValidDropTarget && isOverBefore && (
+          <Box
+            style={{
+              position: "absolute",
+              top: 0,
+              left: level * 20 + 12,
+              right: 4,
+              height: "2px",
+              backgroundColor: colors.dropValid.border,
+              zIndex: 10,
+            }}
+          />
+        )}
+
+        {/* 하단 삽입 라인 */}
+        {isValidDropTarget && isOverAfter && (
+          <Box
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: level * 20 + 12,
+              right: 4,
+              height: "2px",
+              backgroundColor: colors.dropValid.border,
+              zIndex: 10,
+            }}
+          />
+        )}
+
+        {/* 3개의 드롭존 (투명 오버레이) */}
+        <Box
+          ref={setBeforeRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "20%",
+            pointerEvents: "auto",
+            zIndex: 5,
+            // 디버그용: isOverBefore일 때만 배경색 표시
+            backgroundColor: isOverBefore ? "rgba(99, 102, 241, 0.1)" : "transparent",
+          }}
+        />
+        <Box
+          ref={setNestRef}
+          style={{
+            position: "absolute",
+            top: "20%",
+            left: 0,
+            right: 0,
+            height: "60%",
+            pointerEvents: "auto",
+            zIndex: 5,
+            // 디버그용: isOverNest일 때만 배경색 표시
+            backgroundColor: isOverNest ? "rgba(99, 102, 241, 0.1)" : "transparent",
+          }}
+        />
+        <Box
+          ref={setAfterRef}
+          style={{
+            position: "absolute",
+            top: "80%",
+            left: 0,
+            right: 0,
+            height: "20%",
+            pointerEvents: "auto",
+            zIndex: 5,
+            // 디버그용: isOverAfter일 때만 배경색 표시
+            backgroundColor: isOverAfter ? "rgba(99, 102, 241, 0.1)" : "transparent",
+          }}
+        />
+
+        <Group gap="sm" wrap="nowrap" style={{ width: "100%", minWidth: 0, flex: "1 1 0", position: "relative", zIndex: 10 }}>
           {isFolder ? (
             <ActionIcon
               variant="subtle"

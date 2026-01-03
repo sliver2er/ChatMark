@@ -10,6 +10,26 @@ export interface ThemeColors {
   fgSubtle: MantineColor;
   border: string;
   deleteColor: MantineColor;
+  // Drag & Drop colors
+  dropValid: {
+    bg: string;
+    bgHover: string;
+    border: string;
+  };
+  dropInvalid: {
+    bg: string;
+    bgHover: string;
+    border: string;
+  };
+  // Bookmark item colors
+  bookmarkItem: {
+    bg: string;
+    bgSelected: string;
+    bgSelectedHover: string;
+    bgHover: string;
+    border: string;
+    borderSelected: string;
+  };
 }
 
 /**
@@ -24,6 +44,24 @@ export function getThemeColors(isDark: boolean): ThemeColors {
         fgSubtle: "gray.5", // Subtle foreground
         border: "#424242", // Border color
         deleteColor: "red.4",
+        dropValid: {
+          bg: "rgba(99, 102, 241, 0.15)",
+          bgHover: "rgba(99, 102, 241, 0.2)",
+          border: "rgba(99, 102, 241, 0.5)",
+        },
+        dropInvalid: {
+          bg: "rgba(239, 68, 68, 0.15)",
+          bgHover: "rgba(239, 68, 68, 0.2)",
+          border: "rgba(239, 68, 68, 0.5)",
+        },
+        bookmarkItem: {
+          bg: "transparent",
+          bgSelected: "rgba(255, 255, 255, 0.06)",
+          bgSelectedHover: "rgba(255, 255, 255, 0.08)",
+          bgHover: "rgba(255, 255, 255, 0.04)",
+          border: "transparent",
+          borderSelected: "rgba(255, 255, 255, 0.12)",
+        },
       }
     : {
         bg: "gray.1", // Main background
@@ -32,5 +70,23 @@ export function getThemeColors(isDark: boolean): ThemeColors {
         fgSubtle: "gray.6", // Subtle foreground
         border: "#e0e0e0", // Border color
         deleteColor: "red.6",
+        dropValid: {
+          bg: "rgba(99, 102, 241, 0.1)",
+          bgHover: "rgba(99, 102, 241, 0.15)",
+          border: "rgba(99, 102, 241, 0.5)",
+        },
+        dropInvalid: {
+          bg: "rgba(239, 68, 68, 0.1)",
+          bgHover: "rgba(239, 68, 68, 0.15)",
+          border: "rgba(239, 68, 68, 0.5)",
+        },
+        bookmarkItem: {
+          bg: "transparent",
+          bgSelected: "rgba(0, 0, 0, 0.04)",
+          bgSelectedHover: "rgba(0, 0, 0, 0.06)",
+          bgHover: "rgba(0, 0, 0, 0.03)",
+          border: "transparent",
+          borderSelected: "rgba(0, 0, 0, 0.08)",
+        },
       };
 }
