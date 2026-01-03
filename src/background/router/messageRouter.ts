@@ -11,6 +11,11 @@ import {
 import { getSettings, updateSettings } from "../repository/settingsCRUD";
 import { MessageType } from "@/types/index";
 import { handleSettingsGet, handleSettingsUpdate } from "../services/settingsService";
+import {
+  handleSessionGetAll,
+  handleSessionGetMeta,
+  handleSessionSaveMeta,
+} from "../services/sessionService";
 
 export function routeMessage(
   msg: any,
@@ -28,6 +33,10 @@ export function routeMessage(
     "SETTINGS_UPDATE": handleSettingsUpdate,
     "BOOKMARK_DELETE_ALL": handleBookmarkDeleteAll,
     "BOOKMARK_DELETE_SESSION": handleBookmarkDeleteAllInSession,
+    // 세션 관련
+    "SESSION_GET_ALL": handleSessionGetAll,
+    "SESSION_GET_META": handleSessionGetMeta,
+    "SESSION_SAVE_META": handleSessionSaveMeta,
   };
 
   const handler = map[msg.type];

@@ -6,7 +6,14 @@
     "scrollSmooth": "부드럽게",
     "highlightColor": "하이라이트 색상",
     "deleteAll": "북마크 전체 삭제",
-    "warning": "주의 : 모든 세션의 북마크가 삭제됩니다."
+    "warning": "주의 : 모든 세션의 북마크가 삭제됩니다.",
+    "allBookmarks": "모든 북마크",
+    "settings": "설정",
+    "sessions": "세션 목록",
+    "selectSession": "세션을 선택하세요",
+    "noSessions": "저장된 북마크가 없습니다",
+    "noBookmarksInSession": "이 세션에 북마크가 없습니다",
+    "goToSession": "세션으로 이동"
   },
   "bookmark": {
     "addTitle": "북마크 추가",

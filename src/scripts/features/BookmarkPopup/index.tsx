@@ -10,6 +10,8 @@ import { captureTextSelection } from "./utils/selectText";
 import { error, warn } from "@/shared/logger";
 import { BookmarkItem } from "@/types";
 import { useIsDark } from "@/shared/hooks/useIsDark";
+import { getSessionTitle } from "@/shared/functions";
+import { sessionApi } from "@/api/sessionApi";
 
 export function BookmarkPopup() {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -54,7 +56,7 @@ export function BookmarkPopup() {
   };
 
   const handleSave = async (name: string, parentId?: string) => {
-    if (!capturedBookmark) return;
+    if (!capturedBookmark || !sessionId) return;
 
     const finalBookmark: BookmarkItem = {
       ...capturedBookmark,
@@ -63,7 +65,17 @@ export function BookmarkPopup() {
     };
 
     try {
-      await addBookmark(finalBookmark);
+      // 세션 제목 저장 (북마크 저장과 병렬 실행)
+      const title = getSessionTitle(sessionId);
+      const saveSessionPromise = title
+        ? sessionApi.saveMeta({
+            session_id: sessionId,
+            title,
+            updated_at: new Date(),
+          })
+        : Promise.resolve();
+
+      await Promise.all([addBookmark(finalBookmark), saveSessionPromise]);
       setCapturedBookmark(null);
     } catch (err) {
       error("Failed to add bookmark:", err);
