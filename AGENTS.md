@@ -2,7 +2,7 @@
 
 ## 프로젝트 개요
 
-ChatMark는 ChatGPT 대화 내용을 북마크하고 관리하는 Chrome 확장 프로그램입니다.
+ChatMark는 ChatGPT, Gemini, Claude 대화 내용을 북마크하고 관리하는 Chrome 확장 프로그램입니다.
 
 **기술 스택:** React 18, TypeScript, Zustand, Mantine v8, react-i18next, Vite + @crxjs/vite-plugin
 
@@ -215,7 +215,7 @@ src/
 ## Chrome 확장 프로그램 패턴
 
 - **Manifest V3**, 권한: `storage`, `activeTab`
-- 컨텐츠 스크립트 실행 대상: `chat.openai.com/*`, `chatgpt.com/*`
+- 컨텐츠 스크립트 실행 대상: `chatgpt.com/*`, `gemini.google.com/*`, `claude.ai/*`
 - 컨텐츠 스크립트 <-> 백그라운드 통신: `chrome.runtime.sendMessage` 사용
 - 모든 스토리지 작업은 백그라운드 스크립트에서 메시지 라우팅으로 처리
 
