@@ -3,7 +3,7 @@ import { defineManifest } from "@crxjs/vite-plugin";
 export default defineManifest({
   manifest_version: 3,
   name: "ChatMark",
-  version: "1.0.0",
+  version: "1.1.0",
   icons: {
     "16": "src/assets/icons/icon-16.png",
     "48": "src/assets/icons/icon-48.png",
