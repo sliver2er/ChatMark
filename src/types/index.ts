@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+// ===== LLM Provider =====
+export const LLMProviderSchema = z.enum(["ChatGPT", "Gemini", "Claude"]);
+export type LLMProvider = z.infer<typeof LLMProviderSchema>;
+
+// ===== Bookmark Item =====
 export const BookmarkItemSchema = z.object({
   id: z.string(), // UUID
   bookmark_name: z.string(),
@@ -14,15 +19,17 @@ export const BookmarkItemSchema = z.object({
   note: z.string().optional(),
   parent_bookmark: z.string().nullable(), // UUID of parent folder/bookmark (null = root)
   order: z.number(), // Order within the same parent (0-indexed)
+  provider: LLMProviderSchema, // LLM provider (ChatGPT, Gemini, Claude)
 });
 
 export type BookmarkItem = z.infer<typeof BookmarkItemSchema>;
 
-// 세션 메타데이터 (제목 저장용)
+// ===== Session Meta =====
 export const SessionMetaSchema = z.object({
   session_id: z.string(),
   title: z.string(),
   updated_at: z.date(),
+  provider: LLMProviderSchema, // LLM provider (ChatGPT, Gemini, Claude)
 });
 
 export type SessionMeta = z.infer<typeof SessionMetaSchema>;

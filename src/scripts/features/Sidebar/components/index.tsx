@@ -3,7 +3,7 @@ import { IconAlertCircle } from "@tabler/icons-react";
 import { BookmarkItem as BookmarkItemType } from "@/types";
 import { bookmarkApi } from "@/api/bookmarkApi";
 import { NavigationBookmarkTreeView } from "./NavigationBookmarkTreeView";
-import { getSessionId } from "@/shared/functions/getSessionId";
+import { useProviderStore } from "@/stores/useProviderStore";
 import { useStorageSync } from "@/hooks/useStorageSync";
 import {
   DEBOUNCE_DELAY,
@@ -19,6 +19,7 @@ import { wouldCreateCycle } from "@/utils/bookmarkTreeUtils";
 
 export const BookmarkTree = () => {
   const { t } = useTranslation();
+  const provider = useProviderStore((state) => state.provider);
   const [bookmarks, setBookmarks] = useState<BookmarkItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,8 +71,13 @@ export const BookmarkTree = () => {
   }, [sessionId, debouncedFetchBookmarks]);
 
   useEffect(() => {
-    // Get session ID from current page
-    const initialSessionId = getSessionId();
+    if (!provider) {
+      setError(t("sidebar.noSessionId"));
+      setLoading(false);
+      return;
+    }
+
+    const initialSessionId = provider.getSessionId();
 
     if (!initialSessionId) {
       setError(t("sidebar.noSessionId"));
@@ -83,17 +89,17 @@ export const BookmarkTree = () => {
     fetchBookmarks(initialSessionId);
 
     return () => {
-      // Cleanup debounce timer
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, []);
+  }, [provider]);
 
-  // Real-time URL change detection
   useEffect(() => {
+    if (!provider) return;
+
     const checkUrlChange = () => {
-      const newSessionId = getSessionId();
+      const newSessionId = provider.getSessionId();
       if (newSessionId && newSessionId !== sessionId) {
         setSessionId(newSessionId);
       }
@@ -101,7 +107,7 @@ export const BookmarkTree = () => {
 
     const intervalId = setInterval(checkUrlChange, URL_POLLING_INTERVAL);
     return () => clearInterval(intervalId);
-  }, [sessionId]);
+  }, [sessionId, provider]);
 
   if (loading) {
     return (

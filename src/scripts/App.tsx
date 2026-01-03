@@ -4,8 +4,7 @@ import "@mantine/core/styles.css";
 import { BookmarkPopup } from "./features/BookmarkPopup";
 import { OpenPanelBtn } from "./features/TogglePanelBtn";
 import { Sidebar } from "./features/Sidebar";
-import { watchChatGPTTheme } from "@/shared/functions/detectChatGPTTheme";
-import { isInChatSession } from "@/shared/functions/isInChatSession";
+import { useProviderStore } from "@/stores/useProviderStore";
 import { initReactI18next } from "react-i18next";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -39,12 +38,12 @@ const DEFAULT_SIDEBAR_WIDTH = 400;
 const URL_CHECK_INTERVAL = 300;
 
 export const App = () => {
+  const provider = useProviderStore((state) => state.provider);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
   const [colorScheme, setColorScheme] = useState<"dark" | "light">("dark");
-  const [isInSession, setIsInSession] = useState(isInChatSession());
+  const [isInSession, setIsInSession] = useState(provider?.isInChatSession() ?? false);
 
-  // Load saved sidebar width
   useEffect(() => {
     chrome.storage.local.get([SIDEBAR_WIDTH_STORAGE_KEY], (result) => {
       if (result[SIDEBAR_WIDTH_STORAGE_KEY]) {
@@ -53,9 +52,10 @@ export const App = () => {
     });
   }, []);
 
-  // Watch ChatGPT's theme and sync
   useEffect(() => {
-    const cleanup = watchChatGPTTheme((theme) => {
+    if (!provider) return;
+
+    const cleanup = provider.watchTheme((theme) => {
       setColorScheme(theme);
       chrome.runtime.sendMessage({
         type: MessageType.SettingsUpdate,
@@ -63,13 +63,15 @@ export const App = () => {
       });
     });
 
+    setColorScheme(provider.detectTheme());
     return cleanup;
-  }, []);
+  }, [provider]);
 
-  // Monitor URL changes to detect session transitions
   useEffect(() => {
+    if (!provider) return;
+
     const checkSessionStatus = () => {
-      const currentlyInSession = isInChatSession();
+      const currentlyInSession = provider.isInChatSession();
       if (currentlyInSession !== isInSession) {
         setIsInSession(currentlyInSession);
         if (!currentlyInSession && isSidebarOpen) {
@@ -80,7 +82,7 @@ export const App = () => {
 
     const intervalId = setInterval(checkSessionStatus, URL_CHECK_INTERVAL);
     return () => clearInterval(intervalId);
-  }, [isInSession, isSidebarOpen]);
+  }, [provider, isInSession, isSidebarOpen]);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
@@ -94,6 +96,8 @@ export const App = () => {
     setSidebarWidth(newWidth);
     chrome.storage.local.set({ [SIDEBAR_WIDTH_STORAGE_KEY]: newWidth });
   };
+
+  if (!provider) return null;
 
   return (
     <StrictMode>

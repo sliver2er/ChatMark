@@ -43,8 +43,7 @@ export function useTextSelection(enabled: boolean = true): TextSelectionState {
       return;
     }
 
-    // Debounce to avoid excessive updates
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const debouncedHandler = () => {
       clearTimeout(timeoutId);

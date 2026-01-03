@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getSessionId } from "@/shared/functions/getSessionId";
+import { useProviderStore } from "./useProviderStore";
 
 interface SessionStore {
   sessionId: string | null;
@@ -10,13 +10,18 @@ interface SessionStore {
 let urlObserver: MutationObserver | null = null;
 let previousUrl = window.location.href;
 
+const getSessionIdFromProvider = () => {
+  const provider = useProviderStore.getState().provider;
+  return provider?.getSessionId() ?? null;
+};
+
 export const useSessionStore = create<SessionStore>((set, get) => ({
-  sessionId: getSessionId(),
+  sessionId: null,
 
   setSessionId: (session_id) => set({ sessionId: session_id }),
 
   syncSessionId: () => {
-    const currentSessionId = getSessionId();
+    const currentSessionId = getSessionIdFromProvider();
     const storeSessionId = get().sessionId;
 
     if (currentSessionId !== storeSessionId) {
@@ -36,7 +41,6 @@ function startUrlObserver() {
     }
   };
 
-  // MutationObserver: DOM 변경 감지 (SPA 라우팅)
   urlObserver = new MutationObserver(syncSession);
 
   urlObserver.observe(document.body, {
@@ -44,10 +48,8 @@ function startUrlObserver() {
     subtree: true,
   });
 
-  // popstate: 브라우저 뒤로/앞으로 버튼
   window.addEventListener("popstate", syncSession);
 
-  // History API 감지
   const originalPushState = history.pushState;
   const originalReplaceState = history.replaceState;
 
@@ -69,4 +71,7 @@ export function stopUrlObserver() {
   }
 }
 
-startUrlObserver();
+export function initSessionStore() {
+  useSessionStore.getState().syncSessionId();
+  startUrlObserver();
+}

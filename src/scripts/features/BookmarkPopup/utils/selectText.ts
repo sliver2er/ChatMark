@@ -1,11 +1,7 @@
 import { BookmarkItem } from "@/types";
-import { getSessionId } from "@/shared/functions/getSessionId";
 import { error } from "@/shared/logger";
-import { findMessageId } from "./selectionHelpers";
+import { useProviderStore } from "@/stores/useProviderStore";
 
-/**
- * Find the closest parent element with data-start attribute
- */
 function findDataStart(node: Node): HTMLElement | null {
   let current = node instanceof Text ? node.parentElement : (node as HTMLElement);
 
@@ -19,11 +15,13 @@ function findDataStart(node: Node): HTMLElement | null {
   return null;
 }
 
-/**
- * Capture the current text selection and create a bookmark item
- */
 export function captureTextSelection(): BookmarkItem | null {
-  // Get current selection
+  const provider = useProviderStore.getState().provider;
+  if (!provider) {
+    error("Provider not initialized");
+    return null;
+  }
+
   const selection = window.getSelection();
 
   if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
@@ -36,19 +34,26 @@ export function captureTextSelection(): BookmarkItem | null {
   if (!selectedText) {
     return null;
   }
-  const messageNode = findMessageId(range.startContainer);
 
-  if (!messageNode || !messageNode.dataset.messageId) {
-    error("Could not find message node with data-message-id");
+  const startContainer = range.startContainer;
+  const parent = startContainer instanceof Element ? startContainer : startContainer.parentElement;
+
+  if (!parent) {
+    error("Could not find parent element");
     return null;
   }
 
-  const messageId = messageNode.dataset.messageId;
+  const messageId = provider.findMessageId(parent);
 
-  // Get full message text content
-  const fullText = messageNode.textContent || "";
+  if (!messageId) {
+    error("Could not find message ID");
+    return null;
+  }
 
-  // Find the selected text position in the full message
+  const messageSelector = provider.getMessageElementSelector();
+  const messageNode = parent.closest(messageSelector);
+  const fullText = messageNode?.textContent || "";
+
   const selectionIndex = fullText.indexOf(selectedText);
 
   if (selectionIndex === -1) {
@@ -56,22 +61,19 @@ export function captureTextSelection(): BookmarkItem | null {
     return null;
   }
 
-  // Extract context (50 characters before and after)
   const context_before = fullText.substring(Math.max(0, selectionIndex - 50), selectionIndex);
   const context_after = fullText.substring(
     selectionIndex + selectedText.length,
     Math.min(fullText.length, selectionIndex + selectedText.length + 50)
   );
 
-  // Get session_id from URL
-  const sessionId = getSessionId();
+  const sessionId = provider.getSessionId();
 
   if (!sessionId) {
     error("Could not extract session_id from URL");
     return null;
   }
 
-  // Optional: try to get DOM offsets for reference (unreliable)
   let start: number | undefined;
   let end: number | undefined;
 
@@ -85,7 +87,6 @@ export function captureTextSelection(): BookmarkItem | null {
     end = spanEnd + range.endOffset;
   }
 
-  // Create bookmark item
   const bookmarkItem: BookmarkItem = {
     id: crypto.randomUUID(),
     bookmark_name: selectedText,
@@ -97,8 +98,9 @@ export function captureTextSelection(): BookmarkItem | null {
     start,
     end,
     created_at: new Date(),
-    parent_bookmark: null, // Root by default
-    order: 0, // Initial order, will be recalculated by API
+    parent_bookmark: null,
+    order: 0,
+    provider: provider.provider,
   };
 
   return bookmarkItem;

@@ -6,29 +6,27 @@ import { BookmarkBtn } from "./components/BookmarkBtn";
 import { BookmarkSaveMenu } from "./components/BookmarkSaveMenu";
 import { useSessionStore } from "@/stores/useSessionStore";
 import { useBookmarkStore } from "@/stores/useBookmarkStore";
+import { useProviderStore } from "@/stores/useProviderStore";
 import { captureTextSelection } from "./utils/selectText";
 import { error, warn } from "@/shared/logger";
 import { BookmarkItem } from "@/types";
 import { useIsDark } from "@/shared/hooks/useIsDark";
-import { getSessionTitle } from "@/shared/functions";
 import { sessionApi } from "@/api/sessionApi";
 
 export function BookmarkPopup() {
   const [menuOpened, setMenuOpened] = useState(false);
   const [capturedBookmark, setCapturedBookmark] = useState<BookmarkItem | null>(null);
 
-  // Text selection-based portal
-  // Disable selection tracking when menu is open to prevent it from disappearing during streaming
   const selectionState = useTextSelection(!menuOpened);
   const floatingPortal = useFloatingPortal(selectionState, true);
 
   const targetElement = floatingPortal;
 
+  const provider = useProviderStore((state) => state.provider);
   const sessionId = useSessionStore((state) => state.sessionId);
   const addBookmark = useBookmarkStore((state) => state.addBookmark);
   const isDark = useIsDark();
 
-  // Cleanup: close menu if target element disappears
   useEffect(() => {
     if (!targetElement && menuOpened) {
       setMenuOpened(false);
@@ -36,7 +34,7 @@ export function BookmarkPopup() {
     }
   }, [targetElement, menuOpened]);
 
-  if (!targetElement) return null;
+  if (!targetElement || !provider) return null;
 
   const handleBookmarkClick = () => {
     const bookmarkItem = captureTextSelection();
@@ -56,7 +54,7 @@ export function BookmarkPopup() {
   };
 
   const handleSave = async (name: string, parentId?: string) => {
-    if (!capturedBookmark || !sessionId) return;
+    if (!capturedBookmark || !sessionId || !provider) return;
 
     const finalBookmark: BookmarkItem = {
       ...capturedBookmark,
@@ -65,13 +63,13 @@ export function BookmarkPopup() {
     };
 
     try {
-      // 세션 제목 저장 (북마크 저장과 병렬 실행)
-      const title = getSessionTitle(sessionId);
+      const title = provider.getSessionTitle();
       const saveSessionPromise = title
         ? sessionApi.saveMeta({
             session_id: sessionId,
             title,
             updated_at: new Date(),
+            provider: provider.provider,
           })
         : Promise.resolve();
 

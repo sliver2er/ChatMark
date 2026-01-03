@@ -3,7 +3,7 @@ import { defineManifest } from "@crxjs/vite-plugin";
 export default defineManifest({
   manifest_version: 3,
   name: "ChatMark",
-  version: "1.1.0",
+  version: "2.0.0",
   icons: {
     "16": "src/assets/icons/icon-16.png",
     "48": "src/assets/icons/icon-48.png",
@@ -20,7 +20,11 @@ export default defineManifest({
   content_scripts: [
     {
       matches: ["https://chat.openai.com/*", "https://chatgpt.com/*"],
-      js: ["src/scripts/index.tsx"],
+      js: ["src/scripts/chatgpt.tsx"],
+    },
+    {
+      matches: ["https://gemini.google.com/*"],
+      js: ["src/scripts/gemini.tsx"],
     },
   ],
 });

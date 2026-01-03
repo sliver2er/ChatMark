@@ -13,7 +13,9 @@
     "selectSession": "Select a session",
     "noSessions": "No saved bookmarks",
     "noBookmarksInSession": "No bookmarks in this session",
-    "goToSession": "Go to Session"
+    "goToSession": "Go to Session",
+    "providerChatGPT": "ChatGPT",
+    "providerGemini": "Gemini"
   },
   "bookmark": {
     "addTitle": "Add Bookmark",
@@ -28,7 +30,7 @@
   },
   "sidebar": {
     "title": "Bookmarks",
-    "noSessionId": "No session ID found. Please open from a ChatGPT conversation.",
+    "noSessionId": "No session ID found. Please open from a chat conversation.",
     "error": "Error",
     "noBookmarksYet": "No bookmarks yet",
     "deleteSession": "Delete all bookmarks in this session",

@@ -1,24 +1,9 @@
-/**
- * Find the closest parent element with data-message-id
- * Used to determine if a text selection is within a ChatGPT message
- */
-export function findMessageId(node: Node): HTMLElement | null {
-  let current = node instanceof Text ? node.parentElement : (node as HTMLElement);
+import { useProviderStore } from "@/stores/useProviderStore";
 
-  while (current) {
-    if (current.dataset?.messageId) {
-      return current;
-    }
-    current = current.parentElement;
-  }
-
-  return null;
-}
-
-/**
- * Check if a text selection is within a ChatGPT message
- */
 export function isValidChatSelection(selection: Selection): boolean {
+  const provider = useProviderStore.getState().provider;
+  if (!provider) return false;
+
   if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
     return false;
   }
@@ -30,9 +15,7 @@ export function isValidChatSelection(selection: Selection): boolean {
     return false;
   }
 
-  // Check if selection is within a message element
-  const messageNode = findMessageId(range.startContainer);
-  return messageNode !== null;
+  return provider.isValidChatSelection(range);
 }
 
 /**

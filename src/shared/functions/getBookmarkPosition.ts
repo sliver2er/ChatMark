@@ -1,24 +1,25 @@
 import { BookmarkItem } from "@/types";
 
-/**
- * Result of finding bookmark position
- */
 export interface BookmarkPositionResult {
   element: HTMLElement;
   range: Range | null;
 }
 
-/**
- * Find the exact position of bookmarked text using multi-layered approach
- * Layer 1: Find message by ID
- * Layer 2: Search with context for accuracy
- * Layer 3: Fallback to text-only search
- */
+function getMessageElement(bookmark: BookmarkItem): HTMLElement | null {
+  switch (bookmark.provider) {
+    case "ChatGPT":
+      return document.querySelector(`[data-message-id="${bookmark.message_id}"]`);
+    case "Gemini":
+      return document.querySelector(`.conversation-container#${bookmark.message_id}`);
+    case "Claude":
+      return document.querySelector(`[data-message-id="${bookmark.message_id}"]`);
+    default:
+      return document.querySelector(`[data-message-id="${bookmark.message_id}"]`);
+  }
+}
+
 export function getBookmarkPosition(bookmark: BookmarkItem): BookmarkPositionResult | null {
-  // Layer 1: Find the message element by data-message-id
-  const messageElement = document.querySelector(
-    `[data-message-id="${bookmark.message_id}"]`
-  ) as HTMLElement;
+  const messageElement = getMessageElement(bookmark);
 
   if (!messageElement) {
     console.error(`Message with id ${bookmark.message_id} not found`);
