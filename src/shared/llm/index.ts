@@ -1,3 +1,4 @@
 export * from "./types";
 export * from "./providers/chatgpt";
 export * from "./providers/gemini";
+export * from "./providers/claude";

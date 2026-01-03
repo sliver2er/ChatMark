@@ -11,8 +11,12 @@ function getMessageElement(bookmark: BookmarkItem): HTMLElement | null {
       return document.querySelector(`[data-message-id="${bookmark.message_id}"]`);
     case "Gemini":
       return document.querySelector(`.conversation-container#${bookmark.message_id}`);
-    case "Claude":
-      return document.querySelector(`[data-message-id="${bookmark.message_id}"]`);
+    case "Claude": {
+      // Claude uses index-based message IDs: "msg-{index}"
+      const index = parseInt(bookmark.message_id.replace("msg-", ""), 10);
+      const messages = document.querySelectorAll("div[data-test-render-count]");
+      return (messages[index] as HTMLElement) || null;
+    }
     default:
       return document.querySelector(`[data-message-id="${bookmark.message_id}"]`);
   }

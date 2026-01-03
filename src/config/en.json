@@ -16,7 +16,8 @@
     "goToSession": "Go to Session",
     "deleteSession": "Delete Session",
     "providerChatGPT": "ChatGPT",
-    "providerGemini": "Gemini"
+    "providerGemini": "Gemini",
+    "providerClaude": "Claude"
   },
   "bookmark": {
     "addTitle": "Add Bookmark",

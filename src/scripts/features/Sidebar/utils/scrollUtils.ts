@@ -48,11 +48,24 @@ export function selectElement(element: HTMLElement) {
 }
 
 export async function scrollToBottom(scrollContainerSelector?: string) {
+  const claudeScrollBtn = document.querySelector(
+    'button[aria-label*="스크롤"], button[aria-label*="scroll" i]'
+  ) as HTMLButtonElement | null;
+  if (claudeScrollBtn) {
+    claudeScrollBtn.click();
+    return;
+  }
+
   const behavior = await getScrollBehavior();
 
   const selectors = scrollContainerSelector
     ? [scrollContainerSelector]
-    : ['div[data-scroll-root="true"]', "infinite-scroller.chat-history", "#chat-history"];
+    : [
+        'div[data-scroll-root="true"]',
+        "infinite-scroller.chat-history",
+        "#chat-history",
+        ".overflow-y-scroll.overflow-x-hidden",
+      ];
 
   let scrollRoot: Element | null = null;
   for (const selector of selectors) {

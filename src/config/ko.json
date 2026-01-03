@@ -16,7 +16,8 @@
     "goToSession": "세션으로 이동",
     "deleteSession": "세션 삭제",
     "providerChatGPT": "ChatGPT",
-    "providerGemini": "Gemini"
+    "providerGemini": "Gemini",
+    "providerClaude": "Claude"
   },
   "bookmark": {
     "addTitle": "북마크 추가",

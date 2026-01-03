@@ -154,6 +154,7 @@ export const AllSessionsView = () => {
           data={[
             { label: t("popup.providerChatGPT"), value: "ChatGPT" },
             { label: t("popup.providerGemini"), value: "Gemini" },
+            { label: t("popup.providerClaude"), value: "Claude" },
           ]}
           size="xs"
           fullWidth

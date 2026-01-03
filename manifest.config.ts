@@ -26,5 +26,9 @@ export default defineManifest({
       matches: ["https://gemini.google.com/*"],
       js: ["src/scripts/gemini.tsx"],
     },
+    {
+      matches: ["https://claude.ai/*"],
+      js: ["src/scripts/claude.tsx"],
+    },
   ],
 });
